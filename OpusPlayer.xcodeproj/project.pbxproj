@@ -13,6 +13,8 @@
 		B16DC3C7166B5F220003B297 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B16DC3C5166B5F220003B297 /* Credits.rtf */; };
 		B16DC3CA166B5F220003B297 /* OpusPlayerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B16DC3C9166B5F220003B297 /* OpusPlayerAppDelegate.m */; };
 		B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B16DC3CB166B5F230003B297 /* MainMenu.xib */; };
+		B16DC3ED166BE7BA0003B297 /* OpusPlayerTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = B16DC3EC166BE7BA0003B297 /* OpusPlayerTrack.m */; };
+		B1D56DCF16710A620021D240 /* Opus.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D56DCE16710A620021D240 /* Opus.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,10 @@
 		B16DC3C8166B5F220003B297 /* OpusPlayerAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpusPlayerAppDelegate.h; sourceTree = "<group>"; };
 		B16DC3C9166B5F220003B297 /* OpusPlayerAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OpusPlayerAppDelegate.m; sourceTree = "<group>"; };
 		B16DC3CC166B5F230003B297 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		B16DC3EB166BE7BA0003B297 /* OpusPlayerTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpusPlayerTrack.h; sourceTree = "<group>"; };
+		B16DC3EC166BE7BA0003B297 /* OpusPlayerTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpusPlayerTrack.m; sourceTree = "<group>"; };
+		B1D56DCD16710A620021D240 /* Opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opus.h; sourceTree = "<group>"; };
+		B1D56DCE16710A620021D240 /* Opus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Opus.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,8 +90,12 @@
 			children = (
 				B16DC3C8166B5F220003B297 /* OpusPlayerAppDelegate.h */,
 				B16DC3C9166B5F220003B297 /* OpusPlayerAppDelegate.m */,
+				B1D56DCD16710A620021D240 /* Opus.h */,
+				B1D56DCE16710A620021D240 /* Opus.m */,
 				B16DC3CB166B5F230003B297 /* MainMenu.xib */,
 				B16DC3BD166B5F220003B297 /* Supporting Files */,
+				B16DC3EB166BE7BA0003B297 /* OpusPlayerTrack.h */,
+				B16DC3EC166BE7BA0003B297 /* OpusPlayerTrack.m */,
 			);
 			path = OpusPlayer;
 			sourceTree = "<group>";
@@ -169,6 +179,8 @@
 			files = (
 				B16DC3C3166B5F220003B297 /* main.m in Sources */,
 				B16DC3CA166B5F220003B297 /* OpusPlayerAppDelegate.m in Sources */,
+				B16DC3ED166BE7BA0003B297 /* OpusPlayerTrack.m in Sources */,
+				B1D56DCF16710A620021D240 /* Opus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,6 +310,7 @@
 				B16DC3D2166B5F230003B297 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
