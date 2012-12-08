@@ -7,8 +7,6 @@
 //
 
 #import "OpusPlayerAppDelegate.h"
-#import "OpusPlayerTrack.h"
-#import "Opus.h"
 
 @implementation OpusPlayerAppDelegate
 
@@ -80,7 +78,7 @@
                 [ rootPlaylists addObject:playlist ];
             }
         }
-    }
+     }
     return self;
 }
 
@@ -213,17 +211,134 @@
     }
         
     NSLog( @"#opusItems: %ld from a total of %ld", [ opusItems count ], [ playlistTracks count ] );
-    
  
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
 
+    [ self playNextOpus:nil ];
+    [ _nextOpusButton setEnabled:YES ];
 }
-
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+    opusPlaying = NO;
+    currentOpus = nil;
+    currentOpusPartNames = nil;
+    currentOpusPartNamesIndex = 0;
+    
+    [ _previousOpusPartButton setEnabled:NO ];
+    [ _playOrPauseButton setEnabled:NO ];
+    [ _nextOpusPartButton setEnabled:NO ];
+    [ _nextOpusButton setEnabled:NO ];
+}
+
+- (IBAction)playPreviousOpusPart:(id)sender {
+    if ( currentOpusPartNamesIndex <= 0 )
+    {
+        NSLog( @"Error: cannot decrease index: %d", currentOpusPartNamesIndex );
+        return;
+    }
+    currentOpusPartNamesIndex--;
+    [ _nextOpusPartButton setEnabled:YES ];
+    if ( currentOpusPartNamesIndex == 0 ) [ _previousOpusPartButton setEnabled:NO ];
+    [ self startPlayingOpusPart ];
+}
+
+- (IBAction)playOrPause:(id)sender
+{
+    if ( opusPlaying ) [ self pauseOpus ];
+    else [ self playOpus ];
+}
+
+- (IBAction)playNextOpusPart:(id)sender
+{
+    if ( currentOpusPartNamesIndex >= ( [ currentOpusPartNames count ] - 1 ) )
+    {
+        NSLog( @"Error: cannot increase index to number of parts of current opus: %ld", [ currentOpusPartNames count ] );
+        return;
+    }
+    currentOpusPartNamesIndex++;
+    [ _previousOpusPartButton setEnabled:YES ];
+    if ( currentOpusPartNamesIndex == ( [ currentOpusPartNames count ] - 1 ) ) [ _nextOpusPartButton setEnabled:NO ];
+    [ self startPlayingOpusPart ];
+}
+
+- (IBAction)playNextOpus:(id)sender
+{
+    int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
+    currentOpus = [ opusItems objectAtIndex:randomOpusItemsIndex ];
+    if ( [ currentOpus.tracks count ] == 0 )
+    {
+        NSLog( @"tracks empty" );
+        return;
+    }
+
+    currentOpusPartNames = [ [ currentOpus.tracks allKeys ] sortedArrayUsingComparator: ^(id obj1, id obj2)
+                            {
+                                return[ obj1 caseInsensitiveCompare:obj2 ];
+                            } ];
+    currentOpusPartNamesIndex = 0;
+
+    [ _previousOpusPartButton setEnabled:NO ];
+
+    if ( [ currentOpusPartNames count ] > 1 ) [ _nextOpusPartButton setEnabled:YES ];
+    else [ _nextOpusPartButton setEnabled:NO ];
+
+    [ self startPlayingOpusPart ];
+}
+
+- (void)startPlayingOpusPart
+{
+    if ( opusPlaying ) [ self stopOpus ];
+    
+    if ( currentOpusPartNamesIndex < 0 || currentOpusPartNamesIndex >= [ currentOpusPartNames count ] )
+    {
+        NSLog( @"Error: invalid index in current opus part names: %d", currentOpusPartNamesIndex );
+        return;
+    }
+    NSString* partName = [ currentOpusPartNames objectAtIndex: currentOpusPartNamesIndex ];
+    
+    NSURL* locationUrl = [ NSURL URLWithString:[ currentOpus.tracks valueForKey:partName ] ];
+    audioPlayer = [ [ AVAudioPlayer alloc ] init ];
+    audioPlayer = [ audioPlayer initWithContentsOfURL:locationUrl error:NULL ];
+    if ( !audioPlayer)
+    {
+        NSLog( @"Error initializing audio player with URL %@", locationUrl );
+        return;
+    }
+    [ audioPlayer setDelegate:self ];
+    [ self playOpus ];
+    [ _composerOpus setStringValue:[ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ] ];
+    if ( [ partName isEqualToString:currentOpus.name ] )  [ _opusPart setStringValue:@"" ];
+    else [ _opusPart setStringValue:partName ];
+}
+
+- (void)playOpus
+{
+    [ audioPlayer play ];
+    [ _playOrPauseButton setTitle:@"Pause" ];
+    [ _playOrPauseButton setEnabled:YES ];
+    opusPlaying = YES;
+}
+
+- (void)pauseOpus
+{
+    [ audioPlayer pause ];
+    [ _playOrPauseButton setTitle:@"Play" ];
+    opusPlaying = NO;
+}
+
+- (void)stopOpus
+{
+    [ audioPlayer stop ];
+    [ _playOrPauseButton setTitle:@"Play" ];
+    opusPlaying = NO;
+}
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
+    else [ self playNextOpus:nil ];
 }
 
 @end

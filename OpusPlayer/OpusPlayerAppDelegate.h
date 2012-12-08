@@ -7,8 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <AVFoundation/AVAudioPlayer.h>
+#import "Opus.h"
 
-@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource>
+@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, AVAudioPlayerDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource>
 {
     // The complete iTuns music dictionary (all 10 Mb)
     NSDictionary* iTunesMusicDictionary;
@@ -21,12 +23,39 @@
     
     // All opus items of the selected playlist
     NSMutableArray* opusItems;
+    
+    // The audio player
+    AVAudioPlayer* audioPlayer;
+
+    // Current Opus item
+    Opus* currentOpus;
+
+    // Current opus part names
+    NSArray* currentOpusPartNames;
+    
+    // Current index in opus part names
+    int currentOpusPartNamesIndex;
+
+    // Is the opus item playing?
+    BOOL opusPlaying;
 }
 
 @property (assign) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 @property (weak) IBOutlet NSArrayController *arrayController;
-@property (readwrite) NSMutableArray* playlistTracks;
 @property (readwrite) NSMutableArray* opusItems;
+
+- (IBAction)playPreviousOpusPart:(id)sender;
+- (IBAction)playOrPause:(id)sender;
+- (IBAction)playNextOpusPart:(id)sender;
+- (IBAction)playNextOpus:(id)sender;
+
+@property (weak) IBOutlet NSButton *previousOpusPartButton;
+@property (weak) IBOutlet NSButton *playOrPauseButton;
+@property (weak) IBOutlet NSButton *nextOpusPartButton;
+@property (weak) IBOutlet NSButton *nextOpusButton;
+
+@property (weak) IBOutlet NSTextField *composerOpus;
+@property (weak) IBOutlet NSTextField *opusPart;
 
 @end

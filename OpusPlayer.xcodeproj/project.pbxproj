@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11155D816727EE60016C406 /* AVFoundation.framework */; };
 		B16DC3B7166B5F220003B297 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B16DC3B6166B5F220003B297 /* Cocoa.framework */; };
 		B16DC3C1166B5F220003B297 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B16DC3BF166B5F220003B297 /* InfoPlist.strings */; };
 		B16DC3C3166B5F220003B297 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B16DC3C2166B5F220003B297 /* main.m */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B11155D816727EE60016C406 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = ../../../../System/Library/Frameworks/AVFoundation.framework; sourceTree = "<group>"; };
 		B16DC3B2166B5F220003B297 /* OpusPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpusPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B16DC3B6166B5F220003B297 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		B16DC3B9166B5F220003B297 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -43,6 +45,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B16DC3B7166B5F220003B297 /* Cocoa.framework in Frameworks */,
+				B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +81,7 @@
 		B16DC3B8166B5F220003B297 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B11155D816727EE60016C406 /* AVFoundation.framework */,
 				B16DC3B9166B5F220003B297 /* AppKit.framework */,
 				B16DC3BA166B5F220003B297 /* CoreData.framework */,
 				B16DC3BB166B5F220003B297 /* Foundation.framework */,
