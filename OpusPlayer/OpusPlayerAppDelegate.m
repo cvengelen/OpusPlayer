@@ -214,14 +214,24 @@
  
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
-
-    [ self playNextOpus:nil ];
-    [ _nextOpusButton setEnabled:YES ];
+    
+    // Now the shuffle can start
+    [ _shuffleButton setEnabled:YES ];
 }
+
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification
+{
+    // Get the selected opus item
+    currentOpus = [ opusItems objectAtIndex:[ _playlistTableView selectedRow ] ];
+    
+    // Start playing the opus item
+    [ self startPlayingCurrentOpus ];
+}
+
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    opusPlaying = NO;
+    opusIsPlaying = NO;
     currentOpus = nil;
     currentOpusPartNames = nil;
     currentOpusPartNamesIndex = 0;
@@ -230,6 +240,7 @@
     [ _playOrPauseButton setEnabled:NO ];
     [ _nextOpusPartButton setEnabled:NO ];
     [ _nextOpusButton setEnabled:NO ];
+    [ _shuffleButton setEnabled:NO ];
 }
 
 - (IBAction)playPreviousOpusPart:(id)sender {
@@ -246,7 +257,7 @@
 
 - (IBAction)playOrPause:(id)sender
 {
-    if ( opusPlaying ) [ self pauseOpus ];
+    if ( opusIsPlaying ) [ self pauseOpus ];
     else [ self playOpus ];
 }
 
@@ -265,6 +276,7 @@
 
 - (IBAction)playNextOpus:(id)sender
 {
+    // Get a random new opus
     int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
     currentOpus = [ opusItems objectAtIndex:randomOpusItemsIndex ];
     if ( [ currentOpus.tracks count ] == 0 )
@@ -272,7 +284,25 @@
         NSLog( @"tracks empty" );
         return;
     }
+    
+    // Select the opus item in the table view
+    [ _playlistTableView selectRowIndexes:[ NSIndexSet indexSetWithIndex:randomOpusItemsIndex ] byExtendingSelection:NO ];
+    
+    // Start playing the current opus
+    [ self startPlayingCurrentOpus ];
+}
 
+- (IBAction)shuffleButton:(id)sender
+{
+    if ( ( [ _shuffleButton state ] == NSOnState ) && !opusIsPlaying )
+    {
+        [ self playNextOpus:nil ];
+        [ _nextOpusButton setEnabled:YES ];
+    }
+}
+
+- (void)startPlayingCurrentOpus
+{
     currentOpusPartNames = [ [ currentOpus.tracks allKeys ] sortedArrayUsingComparator: ^(id obj1, id obj2)
                             {
                                 return[ obj1 caseInsensitiveCompare:obj2 ];
@@ -289,7 +319,7 @@
 
 - (void)startPlayingOpusPart
 {
-    if ( opusPlaying ) [ self stopOpus ];
+    if ( opusIsPlaying ) [ self stopOpus ];
     
     if ( currentOpusPartNamesIndex < 0 || currentOpusPartNamesIndex >= [ currentOpusPartNames count ] )
     {
@@ -318,27 +348,29 @@
     [ audioPlayer play ];
     [ _playOrPauseButton setTitle:@"Pause" ];
     [ _playOrPauseButton setEnabled:YES ];
-    opusPlaying = YES;
+    opusIsPlaying = YES;
 }
 
 - (void)pauseOpus
 {
     [ audioPlayer pause ];
     [ _playOrPauseButton setTitle:@"Play" ];
-    opusPlaying = NO;
+    opusIsPlaying = NO;
 }
 
 - (void)stopOpus
 {
     [ audioPlayer stop ];
     [ _playOrPauseButton setTitle:@"Play" ];
-    opusPlaying = NO;
+    opusIsPlaying = NO;
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
+    // Play the next opus part, if there is one in the part names array of the current opus
+    // else play the next opus if the shuffle button is on
     if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
-    else [ self playNextOpus:nil ];
+    else if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
 }
 
 @end
