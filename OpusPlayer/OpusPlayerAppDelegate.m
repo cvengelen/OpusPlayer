@@ -351,8 +351,9 @@
         return;
     }
 
-    // Select the opus item in the table view
+    // Select the opus item in the table view, and show it
     [ _playlistTableView selectRowIndexes:[ NSIndexSet indexSetWithIndex:randomOpusItemsIndex ] byExtendingSelection:NO ];
+    [ _playlistTableView scrollRowToVisible:randomOpusItemsIndex ];
     
     // Start playing the current opus
     [ self startPlayingCurrentOpus ];
@@ -427,8 +428,20 @@
     }
     [ audioPlayer setDelegate:self ];
     [ self playOpus ];
-    if ( [ partName isEqualToString:currentOpus.name ] )  [ _opusPart setStringValue:@"" ];
-    else [ _opusPart setStringValue:partName ];
+    
+    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
+                                                                        fromDate:[ NSDate date ]
+                                                                        toDate:[ NSDate dateWithTimeIntervalSinceNow:audioPlayer.duration ]
+                                                                        options:0 ];
+    NSString* partDuration = @"(";
+    if ( [ timeComponents hour ] > 0 ) partDuration = [ partDuration stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
+    partDuration = [ partDuration stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
+    
+    // Set the part name, if different from the opus name, and add the duration of part
+    if ( [ partName isEqualToString:currentOpus.name ] )  [ _opusPart setStringValue:partDuration ];
+    else [ _opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDuration ] ];
 }
 
 // Update the played opus items
@@ -438,13 +451,10 @@
     playedOpus.opus = currentOpus;
     playedOpus.atDate = currentOpusStartsPlayingDate;
     
-    // Get the system calendar
-    NSCalendar *systemCalendar = [ NSCalendar currentCalendar ];
-    
-    // Get conversion to hours, minutes, seconds
-    NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    NSDateComponents* timeComponents = [ systemCalendar components:unitFlags fromDate:currentOpusStartsPlayingDate  toDate:[ NSDate date ]  options:0 ];
-    playedOpus.forTime = [ NSString stringWithFormat:@"%ld:%ld:%ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
+    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpusStartsPlayingDate  toDate:[ NSDate date ]  options:0 ];
+    playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
     
     // Notify the array controller that the contents will be changed
     [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
