@@ -253,15 +253,9 @@
     [ self stopOpus ];
     
     // Play the next opus part, if there is one in the part names array of the current opus
-    // else play the next opus if the shuffle button is on
+    // else play the next randomly chosen opus if the shuffle button is on
     if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
-    else
-    {
-        [ self updatePlayedOpusItems ];
-        
-        // Play the next opus item, chosen at random if the shuffle button is on
-        if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
-    }
+    else if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
 }
 
 // NSApplicationDelegate: Sent by the default notification center after the application
