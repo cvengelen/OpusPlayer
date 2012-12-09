@@ -215,8 +215,11 @@
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
     
-    // Now the shuffle can start
+    // Enable playing random opus items from the playlist
     [ _shuffleButton setEnabled:YES ];
+
+    // Enable playing a random opus item from the playlist
+    [ _nextOpusButton setEnabled:YES ];
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
@@ -297,7 +300,6 @@
     if ( ( [ _shuffleButton state ] == NSOnState ) && !opusIsPlaying )
     {
         [ self playNextOpus:nil ];
-        [ _nextOpusButton setEnabled:YES ];
     }
 }
 
