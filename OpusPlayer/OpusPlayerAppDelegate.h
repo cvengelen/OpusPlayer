@@ -36,8 +36,14 @@
     // Current index in opus part names
     int currentOpusPartNamesIndex;
 
+    // Date and time at which current opus starts playing
+    NSDate* currentOpusStartsPlayingDate;
+
     // Is the opus item playing?
     BOOL opusIsPlaying;
+
+    // All played opus items
+    NSMutableArray* playedOpusItems;
 }
 
 @property (assign) IBOutlet NSWindow *window;
@@ -60,5 +66,6 @@
 
 @property (weak) IBOutlet NSTextField *composerOpus;
 @property (weak) IBOutlet NSTextField *opusPart;
+@property (weak) IBOutlet NSTextField *artist;
 
 @end
