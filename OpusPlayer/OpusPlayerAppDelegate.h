@@ -46,11 +46,14 @@
     NSMutableArray* playedOpusItems;
 }
 
+@property (readwrite) NSMutableArray* opusItems;
+@property (readwrite) NSMutableArray* playedOpusItems;
+
 @property (assign) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 @property (weak) IBOutlet NSArrayController *arrayController;
-@property (readwrite) NSMutableArray* opusItems;
 @property (weak) IBOutlet NSTableView *playlistTableView;
+@property (weak) IBOutlet NSArrayController *playedOpusItemsArrayController;
 
 - (IBAction)playPreviousOpusPart:(id)sender;
 - (IBAction)playOrPause:(id)sender;

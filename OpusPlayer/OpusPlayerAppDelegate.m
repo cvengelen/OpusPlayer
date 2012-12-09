@@ -12,6 +12,7 @@
 @implementation OpusPlayerAppDelegate
 
 @synthesize opusItems;
+@synthesize playedOpusItems;
 
 - ( id )init
 {
@@ -450,7 +451,9 @@
     
     playedOpus.forTime = [ NSString stringWithFormat:@"%ld:%ld:%ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
 
+    [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
     [ playedOpusItems addObject:playedOpus ];
+    [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
 }
 
 @end
