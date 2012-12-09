@@ -7,6 +7,7 @@
 //
 
 #import "OpusPlayerAppDelegate.h"
+#import "PlayedOpus.h"
 
 @implementation OpusPlayerAppDelegate
 
@@ -78,6 +79,9 @@
         
         // Initialise the array with the opus items in the playlist
         opusItems = [ NSMutableArray array ];
+        
+        // Initialise the array with the played opus items
+        playedOpusItems = [ NSMutableArray array ];
 
         // Initialise the audio player
         audioPlayer = nil;
@@ -307,7 +311,10 @@
 {
     // Release the audio hardware
     if ( audioPlayer ) [ self stopOpus ];
-    
+
+    // update the played opus items
+    if ( currentOpus ) [ self updatePlayedOpusItems ];
+
     // Get a random new opus
     int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
     currentOpus = [ opusItems objectAtIndex:randomOpusItemsIndex ];
@@ -348,7 +355,14 @@
 
     if ( [ currentOpusPartNames count ] > 1 ) [ _nextOpusPartButton setEnabled:YES ];
     else [ _nextOpusPartButton setEnabled:NO ];
+    
+    // Get time at which the current opus starts playing
+    currentOpusStartsPlayingDate = [ NSDate date ];
 
+    // Output the composer, opus and artist
+    [ _composerOpus setStringValue:[ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ] ];
+    [ _artist setStringValue:currentOpus.artist ];
+    
     [ self startPlayingOpusPart ];
 }
 
@@ -377,7 +391,6 @@
     }
     [ audioPlayer setDelegate:self ];
     [ self playOpus ];
-    [ _composerOpus setStringValue:[ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ] ];
     if ( [ partName isEqualToString:currentOpus.name ] )  [ _opusPart setStringValue:@"" ];
     else [ _opusPart setStringValue:partName ];
 }
@@ -412,7 +425,32 @@
     // Play the next opus part, if there is one in the part names array of the current opus
     // else play the next opus if the shuffle button is on
     if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
-    else if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
+    else
+    {
+        [ self updatePlayedOpusItems ];
+
+        // Play the next opus item, chosen at random if the shuffle button is on
+        if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
+    }
+}
+
+- (void)updatePlayedOpusItems
+{
+    PlayedOpus* playedOpus = [ [ PlayedOpus alloc ] init ];
+    playedOpus.opus = currentOpus;
+    playedOpus.atDate = currentOpusStartsPlayingDate;
+    
+    // Get the system calendar
+    NSCalendar *systemCalendar = [ NSCalendar currentCalendar ];
+
+    // Get conversion to hours, minutes, seconds
+    NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    
+    NSDateComponents* timeComponents = [ systemCalendar components:unitFlags fromDate:currentOpusStartsPlayingDate  toDate:[ NSDate date ]  options:0 ];
+    
+    playedOpus.forTime = [ NSString stringWithFormat:@"%ld:%ld:%ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
+
+    [ playedOpusItems addObject:playedOpus ];
 }
 
 @end
