@@ -37,9 +37,6 @@
 
         // Initialise the dictionary of child playlists of a parent playlist
         childPlaylistsOfParent = [ NSMutableDictionary dictionary ];
-        
-        //
-        opusItems = [ NSMutableArray array ];
 
         // Initialise the array with root playlists (the playlists without a parent playlist)
         rootPlaylists = [ NSMutableArray array ];
@@ -78,6 +75,12 @@
                 [ rootPlaylists addObject:playlist ];
             }
         }
+        
+        // Initialise the array with the opus items in the playlist
+        opusItems = [ NSMutableArray array ];
+
+        // Initialise the audio player
+        audioPlayer = nil;
      }
     return self;
 }
@@ -224,6 +227,9 @@
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
+    // Release the audio hardware
+    if ( audioPlayer ) [ self stopOpus ];
+
     // Get the selected opus item
     currentOpus = [ opusItems objectAtIndex:[ _playlistTableView selectedRow ] ];
     
@@ -246,15 +252,30 @@
     [ _shuffleButton setEnabled:NO ];
 }
 
+-( void )applicationWillTerminate:(NSNotification *)notification
+{
+    // Release the audio hardware
+    if ( audioPlayer )
+    {
+        [ audioPlayer stop ];
+        NSLog( @"Audio player stopped" );
+    }
+}
+
 - (IBAction)playPreviousOpusPart:(id)sender {
+    // Release the audio hardware
+    if ( audioPlayer ) [ self stopOpus ];
+    
     if ( currentOpusPartNamesIndex <= 0 )
     {
         NSLog( @"Error: cannot decrease index: %d", currentOpusPartNamesIndex );
         return;
     }
     currentOpusPartNamesIndex--;
+
     [ _nextOpusPartButton setEnabled:YES ];
     if ( currentOpusPartNamesIndex == 0 ) [ _previousOpusPartButton setEnabled:NO ];
+
     [ self startPlayingOpusPart ];
 }
 
@@ -266,19 +287,27 @@
 
 - (IBAction)playNextOpusPart:(id)sender
 {
+    // Release the audio hardware
+    if ( audioPlayer ) [ self stopOpus ];
+    
     if ( currentOpusPartNamesIndex >= ( [ currentOpusPartNames count ] - 1 ) )
     {
         NSLog( @"Error: cannot increase index to number of parts of current opus: %ld", [ currentOpusPartNames count ] );
         return;
     }
     currentOpusPartNamesIndex++;
+
     [ _previousOpusPartButton setEnabled:YES ];
     if ( currentOpusPartNamesIndex == ( [ currentOpusPartNames count ] - 1 ) ) [ _nextOpusPartButton setEnabled:NO ];
+
     [ self startPlayingOpusPart ];
 }
 
 - (IBAction)playNextOpus:(id)sender
 {
+    // Release the audio hardware
+    if ( audioPlayer ) [ self stopOpus ];
+    
     // Get a random new opus
     int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
     currentOpus = [ opusItems objectAtIndex:randomOpusItemsIndex ];
@@ -287,7 +316,7 @@
         NSLog( @"tracks empty" );
         return;
     }
-    
+
     // Select the opus item in the table view
     [ _playlistTableView selectRowIndexes:[ NSIndexSet indexSetWithIndex:randomOpusItemsIndex ] byExtendingSelection:NO ];
     
@@ -299,6 +328,10 @@
 {
     if ( ( [ _shuffleButton state ] == NSOnState ) && !opusIsPlaying )
     {
+        // Release the audio hardware
+        if ( audioPlayer ) [ self stopOpus ];
+
+        // Play the next opus item, chosen randomly
         [ self playNextOpus:nil ];
     }
 }
@@ -321,8 +354,12 @@
 
 - (void)startPlayingOpusPart
 {
-    if ( opusIsPlaying ) [ self stopOpus ];
-    
+    // Safety check on current audio player still playing
+    if ( audioPlayer )
+    {
+        if ( audioPlayer.playing ) [ self stopOpus ];
+    }
+
     if ( currentOpusPartNamesIndex < 0 || currentOpusPartNamesIndex >= [ currentOpusPartNames count ] )
     {
         NSLog( @"Error: invalid index in current opus part names: %d", currentOpusPartNamesIndex );
@@ -369,6 +406,9 @@
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
+    // Release the audio hardware
+    [ self stopOpus ];
+    
     // Play the next opus part, if there is one in the part names array of the current opus
     // else play the next opus if the shuffle button is on
     if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
