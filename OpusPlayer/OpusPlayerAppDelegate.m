@@ -90,18 +90,18 @@
     return self;
 }
 
+
+////////////////////////////////////////////////////
+// Playlist outline view data source methods:
+// Input for the rows of the playlist outline view
+////////////////////////////////////////////////////
+
+// NSOutlineViewDataSource: Returns the child item at the specified index of a given item
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
 {
-    if ( item == nil )
-    {
-        NSLog( @"outline view retrieves child %ld of root", index );
-        return [ rootPlaylists objectAtIndex:index ];
-    }
+    if ( item == nil ) return [ rootPlaylists objectAtIndex:index ];
 
-    NSLog( @"outline view retrieves child %ld for item %@", index, [ item objectForKey:@"Name" ] );
-    
-    // if ( item == [ level0Values objectAtIndex:1 ] ) return [ jazzValues objectAtIndex:index ];
-    // if ( item == [ level0Values objectAtIndex:2 ] ) return [ classicalValues objectAtIndex:index ];
+    // NSLog( @"outline view retrieves child %ld for item %@", index, [ item objectForKey:@"Name" ] );
 
     NSArray* childPlaylists = [ childPlaylistsOfParent objectForKey:[ item objectForKey:@"Playlist Persistent ID" ] ];
     if ( childPlaylists ) return [ childPlaylists objectAtIndex:index ];
@@ -109,22 +109,19 @@
     return nil;
 }
 
+// NSOutlineViewDataSource: Returns a Boolean value that indicates whether the a given item is expandable
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
 {
     if ( [ item objectForKey:@"Folder" ] ) return YES;
-    //     if ( item == [ level0Values objectAtIndex:1 ] ) return YES;
-    // if ( item == [ level0Values objectAtIndex:2 ] ) return YES;
     return NO;
 }
 
+// NSOutlineViewDataSource: Returns the number of child items encompassed by a given item
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
 {
     if ( item == nil ) return [ rootPlaylists count ];
     
-    NSLog( @"outline view retrieves number of children for %@", [ item objectForKey:@"Name" ] );
-     //    if ( item == [ level0Values objectAtIndex:0 ] ) return 0;
-    //    if ( item == [ level0Values objectAtIndex:1 ] ) return 2;
-    //    if ( item == [ level0Values objectAtIndex:2 ] ) return 3;
+    // NSLog( @"outline view retrieves number of children for %@", [ item objectForKey:@"Name" ] );
 
     NSArray* childPlaylists = [ childPlaylistsOfParent objectForKey:[ item objectForKey:@"Playlist Persistent ID" ] ];
     if ( childPlaylists ) return [ childPlaylists count ];
@@ -132,13 +129,19 @@
     return  0;
 }
 
+// NSOutlineViewDataSource: Invoked by outlineView to return the data object associated with the specified item
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
 {
     // NSLog( @"outline view retrieves item for item %@", [ item objectForKey:@"Name" ] );
-    // return item;
     return [ item objectForKey:@"Name" ];
 }
 
+
+////////////////////////////////////////////////////
+// Delegate methods: handle notifications
+////////////////////////////////////////////////////
+
+// NSOutlineView: notification that selection changed
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification
 {
     // Get the selected row from the outline view
@@ -146,7 +149,7 @@
     
     // Get the playlist dictionary from the selected row
     NSDictionary* playlist = [ _outlineView itemAtRow:selectedRow ];
-    NSLog( @"selected row: %ld, item %@", selectedRow , [ playlist objectForKey:@"Name" ] );
+    // NSLog( @"selected row: %ld, item %@", selectedRow , [ playlist objectForKey:@"Name" ] );
 
     // Get all playlist tracks from the playlist
     NSArray* playlistTracks = [ playlist objectForKey:@"Playlist Items" ];
@@ -230,6 +233,7 @@
     [ _nextOpusButton setEnabled:YES ];
 }
 
+// NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
     // Release the audio hardware
@@ -242,7 +246,26 @@
     [ self startPlayingCurrentOpus ];
 }
 
+// AVAudioPlayerDelegate: Called when a sound has finished playing
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    // Release the audio hardware
+    [ self stopOpus ];
+    
+    // Play the next opus part, if there is one in the part names array of the current opus
+    // else play the next opus if the shuffle button is on
+    if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
+    else
+    {
+        [ self updatePlayedOpusItems ];
+        
+        // Play the next opus item, chosen at random if the shuffle button is on
+        if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
+    }
+}
 
+// NSApplicationDelegate: Sent by the default notification center after the application
+// has been launched and initialized but before it has received its first event
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     opusIsPlaying = NO;
@@ -257,6 +280,7 @@
     [ _shuffleButton setEnabled:NO ];
 }
 
+// NSApplicationDelegate: Sent by the default notification center immediately before the application terminates
 -( void )applicationWillTerminate:(NSNotification *)notification
 {
     // Release the audio hardware
@@ -267,6 +291,11 @@
     }
 }
 
+/////////////////////////
+// Button actions
+/////////////////////////
+
+// Play the previous opus part
 - (IBAction)playPreviousOpusPart:(id)sender {
     // Release the audio hardware
     if ( audioPlayer ) [ self stopOpus ];
@@ -284,12 +313,14 @@
     [ self startPlayingOpusPart ];
 }
 
+// Play or pause
 - (IBAction)playOrPause:(id)sender
 {
     if ( opusIsPlaying ) [ self pauseOpus ];
     else [ self playOpus ];
 }
 
+// Play the next opus part
 - (IBAction)playNextOpusPart:(id)sender
 {
     // Release the audio hardware
@@ -308,6 +339,7 @@
     [ self startPlayingOpusPart ];
 }
 
+// Play the next opus
 - (IBAction)playNextOpus:(id)sender
 {
     // Release the audio hardware
@@ -332,6 +364,9 @@
     [ self startPlayingCurrentOpus ];
 }
 
+// Shuffle: If nothing is playing, start playing a randomly chosen opus.
+// If an opus is finished, continue with another randomly chosen opus.
+// See AVAudioPlayerDelegate method audioPlayerDidFinishPlaying
 - (IBAction)shuffleButton:(id)sender
 {
     if ( ( [ _shuffleButton state ] == NSOnState ) && !opusIsPlaying )
@@ -344,6 +379,11 @@
     }
 }
 
+/////////////////////////////
+// Helper methods
+/////////////////////////////
+
+// Prepare for playing a new opus item
 - (void)startPlayingCurrentOpus
 {
     currentOpusPartNames = [ [ currentOpus.tracks allKeys ] sortedArrayUsingComparator: ^(id obj1, id obj2)
@@ -367,6 +407,7 @@
     [ self startPlayingOpusPart ];
 }
 
+// Start playing the part at the current opus part names index of the current opus
 - (void)startPlayingOpusPart
 {
     // Safety check on current audio player still playing
@@ -396,45 +437,7 @@
     else [ _opusPart setStringValue:partName ];
 }
 
-- (void)playOpus
-{
-    [ audioPlayer play ];
-    [ _playOrPauseButton setTitle:@"Pause" ];
-    [ _playOrPauseButton setEnabled:YES ];
-    opusIsPlaying = YES;
-}
-
-- (void)pauseOpus
-{
-    [ audioPlayer pause ];
-    [ _playOrPauseButton setTitle:@"Play" ];
-    opusIsPlaying = NO;
-}
-
-- (void)stopOpus
-{
-    [ audioPlayer stop ];
-    [ _playOrPauseButton setTitle:@"Play" ];
-    opusIsPlaying = NO;
-}
-
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
-{
-    // Release the audio hardware
-    [ self stopOpus ];
-    
-    // Play the next opus part, if there is one in the part names array of the current opus
-    // else play the next opus if the shuffle button is on
-    if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
-    else
-    {
-        [ self updatePlayedOpusItems ];
-
-        // Play the next opus item, chosen at random if the shuffle button is on
-        if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
-    }
-}
-
+// Update the played opus items
 - (void)updatePlayedOpusItems
 {
     PlayedOpus* playedOpus = [ [ PlayedOpus alloc ] init ];
@@ -443,17 +446,49 @@
     
     // Get the system calendar
     NSCalendar *systemCalendar = [ NSCalendar currentCalendar ];
-
+    
     // Get conversion to hours, minutes, seconds
     NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    
     NSDateComponents* timeComponents = [ systemCalendar components:unitFlags fromDate:currentOpusStartsPlayingDate  toDate:[ NSDate date ]  options:0 ];
-    
     playedOpus.forTime = [ NSString stringWithFormat:@"%ld:%ld:%ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
-
+    
+    // Notify the array controller that the contents will be changed
     [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
+
+    // Add the played opus item to the array with played opus items
     [ playedOpusItems addObject:playedOpus ];
+
+    // Notify the array controller that the contents has been changed
     [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
+}
+
+//////////////////////////////
+// Low level helper methods
+//////////////////////////////
+
+// Start playing the audio player
+- (void)playOpus
+{
+    [ audioPlayer play ];
+    [ _playOrPauseButton setTitle:@"Pause" ];
+    [ _playOrPauseButton setEnabled:YES ];
+    opusIsPlaying = YES;
+}
+
+// Pause the audio player
+- (void)pauseOpus
+{
+    [ audioPlayer pause ];
+    [ _playOrPauseButton setTitle:@"Play" ];
+    opusIsPlaying = NO;
+}
+
+// Stop the audio player
+- (void)stopOpus
+{
+    [ audioPlayer stop ];
+    [ _playOrPauseButton setTitle:@"Play" ];
+    opusIsPlaying = NO;
 }
 
 @end
