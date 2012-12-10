@@ -238,6 +238,9 @@
 {
     // Release the audio hardware
     if ( audioPlayer ) [ self stopOpus ];
+    
+    // update the played opus items
+    if ( currentOpus ) [ self updatePlayedOpusItems ];
 
     // Get the selected opus item
     currentOpus = [ opusItems objectAtIndex:[ _playlistTableView selectedRow ] ];
