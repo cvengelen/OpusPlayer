@@ -178,28 +178,62 @@
  
         // Get the full name of the track
         NSString* trackName = [ track valueForKey:@"Name" ];
-        
-        // Find the first occurence of ": " in the track name
-        NSRange colonRange = [ trackName rangeOfString:@": " ];
 
-        // Move to the next track if not found
-        if ( colonRange.location == NSNotFound )
+        /////////////////////////////////////////////////////////////////////////////
+        // First remove the name of the composer from the track name, if present
+        /////////////////////////////////////////////////////////////////////////////
+        
+        // Search for the name of the composer at the start of the track, followed by a colon or dash, with possible spaces
+        NSString* composerName = [ NSString stringWithFormat:@"%@%@%@", @"^\\s*", opus.composer, @"\\s*[:-]\\s*" ];
+        NSRange composerNameRange = [ trackName rangeOfString:composerName options:NSRegularExpressionSearch ];
+
+        // Check if the name of the composer is found at the start of the track name
+        if ( composerNameRange.location != NSNotFound )
         {
-            // Copy the full name and the track location
-            opus.name = trackName;
-            [ opus.tracks setValue:[ track valueForKey:@"Location" ] forKey:trackName ];
+            // Remove the composer name from the track name
+            trackName = [ trackName substringFromIndex:composerNameRange.length ];
+        }
+ 
+        /////////////////////////////////////////////////////////////////////////////
+        // Divide the track name in the opus name, and opus part names, divided by
+        // either a colon or a dash, with possible spaces.
+        /////////////////////////////////////////////////////////////////////////////
+
+        // Try to find a colon, with possible spaces in front of the colon, and at least one space after the colon,
+        // in the track name as divider between opus and opus part
+        NSString* opusDivider = @"\\s*:\\s+";
+        NSRange opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
+
+        // Check if a colon is not found in the track name
+        if ( opusDividerRange.location == NSNotFound )
+        {
+            // Try to find a dash, with at least one space in front and after the dash, in the track name as divider between opus and opus part
+            opusDivider = @"\\s+-\\s+";
+            opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
+
+            // Check if a dash is also not found in the track name
+            if ( opusDividerRange.location == NSNotFound )
+            {
+                // This track does not seem to be part of an opus
+
+                // Copy the full name and the track location
+                opus.name = trackName;
+                [ opus.tracks setValue:[ track valueForKey:@"Location" ] forKey:trackName ];
             
-            // Add the opus to the collection
-            [ opusItems addObject:opus ];
+                // Add the opus to the collection
+                [ opusItems addObject:opus ];
             
-            // Move to the next track in the playlist
-            continue;
+                // Move to the next track in the playlist
+                continue;
+            }
         }
 
-        // Get the opus name: everything before the colon
-        NSRange opusNameRange = { 0, colonRange.location };
+        // Get the opus name: everything before the opus divider
+        NSRange opusNameRange = { 0, opusDividerRange.location };
         opus.name = [ trackName substringWithRange:opusNameRange ];
-        NSString* partName = [ trackName substringFromIndex: opusNameRange.length + 2 ];
+
+        // Get the opus part name: everything after the opus divider
+        NSString* partName = [ trackName substringFromIndex:( opusDividerRange.location + opusDividerRange.length ) ];
         
         // Check if the collection of opus items already contains this opus
         if ( [ opusItems containsObject:opus ] )
@@ -299,14 +333,20 @@
 
 - (void)handleFullScreenTimer:(NSTimer *)timer
 {
-        // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes
+    // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit;
     NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:[ NSDate date ] ];
+    
+    // Set the time on the full screen window
     [ _fullScreenTime setStringValue:[ NSString stringWithFormat:@"%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ] ] ];
     
+    // Get the frame of the box in the full screen window
     NSRect fullScreenBoxFrame = [ _fullScreenBox frame ];
+
+    // Get the bounds of the parent view of the box
     NSRect fullScreenViewBounds = [ [ _fullScreenBox superview ] bounds ];
 
+    // Determine the direction of the x increment of the box position in the full screen window
     if ( fullScreenBoxXIncr > 0 )
     {
         if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxFrame.size.width + fullScreenBoxXIncr ) > fullScreenViewBounds.size.width ) fullScreenBoxXIncr = -fullScreenBoxXIncr;
@@ -316,6 +356,7 @@
         if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxXIncr ) < 0 ) fullScreenBoxXIncr = - fullScreenBoxXIncr;
     }
     
+    // Determine the direction of the y increment of the box position in the full screen window
     if ( fullScreenBoxYIncr > 0 )
     {
         if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxFrame.size.height + fullScreenBoxYIncr ) > fullScreenViewBounds.size.height ) fullScreenBoxYIncr = -fullScreenBoxYIncr;
@@ -325,12 +366,15 @@
         if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxYIncr ) < 0 ) fullScreenBoxYIncr = - fullScreenBoxYIncr;
     }
  
+    // Move the box in the full screen window a bit
     fullScreenBoxFrame.origin.x += fullScreenBoxXIncr;
     fullScreenBoxFrame.origin.y += fullScreenBoxYIncr;
     [ _fullScreenBox setFrameOrigin:fullScreenBoxFrame.origin ];
 
+    // Get the frame of the Time text label in the full screen window
     NSRect fullScreenTimeFrame = [ _fullScreenTime frame ];
     
+    // Determine the direction of the y increment of the time label position in the full screen window
     if ( fullScreenTimeYIncr > 0 )
     {
         if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeFrame.size.height + fullScreenTimeYIncr ) > fullScreenViewBounds.size.height ) fullScreenTimeYIncr = -fullScreenTimeYIncr;
@@ -340,6 +384,7 @@
         if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeYIncr ) < 0 ) fullScreenTimeYIncr = - fullScreenTimeYIncr;
     }
     
+    // Move the time label in the full screen window a bit
     fullScreenTimeFrame.origin.y += fullScreenTimeYIncr;
     [ _fullScreenTime setFrameOrigin:fullScreenTimeFrame.origin ];
 
