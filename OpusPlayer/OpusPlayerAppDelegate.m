@@ -222,20 +222,30 @@
     }
         
     NSLog( @"#opusItems: %ld from a total of %ld", [ opusItems count ], [ playlistTracks count ] );
- 
+
+    // Sort the play list table on composer, opus name, and artist
+    // This makes showing the selected opus difficult?
+    NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:[ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ],
+                                                                  [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES ],
+                                                                  [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ], nil ];
+    [ _arrayController setSortDescriptors:playListSortDescriptors ];
+    NSLog( @"#arranged objects in array controller: %ld", [ [ _arrayController arrangedObjects ] count ] );
+    
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
     
     // Enable playing random opus items from the playlist
     [ _shuffleButton setEnabled:YES ];
-
-    // Enable playing a random opus item from the playlist
-    [ _nextOpusButton setEnabled:YES ];
 }
 
 // NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
+    // Check if the current opus already equals the opus item at the selected index,
+    // which means that the row is being automatically selected by playNextOpus.
+    // In that case this method does not need to take any action.
+    if ( [ currentOpus isEqual:[ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ] ] ) return;
+
     // Release the audio hardware
     if ( audioPlayer ) [ self stopOpus ];
     
@@ -243,10 +253,13 @@
     if ( currentOpus ) [ self updatePlayedOpusItems ];
 
     // Get the selected opus item
-    currentOpus = [ opusItems objectAtIndex:[ _playlistTableView selectedRow ] ];
+    currentOpus = [ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ];
     
     // Start playing the opus item
     [ self startPlayingCurrentOpus ];
+    
+    // Enable playing a random opus item from the playlist
+    [ _nextOpusButton setEnabled:YES ];
 }
 
 // AVAudioPlayerDelegate: Called when a sound has finished playing
@@ -275,6 +288,61 @@
     [ _nextOpusPartButton setEnabled:NO ];
     [ _nextOpusButton setEnabled:NO ];
     [ _shuffleButton setEnabled:NO ];
+
+    // Set full screen time every 10 seconds
+    fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
+
+    fullScreenBoxXIncr = 10;
+    fullScreenBoxYIncr = 10;
+    fullScreenTimeYIncr = 10;
+}
+
+- (void)handleFullScreenTimer:(NSTimer *)timer
+{
+        // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:[ NSDate date ] ];
+    [ _fullScreenTime setStringValue:[ NSString stringWithFormat:@"%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ] ] ];
+    
+    NSRect fullScreenBoxFrame = [ _fullScreenBox frame ];
+    NSRect fullScreenViewBounds = [ [ _fullScreenBox superview ] bounds ];
+
+    if ( fullScreenBoxXIncr > 0 )
+    {
+        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxFrame.size.width + fullScreenBoxXIncr ) > fullScreenViewBounds.size.width ) fullScreenBoxXIncr = -fullScreenBoxXIncr;
+    }
+    else
+    {
+        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxXIncr ) < 0 ) fullScreenBoxXIncr = - fullScreenBoxXIncr;
+    }
+    
+    if ( fullScreenBoxYIncr > 0 )
+    {
+        if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxFrame.size.height + fullScreenBoxYIncr ) > fullScreenViewBounds.size.height ) fullScreenBoxYIncr = -fullScreenBoxYIncr;
+    }
+    else
+    {
+        if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxYIncr ) < 0 ) fullScreenBoxYIncr = - fullScreenBoxYIncr;
+    }
+ 
+    fullScreenBoxFrame.origin.x += fullScreenBoxXIncr;
+    fullScreenBoxFrame.origin.y += fullScreenBoxYIncr;
+    [ _fullScreenBox setFrameOrigin:fullScreenBoxFrame.origin ];
+
+    NSRect fullScreenTimeFrame = [ _fullScreenTime frame ];
+    
+    if ( fullScreenTimeYIncr > 0 )
+    {
+        if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeFrame.size.height + fullScreenTimeYIncr ) > fullScreenViewBounds.size.height ) fullScreenTimeYIncr = -fullScreenTimeYIncr;
+    }
+    else
+    {
+        if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeYIncr ) < 0 ) fullScreenTimeYIncr = - fullScreenTimeYIncr;
+    }
+    
+    fullScreenTimeFrame.origin.y += fullScreenTimeYIncr;
+    [ _fullScreenTime setFrameOrigin:fullScreenTimeFrame.origin ];
+
 }
 
 // NSApplicationDelegate: Sent by the default notification center immediately before the application terminates
@@ -286,6 +354,8 @@
         [ audioPlayer stop ];
         NSLog( @"Audio player stopped" );
     }
+    
+    if ( fullScreenTimer ) [ fullScreenTimer invalidate ];
 }
 
 /////////////////////////
@@ -346,8 +416,9 @@
     if ( currentOpus ) [ self updatePlayedOpusItems ];
 
     // Get a random new opus
+    // Use the arranged objects from the array controller to get the opus item
     int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
-    currentOpus = [ opusItems objectAtIndex:randomOpusItemsIndex ];
+    currentOpus = [ [ _arrayController arrangedObjects ] objectAtIndex:randomOpusItemsIndex ];
     if ( [ currentOpus.tracks count ] == 0 )
     {
         NSLog( @"tracks empty" );
@@ -355,9 +426,10 @@
     }
 
     // Select the opus item in the table view, and show it
-    [ _playlistTableView selectRowIndexes:[ NSIndexSet indexSetWithIndex:randomOpusItemsIndex ] byExtendingSelection:NO ];
-    [ _playlistTableView scrollRowToVisible:randomOpusItemsIndex ];
-    
+    // [ _playlistTableView selectRowIndexes:[ NSIndexSet indexSetWithIndex:randomOpusItemsIndex ] byExtendingSelection:NO ];
+    [ _arrayController setSelectionIndex:randomOpusItemsIndex ];
+    [ _playlistTableView scrollRowToVisible:[ _playlistTableView selectedRow ] ];
+   
     // Start playing the current opus
     [ self startPlayingCurrentOpus ];
 }
@@ -367,13 +439,19 @@
 // See AVAudioPlayerDelegate method audioPlayerDidFinishPlaying
 - (IBAction)shuffleButton:(id)sender
 {
-    if ( ( [ _shuffleButton state ] == NSOnState ) && !opusIsPlaying )
+    if ( [ _shuffleButton state ] == NSOnState )
     {
-        // Release the audio hardware
-        if ( audioPlayer ) [ self stopOpus ];
+        if ( !opusIsPlaying )
+        {
+            // Release the audio hardware
+            if ( audioPlayer ) [ self stopOpus ];
 
-        // Play the next opus item, chosen randomly
-        [ self playNextOpus:nil ];
+            // Play the next opus item, chosen randomly
+            [ self playNextOpus:nil ];
+        }
+        
+        // Enable playing the next random opus item from the playlist
+        [ _nextOpusButton setEnabled:YES ];
     }
 }
 
@@ -399,8 +477,12 @@
     currentOpusStartsPlayingDate = [ NSDate date ];
 
     // Output the composer, opus and artist
-    [ _composerOpus setStringValue:[ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ] ];
+    NSString* composerOpus = [ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ];
+    [ _composerOpus setStringValue:composerOpus ];
     [ _artist setStringValue:currentOpus.artist ];
+
+    [ _fullScreenComposerOpus setStringValue:composerOpus ];
+    [ _fullScreenArtist setStringValue:currentOpus.artist ];
     
     [ self startPlayingOpusPart ];
 }
@@ -443,8 +525,17 @@
     partDuration = [ partDuration stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
     
     // Set the part name, if different from the opus name, and add the duration of part
-    if ( [ partName isEqualToString:currentOpus.name ] )  [ _opusPart setStringValue:partDuration ];
-    else [ _opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDuration ] ];
+    if ( [ partName isEqualToString:currentOpus.name ] )
+    {
+        [ _opusPart setStringValue:partDuration ];
+        [ _fullScreenOpusPart setStringValue:partDuration ];
+    }
+    else
+    {
+        [ _opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDuration ] ];
+        [ _fullScreenOpusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDuration ] ];
+
+    }
 }
 
 // Update the played opus items
