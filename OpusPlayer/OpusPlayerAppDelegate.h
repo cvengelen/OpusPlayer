@@ -44,6 +44,13 @@
 
     // All played opus items
     NSMutableArray* playedOpusItems;
+
+    // Full screen timer
+    NSTimer* fullScreenTimer;
+
+    int fullScreenBoxXIncr;
+    int fullScreenBoxYIncr;
+    int fullScreenTimeYIncr;
 }
 
 @property (readwrite) NSMutableArray* opusItems;
@@ -70,5 +77,11 @@
 @property (weak) IBOutlet NSTextField *composerOpus;
 @property (weak) IBOutlet NSTextField *opusPart;
 @property (weak) IBOutlet NSTextField *artist;
+
+@property (weak) IBOutlet NSBox *fullScreenBox;
+@property (weak) IBOutlet NSTextFieldCell *fullScreenComposerOpus;
+@property (weak) IBOutlet NSTextField *fullScreenOpusPart;
+@property (weak) IBOutlet NSTextField *fullScreenArtist;
+@property (weak) IBOutlet NSTextField *fullScreenTime;
 
 @end
