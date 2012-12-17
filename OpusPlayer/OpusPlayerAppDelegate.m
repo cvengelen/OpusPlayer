@@ -203,6 +203,15 @@
         // in the track name as divider between opus and opus part
         NSString* opusDivider = @"\\s*:\\s+";
         NSRange opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
+        
+        // Check if a colon was found
+        if ( opusDividerRange.location != NSNotFound )
+        {
+            // Check if another colon can be found in the rest of the string
+            NSRange restOfTrackNameRange = { opusDividerRange.location + opusDividerRange.length, trackName.length - ( opusDividerRange.location + opusDividerRange.length ) };
+            NSRange opusDividerFurtherRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch range:restOfTrackNameRange ];
+            if ( opusDividerFurtherRange.location != NSNotFound ) opusDividerRange = opusDividerFurtherRange;
+        }
 
         // Check if a colon is not found in the track name
         if ( opusDividerRange.location == NSNotFound )
