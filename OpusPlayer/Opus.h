@@ -14,6 +14,7 @@
     NSString* name;
     NSString* album;
     NSString* artist;
+    
     // Dictionary holding the track locations with the trackname as key
     NSMutableDictionary* tracks;
 }
