@@ -8,6 +8,7 @@
 
 #import "OpusPlayerAppDelegate.h"
 #import "PlayedOpus.h"
+#import "Track.h"
 
 @implementation OpusPlayerAppDelegate
 
@@ -161,7 +162,15 @@
     // See: http://stackoverflow.com/questions/1313709/kvc-kvo-and-bindings-why-am-i-only-receiving-one-change-notification
     [ _arrayController willChangeValueForKey:@"arrangedObjects" ];
 
+    // Clear all items from the dictionary with opus items
     [ opusItems removeAllObjects ];
+ 
+    // Remove any sort descriptors on the array controller
+    [ _arrayController setSortDescriptors:nil ];
+
+    // Trigger rearrangement of the array controller arranged objects
+    // This is needed because otherwise the contents will not change
+    [ _arrayController rearrangeObjects ];
     
     for ( NSDictionary* playlistTrack in playlistTracks )
     {
@@ -193,89 +202,114 @@
             // Remove the composer name from the track name
             trackName = [ trackName substringFromIndex:composerNameRange.length ];
         }
+
+        // Setup the opus track data
+        Track* opusTrack = [ [ Track alloc ] init ];
+        opusTrack.location = [ track valueForKey:@"Location" ];
+        opusTrack.trackNumber = [ [ track valueForKey:@"Track Number" ] intValue ];
  
         /////////////////////////////////////////////////////////////////////////////
         // Divide the track name in the opus name, and opus part names, divided by
-        // either a colon or a dash, with possible spaces.
+        // either a colon or a dash, with possible spaces, and followed by at least one digit.
         /////////////////////////////////////////////////////////////////////////////
 
-        // Try to find a colon, with possible spaces in front of the colon, and at least one space after the colon,
-        // in the track name as divider between opus and opus part
-        NSString* opusDivider = @"\\s*:\\s+";
+        // Try to find a divider string in the track name between an opus and an opus part:
+        // a colon with possible spaces in front of or after the colon,
+        // and followed by at least one digit (0-9). Bijvoorbeeld:
+        //  Symfonie Nr. 5, Op. 67: 1. Allegro con brio
+        NSString* opusDivider = @"\\s*:\\s*\\d";
+        int opusDividerBacktrack = 1;
         NSRange opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
         
-        // Check if a colon was found
-        if ( opusDividerRange.location != NSNotFound )
-        {
-            // Check if another colon can be found in the rest of the string
-            NSRange restOfTrackNameRange = { opusDividerRange.location + opusDividerRange.length, trackName.length - ( opusDividerRange.location + opusDividerRange.length ) };
-            NSRange opusDividerFurtherRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch range:restOfTrackNameRange ];
-            if ( opusDividerFurtherRange.location != NSNotFound ) opusDividerRange = opusDividerFurtherRange;
-        }
-
-        // Check if a colon is not found in the track name
+        // Check if an opus divider string was not found in the track name
         if ( opusDividerRange.location == NSNotFound )
         {
-            // Try to find a dash, with at least one space in front and after the dash, in the track name as divider between opus and opus part
-            opusDivider = @"\\s+-\\s+";
+            // Try again, now with a dash instead of a colon, followed by at least one space
+            // Must only be done after an unsuccusfull search for a colon
+            opusDivider = @"\\s*-\\s+\\d";
+            opusDividerBacktrack = 1;
             opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
+        }
+       
+        // Check if an opus divider string was not found in the track name
+        if ( opusDividerRange.location == NSNotFound )
+        {
+            // Try again, now only with a colon, followed by at least one space
+            opusDivider = @"\\s*:\\s+";
+            opusDividerBacktrack = 0;
+            opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
+        }
+        
+        // Decare the opus part name
+        NSString* partName;
+        
+        // Check if an opus divider string was found in the track name
+        if ( opusDividerRange.location != NSNotFound )
+        {
+            // Get the opus part name: everything after the opus divider, but with the digit in the opus divider
+            partName = [ trackName substringFromIndex:( opusDividerRange.location + opusDividerRange.length - opusDividerBacktrack ) ];
 
-            // Check if a dash is also not found in the track name
-            if ( opusDividerRange.location == NSNotFound )
+            // Check if the part name contains Nr. or No., which indicates Etudes, Bagatelles, etc.
+            NSRange nrTrackNameRange = [ partName rangeOfString:@"N[ro]\\." options:NSRegularExpressionSearch ];
+            if ( nrTrackNameRange.location != NSNotFound )
             {
-                // This track does not seem to be part of an opus
-
-                // Copy the full name and the track location
-                opus.name = trackName;
-                [ opus.tracks setValue:[ track valueForKey:@"Location" ] forKey:trackName ];
-            
-                // Add the opus to the collection
-                [ opusItems addObject:opus ];
-            
-                // Move to the next track in the playlist
-                continue;
+                // Nr. or No. was found in the track: treat this as a single opus
+                opusDividerRange.location = NSNotFound;
             }
+        }
+        
+        // Check if an opus divider string was not found in the track name
+        if ( opusDividerRange.location == NSNotFound )
+        {
+            // This track does not seem to be part of an opus
+
+            // Copy the full name and the track location
+            opus.name = trackName;
+            [ opus.tracks setObject:opusTrack forKey:trackName ];
+            
+            // Add the opus to the collection
+            [ opusItems addObject:opus ];
+            
+            // Move to the next track in the playlist
+            continue;
         }
 
         // Get the opus name: everything before the opus divider
         NSRange opusNameRange = { 0, opusDividerRange.location };
         opus.name = [ trackName substringWithRange:opusNameRange ];
-
-        // Get the opus part name: everything after the opus divider
-        NSString* partName = [ trackName substringFromIndex:( opusDividerRange.location + opusDividerRange.length ) ];
         
         // Check if the collection of opus items already contains this opus
+        // Note: this uses isEqual from Opus, so checks for composer, opus name, artist and album
         if ( [ opusItems containsObject:opus ] )
         {
             // Get the existing opus
             Opus* existingOpus = [ opusItems objectAtIndex:[ opusItems indexOfObject:opus ] ];
 
             // Add part name and location to the tracks dictionary of the existing opus
-            [ existingOpus.tracks setValue:[ track valueForKey:@"Location" ] forKey:partName ];
+            [ existingOpus.tracks setObject:opusTrack forKey:partName ];
 
             // Move to the next track in the playlist
             continue;
         }
 
         // Add part name and location to the tracks dictionary of the new opus
-        [ opus.tracks setValue:[ track valueForKey:@"Location" ] forKey:partName ];
+        [ opus.tracks setObject:opusTrack forKey:partName ];
 
         // The opus is not yet in the collection of opus items: add the opus to the collection
         [ opusItems addObject:opus ];
     }
-        
+
     NSLog( @"#opusItems: %ld from a total of %ld", [ opusItems count ], [ playlistTracks count ] );
 
     // Sort the play list table on composer, opus name, and artist
-    // This makes showing the selected opus difficult?
     NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:[ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ],
                                                                   [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES ],
                                                                   [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ], nil ];
     [ _arrayController setSortDescriptors:playListSortDescriptors ];
-    NSLog( @"#arranged objects in array controller: %ld", [ [ _arrayController arrangedObjects ] count ] );
     
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
+    NSLog( @"#arranged objects in array controller: %ld", [ [ _arrayController arrangedObjects ] count ] );
     
     // Enable playing random opus items from the playlist
     [ _shuffleButton setEnabled:YES ];
@@ -516,9 +550,14 @@
 // Prepare for playing a new opus item
 - (void)startPlayingCurrentOpus
 {
-    currentOpusPartNames = [ [ currentOpus.tracks allKeys ] sortedArrayUsingComparator: ^(id obj1, id obj2)
+    // Get the keys of the tracks dictionary, which are the names of all the parts of the opus.
+    // The track names cannot be used for sorting, since they may range above 9, and tracks 10=19 would be sorted after 1 and before 2.
+    // Therefore the track number, as stored in the Track object in the object stored with the key for sorting the opus parts.
+    currentOpusPartNames = [ currentOpus.tracks keysSortedByValueUsingComparator: ^(id obj1, id obj2)
                             {
-                                return[ obj1 caseInsensitiveCompare:obj2 ];
+                                if ( [ obj1 trackNumber ] > [ obj2 trackNumber ] ) return (NSComparisonResult)NSOrderedDescending;
+                                if ( [ obj1 trackNumber ] > [ obj2 trackNumber ] ) return (NSComparisonResult)NSOrderedAscending;
+                                return (NSComparisonResult)NSOrderedSame;
                             } ];
     currentOpusPartNamesIndex = 0;
 
@@ -555,9 +594,10 @@
         NSLog( @"Error: invalid index in current opus part names: %d", currentOpusPartNamesIndex );
         return;
     }
-    NSString* partName = [ currentOpusPartNames objectAtIndex: currentOpusPartNamesIndex ];
+    NSString* partName = [ currentOpusPartNames objectAtIndex:currentOpusPartNamesIndex ];
     
-    NSURL* locationUrl = [ NSURL URLWithString:[ currentOpus.tracks valueForKey:partName ] ];
+    Track* opusTrack = [ currentOpus.tracks valueForKey:partName ];
+    NSURL* locationUrl = [ NSURL URLWithString:opusTrack.location ];
     audioPlayer = [ [ AVAudioPlayer alloc ] init ];
     audioPlayer = [ audioPlayer initWithContentsOfURL:locationUrl error:NULL ];
     if ( !audioPlayer)
