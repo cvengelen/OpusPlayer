@@ -300,11 +300,17 @@
     }
 
     NSLog( @"#opusItems: %ld from a total of %ld", [ opusItems count ], [ playlistTracks count ] );
+    
+    // Define the sort descriptors for composer, opus name (special) and artist
+    NSSortDescriptor* composerSortDescriptor = [ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ];
+    // Use numeric search in opus name sort descriptor
+    NSSortDescriptor* opusNameSortDescription = [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES comparator:^(id name1, id name2) {
+        return [ name1 compare:name2 options:NSNumericSearch ];
+    } ];
+    NSSortDescriptor* artistSortDescriptor   = [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ];
 
     // Sort the play list table on composer, opus name, and artist
-    NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:[ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ],
-                                                                  [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES ],
-                                                                  [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ], nil ];
+    NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
     [ _arrayController setSortDescriptors:playListSortDescriptors ];
     
     // Trigger KVC/KVO by posting KVO notification
