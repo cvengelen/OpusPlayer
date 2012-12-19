@@ -240,24 +240,6 @@
             opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
         }
         
-        // Decare the opus part name
-        NSString* partName;
-        
-        // Check if an opus divider string was found in the track name
-        if ( opusDividerRange.location != NSNotFound )
-        {
-            // Get the opus part name: everything after the opus divider, but with the digit in the opus divider
-            partName = [ trackName substringFromIndex:( opusDividerRange.location + opusDividerRange.length - opusDividerBacktrack ) ];
-
-            // Check if the part name contains Nr. or No., which indicates Etudes, Bagatelles, etc.
-            NSRange nrTrackNameRange = [ partName rangeOfString:@"N[ro]\\." options:NSRegularExpressionSearch ];
-            if ( nrTrackNameRange.location != NSNotFound )
-            {
-                // Nr. or No. was found in the track: treat this as a single opus
-                opusDividerRange.location = NSNotFound;
-            }
-        }
-        
         // Check if an opus divider string was not found in the track name
         if ( opusDividerRange.location == NSNotFound )
         {
@@ -277,7 +259,10 @@
         // Get the opus name: everything before the opus divider
         NSRange opusNameRange = { 0, opusDividerRange.location };
         opus.name = [ trackName substringWithRange:opusNameRange ];
-        
+    
+        // Get the opus part name: everything after the opus divider, but with the digit in the opus divider
+        NSString* partName = [ trackName substringFromIndex:( opusDividerRange.location + opusDividerRange.length - opusDividerBacktrack ) ];
+
         // Check if the collection of opus items already contains this opus
         // Note: this uses isEqual from Opus, so checks for composer, opus name, artist and album
         if ( [ opusItems containsObject:opus ] )
