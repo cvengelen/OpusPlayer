@@ -175,16 +175,13 @@
     for ( NSDictionary* playlistTrack in playlistTracks )
     {
         NSNumber* trackId= [ playlistTrack objectForKey:@"Track ID" ];
-        // NSLog( @"Track ID: %@", trackId );
         NSDictionary* track = [ tracks objectForKey:[ trackId stringValue ] ];
-        // NSLog( @"Track name: %@", [ track valueForKey:@"Name" ] );
 
-        Opus* opus = [ [ Opus alloc ] init ];
-        opus.composer = [ track valueForKey:@"Composer" ];
-        opus.artist   = [ track valueForKey:@"Artist" ];
-        opus.album    = [ track valueForKey:@"Album" ];
-        opus.tracks   = [ [ NSMutableDictionary alloc ] init ];
- 
+        // Initialise an opus objec with the composer, artist and album
+        Opus* opus = [ [ Opus alloc ] initWithComposer:[ track valueForKey:@"Composer" ]
+                                      withArtist:[ track valueForKey:@"Artist" ]
+                                      withAlbum:[ track valueForKey:@"Album" ] ];
+        
         // Get the full name of the track
         NSString* trackName = [ track valueForKey:@"Name" ];
 
@@ -193,8 +190,8 @@
         /////////////////////////////////////////////////////////////////////////////
         
         // Search for the name of the composer at the start of the track, followed by a colon or dash, with possible spaces
-        NSString* composerName = [ NSString stringWithFormat:@"%@%@%@", @"^\\s*", opus.composer, @"\\s*[:-]\\s*" ];
-        NSRange composerNameRange = [ trackName rangeOfString:composerName options:NSRegularExpressionSearch ];
+        NSString* composerPrefix = [ NSString stringWithFormat:@"%@%@%@", @"^\\s*", opus.composer, @"\\s*[:-]\\s*" ];
+        NSRange composerNameRange = [ trackName rangeOfString:composerPrefix options:NSRegularExpressionSearch ];
 
         // Check if the name of the composer is found at the start of the track name
         if ( composerNameRange.location != NSNotFound )
@@ -203,11 +200,11 @@
             trackName = [ trackName substringFromIndex:composerNameRange.length ];
         }
 
-        // Setup the opus track data
-        Track* opusTrack = [ [ Track alloc ] init ];
-        opusTrack.location = [ track valueForKey:@"Location" ];
-        opusTrack.trackNumber = [ [ track valueForKey:@"Track Number" ] intValue ];
- 
+        // Initialise an track object
+        Track* opusTrack = [ [ Track alloc ] initWithLocation:[ track valueForKey:@"Location" ]
+                                             withTrackNumber:[ [ track valueForKey:@"Track Number" ] intValue ]
+                                             withTotalTime:[ [ track valueForKey:@"Total Time" ] longValue ] ];
+  
         /////////////////////////////////////////////////////////////////////////////
         // Divide the track name in the opus name, and opus part names, divided by
         // either a colon or a dash, with possible spaces, and followed by at least one digit.
@@ -559,9 +556,32 @@
     
     // Get time at which the current opus starts playing
     currentOpusStartsPlayingDate = [ NSDate date ];
-
+    
     // Output the composer, opus and artist
     NSString* composerOpus = [ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ];
+
+    // Output opus total time only when more than one track
+    if ( [ currentOpus.tracks count ] > 1 )
+    {
+        // Determine opus total time
+        unsigned long opusTotalTime = 0;
+        for ( Track* track in [ currentOpus.tracks allValues ] ) opusTotalTime += track.totalTime;
+ 
+        if ( opusTotalTime > 0 )
+        {
+            // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
+            NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+            NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
+                                                                                fromDate:[ NSDate date ]
+                                                                                toDate:[ NSDate dateWithTimeIntervalSinceNow:( opusTotalTime / 1000 ) ]
+                                                                                options:0 ];
+            NSString* opusDuration = @" (";
+            if ( [ timeComponents hour ] > 0 ) opusDuration = [ opusDuration stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
+            opusDuration = [ opusDuration stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
+            composerOpus = [ composerOpus stringByAppendingString:opusDuration ];
+        }
+    }
+    
     [ _composerOpus setStringValue:composerOpus ];
     [ _artist setStringValue:currentOpus.artist ];
 
@@ -599,27 +619,31 @@
     [ audioPlayer setDelegate:self ];
     [ self playOpus ];
     
+    NSString* partDetails = @"(";
+
+    // Add total # parts if number of tracks > 1
+    if ( [ currentOpusPartNames count ] > 1 ) partDetails = [ partDetails stringByAppendingFormat:@"%d/%ld, ", ( currentOpusPartNamesIndex + 1), [ currentOpusPartNames count ] ];
+    
     // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
     NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
                                                                         fromDate:[ NSDate date ]
                                                                         toDate:[ NSDate dateWithTimeIntervalSinceNow:audioPlayer.duration ]
                                                                         options:0 ];
-    NSString* partDuration = @"(";
-    if ( [ timeComponents hour ] > 0 ) partDuration = [ partDuration stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
-    partDuration = [ partDuration stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
+
+    if ( [ timeComponents hour ] > 0 ) partDetails = [ partDetails stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
+    partDetails = [ partDetails stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
     
     // Set the part name, if different from the opus name, and add the duration of part
     if ( [ partName isEqualToString:currentOpus.name ] )
     {
-        [ _opusPart setStringValue:partDuration ];
-        [ _fullScreenOpusPart setStringValue:partDuration ];
+        [ _opusPart setStringValue:partDetails ];
+        [ _fullScreenOpusPart setStringValue:partDetails ];
     }
     else
     {
-        [ _opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDuration ] ];
-        [ _fullScreenOpusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDuration ] ];
-
+        [ _opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] ];
+        [ _fullScreenOpusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] ];
     }
 }
 
