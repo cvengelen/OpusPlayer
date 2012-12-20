@@ -25,6 +25,7 @@
 @property (readwrite) NSString* artist;
 @property (readwrite) NSMutableDictionary* tracks;
 
-- (BOOL)isEqual:(id)anObject;
+- ( id )initWithComposer:( NSString* )aComposer withArtist:( NSString* )anArtist withAlbum:( NSString* )anAlbum;
+- ( BOOL )isEqual:( id )anObject;
 
 @end

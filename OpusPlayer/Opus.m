@@ -16,12 +16,15 @@
 @synthesize artist;
 @synthesize tracks;
 
--(id)init
+- ( id )initWithComposer:( NSString* )aComposer withArtist:( NSString* )anArtist withAlbum:( NSString* )anAlbum
 {
     self = [ super init ];
     if ( self )
     {
-        //
+        composer = aComposer;
+        artist = anArtist;
+        album = anAlbum;
+        tracks = [ [ NSMutableDictionary alloc ] init ];
     }
     return self;
 }
