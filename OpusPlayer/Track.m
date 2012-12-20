@@ -12,13 +12,16 @@
 
 @synthesize location;
 @synthesize trackNumber;
+@synthesize totalTime;
 
--(id)init
+-( id )initWithLocation:( NSString* )aLocation withTrackNumber:( unsigned int )aTrackNumber withTotalTime:( unsigned long )aTotalTime
 {
     self = [ super init ];
     if ( self )
     {
-        //
+        location = aLocation;
+        trackNumber = aTrackNumber;
+        totalTime = aTotalTime;
     }
     return self;
 }

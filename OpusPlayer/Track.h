@@ -11,10 +11,14 @@
 @interface Track : NSObject
 {
     NSString* location;
-    int trackNumber;
+    unsigned int trackNumber;
+    unsigned long totalTime;
 }
 
 @property (readwrite) NSString* location;
-@property (readwrite) int trackNumber;
+@property (readwrite) unsigned int trackNumber;
+@property (readwrite) unsigned long totalTime;
+
+- ( id )initWithLocation:( NSString* )aLocation withTrackNumber:( unsigned int )aTrackNumber withTotalTime:( unsigned long )aTotalTime;
 
 @end
