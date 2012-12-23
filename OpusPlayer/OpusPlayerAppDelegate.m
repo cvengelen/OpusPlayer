@@ -291,11 +291,25 @@
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
 
-    // Enable playing random opus items from the playlist
-    [ _shuffleButton setEnabled:YES ];
+    // Check if the playlist tableview actually contains on or more opus items
+    if ( [ _arrayController.arrangedObjects count ] > 0 )
+    {
+        // Enable playing random opus items from the playlist
+        [ _shuffleButton setEnabled:YES ];
     
-    // Enable playing a random opus item from the playlist
-    [ _nextOpusButton setEnabled:YES ];
+        // Enable playing a random opus item from the playlist
+        [ _nextOpusButton setEnabled:YES ];
+    }
+    else
+    {
+        // No items in the playlist
+        
+        // Disable playing random opus items from the playlist
+        [ _shuffleButton setEnabled:NO ];
+        
+        // Disable playing a random opus item from the playlist
+        [ _nextOpusButton setEnabled:NO ];
+    }
 }
 
 // NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
