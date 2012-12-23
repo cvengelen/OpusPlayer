@@ -107,8 +107,6 @@
 {
     if ( item == nil ) return [ rootPlaylists objectAtIndex:index ];
 
-    // NSLog( @"outline view retrieves child %ld for item %@", index, [ item objectForKey:@"Name" ] );
-
     NSArray* childPlaylists = [ childPlaylistsOfParent objectForKey:[ item objectForKey:@"Playlist Persistent ID" ] ];
     if ( childPlaylists ) return [ childPlaylists objectAtIndex:index ];
     
@@ -126,8 +124,6 @@
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
 {
     if ( item == nil ) return [ rootPlaylists count ];
-    
-    // NSLog( @"outline view retrieves number of children for %@", [ item objectForKey:@"Name" ] );
 
     NSArray* childPlaylists = [ childPlaylistsOfParent objectForKey:[ item objectForKey:@"Playlist Persistent ID" ] ];
     if ( childPlaylists ) return [ childPlaylists count ];
@@ -155,7 +151,6 @@
     
     // Get the playlist dictionary from the selected row
     NSDictionary* playlist = [ _outlineView itemAtRow:selectedRow ];
-    // NSLog( @"selected row: %ld, item %@", selectedRow , [ playlist objectForKey:@"Name" ] );
 
     // Get all playlist tracks from the playlist
     NSArray* playlistTracks = [ playlist objectForKey:@"Playlist Items" ];
@@ -163,20 +158,20 @@
     // Get all tracks from the iTunes Music dictionary
     NSDictionary* tracks = [ iTunesMusicDictionary valueForKey:@"Tracks" ];
 
+    // Save the sort descriptors currently in use
+    NSArray* sortDescriptors = [ _arrayController sortDescriptors ];
+    
     // Trigger KVC/KVO by posting KVO notification
     // See: http://stackoverflow.com/questions/1313709/kvc-kvo-and-bindings-why-am-i-only-receiving-one-change-notification
     [ _arrayController willChangeValueForKey:@"arrangedObjects" ];
 
+    // Remove all selections from the array controller, because the new list of opus items may be smaller than the selected row.
+    [ _arrayController removeSelectionIndexes:[ _arrayController selectionIndexes ] ];
+    
     // Clear all items from the dictionary with opus items
     [ opusItems removeAllObjects ];
- 
-    // Remove any sort descriptors on the array controller
-    [ _arrayController setSortDescriptors:nil ];
 
-    // Trigger rearrangement of the array controller arranged objects
-    // This is needed because otherwise the contents will not change
-    [ _arrayController rearrangeObjects ];
-    
+    // Loop over all tracks in the playlist
     for ( NSDictionary* playlistTrack in playlistTracks )
     {
         NSNumber* trackId= [ playlistTrack objectForKey:@"Track ID" ];
@@ -287,22 +282,15 @@
 
     NSLog( @"#opusItems: %ld from a total of %ld", [ opusItems count ], [ playlistTracks count ] );
     
-    // Define the sort descriptors for composer, opus name (special) and artist
-    NSSortDescriptor* composerSortDescriptor = [ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ];
-    // Use numeric search in opus name sort descriptor
-    NSSortDescriptor* opusNameSortDescription = [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES comparator:^(id name1, id name2) {
-        return [ name1 compare:name2 options:NSNumericSearch ];
-    } ];
-    NSSortDescriptor* artistSortDescriptor   = [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ];
+    // Set the sort descriptors
+    [ _arrayController setSortDescriptors:sortDescriptors ];
 
-    // Sort the play list table on composer, opus name, and artist
-    NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
-    [ _arrayController setSortDescriptors:playListSortDescriptors ];
+    // Trigger rearrangement of the array controller arranged objects according to the new content and sorting
+    [ _arrayController rearrangeObjects ];
     
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
-    NSLog( @"#arranged objects in array controller: %ld", [ [ _arrayController arrangedObjects ] count ] );
-    
+
     // Enable playing random opus items from the playlist
     [ _shuffleButton setEnabled:YES ];
 }
@@ -310,6 +298,12 @@
 // NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
+    // Get the index of the selected row in the playlist tableview
+    NSInteger selectedRowIndex = [ _playlistTableView selectedRow ];
+
+    // Return if a selection has been removed, in which case the selected row is -1
+    if ( selectedRowIndex < 0 ) return;
+    
     // Check if there is already a current opus
     if ( currentOpus )
     {
@@ -362,6 +356,19 @@
     [ _nextOpusPartButton setEnabled:NO ];
     [ _nextOpusButton setEnabled:NO ];
     [ _shuffleButton setEnabled:NO ];
+    
+    // Set the default sorting of the play list tableview on composer, opus and artist (suitable for classical music)
+    // Define the sort descriptors for composer, opus name (special) and artist
+    NSSortDescriptor* composerSortDescriptor = [ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ];
+    // Use numeric search in opus name sort descriptor: numeric fields are sorted numerically (magically).
+    NSSortDescriptor* opusNameSortDescription = [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES comparator:^(id name1, id name2) {
+        return [ name1 compare:name2 options:NSNumericSearch ];
+    } ];
+    NSSortDescriptor* artistSortDescriptor   = [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ];
+    
+    // Sort the play list tableview on composer, opus name, and artist
+    NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
+    [ _arrayController setSortDescriptors:playListSortDescriptors ];
 
     // Set full screen time every 10 seconds (to be moved to separate full screen class)
     fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
@@ -454,8 +461,7 @@
 // Play or pause
 - (IBAction)playOrPause:(id)sender
 {
-    // if ( opusIsPlaying ) [ self pauseOpus ];
-    // else [ self playOpus ];
+    // Play the current opus if paused, or pause if playing
     [ currentOpus playOrPause ];
 }
 
