@@ -14,6 +14,7 @@
 
 @synthesize opus;
 @synthesize startsPlayingDate;
+@synthesize isPlaying;
 
 -( id )initWithOpus:( Opus* )anOpus andDelegate:( NSObject <CurrentOpusDelegate>* )aDelegate;
 {
@@ -37,6 +38,7 @@
         
         // Initialise the audio player
         audioPlayer = nil;
+        isPlaying = NO;
     }
     return self;
 }

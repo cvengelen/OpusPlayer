@@ -38,6 +38,7 @@
 
 @property (readonly) Opus* opus;
 @property (readonly) NSDate* startsPlayingDate;
+@property (readonly) BOOL isPlaying;
 
 -( id )initWithOpus:( Opus* )anOpus andDelegate:( NSObject <CurrentOpusDelegate>* )aDelegate;
 
