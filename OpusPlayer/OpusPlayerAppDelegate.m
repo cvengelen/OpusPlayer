@@ -293,6 +293,9 @@
 
     // Enable playing random opus items from the playlist
     [ _shuffleButton setEnabled:YES ];
+    
+    // Enable playing a random opus item from the playlist
+    [ _nextOpusButton setEnabled:YES ];
 }
 
 // NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
@@ -333,9 +336,6 @@
     
     // Start playing the opus item
     [ currentOpus startPlaying ];
-    
-    // Enable playing a random opus item from the playlist
-    [ _nextOpusButton setEnabled:YES ];
 }
 
 // Notification from the current opus that it did finish playing the complete opus (all tracks)
@@ -508,21 +508,19 @@
     [ _playlistTableView scrollRowToVisible:[ _playlistTableView selectedRow ] ];
 }
 
-// Shuffle: If nothing is playing, start playing a randomly chosen opus.
-// If an opus is finished, continue with another randomly chosen opus.
-// See AVAudioPlayerDelegate method audioPlayerDidFinishPlaying
+// Shuffle is activated or deactivated
 - (IBAction)shuffleButton:(id)sender
 {
-    if ( [ _shuffleButton state ] == NSOnState )
+    // Check if there is no current opus playing, and shuffle is activated
+    if ( ( ( currentOpus == nil ) || !currentOpus.isPlaying ) &&
+         ( [ _shuffleButton state ] == NSOnState ) )
     {
-        // Release the audio hardware
-        if ( currentOpus ) [ currentOpus stopPlaying ];
-
-        // Play the next opus item, chosen randomly
-        [ self playNextOpus:nil ];
+        // Shuffle is activated, and there is no current opus item playing: start playing a randomly chosen opus.
+        // If an opus is finished, continue with another randomly chosen opus.
+        // See CurrentOpusDelegate method opusDidFinishPlaying
         
-        // Enable playing the next random opus item from the playlist
-        [ _nextOpusButton setEnabled:YES ];
+        // Play an opus item, chosen randomly
+        [ self playNextOpus:nil ];
     }
 }
 
