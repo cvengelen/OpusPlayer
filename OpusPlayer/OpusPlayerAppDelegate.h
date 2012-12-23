@@ -7,10 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <AVFoundation/AVAudioPlayer.h>
 #import "Opus.h"
+#import "CurrentOpus.h"
 
-@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, AVAudioPlayerDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate>
+@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, CurrentOpusDelegate>
 {
     // The complete iTuns music dictionary (all 10 Mb)
     NSDictionary* iTunesMusicDictionary;
@@ -23,26 +23,11 @@
     
     // All opus items of the selected playlist
     NSMutableArray* opusItems;
-    
-    // The audio player
-    AVAudioPlayer* audioPlayer;
 
     // Current playing opus item
-    Opus* currentOpus;
+    CurrentOpus* currentOpus;
 
-    // Current opus part names
-    NSArray* currentOpusPartNames;
-    
-    // Current index in opus part names
-    int currentOpusPartNamesIndex;
-
-    // Date and time at which current opus starts playing
-    NSDate* currentOpusStartsPlayingDate;
-
-    // Is the opus item playing?
-    BOOL opusIsPlaying;
-
-    // All played opus items
+    // All previously played opus items
     NSMutableArray* playedOpusItems;
 
     // Full screen timer
@@ -79,9 +64,9 @@
 @property (weak) IBOutlet NSTextField *artist;
 
 @property (weak) IBOutlet NSBox *fullScreenBox;
-@property (weak) IBOutlet NSTextFieldCell *fullScreenComposerOpus;
 @property (weak) IBOutlet NSTextField *fullScreenOpusPart;
 @property (weak) IBOutlet NSTextField *fullScreenArtist;
 @property (weak) IBOutlet NSTextField *fullScreenTime;
+@property (weak) IBOutlet NSTextField *fullScreenComposerOpus;
 
 @end

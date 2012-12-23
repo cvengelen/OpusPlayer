@@ -85,8 +85,13 @@
         // Initialise the array with the played opus items
         playedOpusItems = [ NSMutableArray array ];
 
-        // Initialise the audio player
-        audioPlayer = nil;
+        // There is no current opus yet
+        currentOpus = nil;
+
+        // Set the full screen data (to be moved to separate full screen class)
+        fullScreenBoxXIncr = 10;
+        fullScreenBoxYIncr = 10;
+        fullScreenTimeYIncr = 10;
      }
     return self;
 }
@@ -211,10 +216,9 @@
         /////////////////////////////////////////////////////////////////////////////
 
         // Try to find a divider string in the track name between an opus and an opus part:
-        // a colon with possible spaces in front of or after the colon,
-        // and followed by at least one digit (0-9). Bijvoorbeeld:
-        //  Symfonie Nr. 5, Op. 67: 1. Allegro con brio
-        NSString* opusDivider = @"\\s*:\\s*\\d";
+        // a colon with possible spaces in front of the colon, and at least one space after the colon (see Haydn trios)
+        // and followed by at least one digit (0-9). For example: Symfonie Nr. 5, Op. 67: 1. Allegro con brio
+        NSString* opusDivider = @"\\s*:\\s+\\d";
         int opusDividerBacktrack = 1;
         NSRange opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
         
@@ -306,60 +310,61 @@
 // NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
-    // Check if the current opus already equals the opus item at the selected index,
-    // which means that the row is being automatically selected by playNextOpus.
-    // In that case this method does not need to take any action.
-    if ( [ currentOpus isEqual:[ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ] ] ) return;
+    // Check if there is already a current opus
+    if ( currentOpus )
+    {
+        // Check if the current opus already equals the opus item at the selected index,
+        // which means that the row is being automatically selected by playNextOpus.
+        // In that case this method does not need to take any action.
+        if ( [ currentOpus.opus isEqual:[ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ] ] ) return;
 
-    // Release the audio hardware
-    if ( audioPlayer ) [ self stopOpus ];
+        // Release the audio hardware
+        [ currentOpus stopPlaying ];
     
-    // update the played opus items
-    if ( currentOpus ) [ self updatePlayedOpusItems ];
+        // update the played opus items
+        [ self updatePlayedOpusItems ];
+    }
 
-    // Get the selected opus item
-    currentOpus = [ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ];
+    // Get the new selected opus item from the playlist table
+    Opus* opus = [ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ];
+    if ( [ opus.tracks count ] == 0 )
+    {
+        NSLog( @"tracks empty" );
+        return;
+    }
+
+    // Initialize a new current opus with the selected opus item
+    // (let ARM delete the previous current opus)
+    currentOpus = [ [ CurrentOpus alloc ] initWithOpus:opus andDelegate:self ];
     
     // Start playing the opus item
-    [ self startPlayingCurrentOpus ];
+    [ currentOpus startPlaying ];
     
     // Enable playing a random opus item from the playlist
     [ _nextOpusButton setEnabled:YES ];
 }
 
-// AVAudioPlayerDelegate: Called when a sound has finished playing
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+// Notification from the current opus that it did finish playing the complete opus (all tracks)
+-( void )opusDidFinishPlaying
 {
-    // Release the audio hardware
-    [ self stopOpus ];
-    
-    // Play the next opus part, if there is one in the part names array of the current opus
-    // else play the next randomly chosen opus if the shuffle button is on
-    if ( currentOpusPartNamesIndex < ( [ currentOpusPartNames count ] - 1 ) ) [ self playNextOpusPart:nil ];
-    else if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
+    // Play the next randomly chosen opus if the shuffle button is on
+    // (this is the same as activating the "Next opus" button)
+    if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
 }
 
 // NSApplicationDelegate: Sent by the default notification center after the application
 // has been launched and initialized but before it has received its first event
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    opusIsPlaying = NO;
-    currentOpus = nil;
-    currentOpusPartNames = nil;
-    currentOpusPartNamesIndex = 0;
-    
+    // Disable all player buttons: there is nothing to play yet.
     [ _previousOpusPartButton setEnabled:NO ];
     [ _playOrPauseButton setEnabled:NO ];
     [ _nextOpusPartButton setEnabled:NO ];
     [ _nextOpusButton setEnabled:NO ];
     [ _shuffleButton setEnabled:NO ];
 
-    // Set full screen time every 10 seconds
+    // Set full screen time every 10 seconds (to be moved to separate full screen class)
     fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
-
-    fullScreenBoxXIncr = 10;
-    fullScreenBoxYIncr = 10;
-    fullScreenTimeYIncr = 10;
 }
 
 - (void)handleFullScreenTimer:(NSTimer *)timer
@@ -425,12 +430,13 @@
 -( void )applicationWillTerminate:(NSNotification *)notification
 {
     // Release the audio hardware
-    if ( audioPlayer )
+    if ( currentOpus )
     {
-        [ audioPlayer stop ];
+        [ currentOpus stopPlaying ];
         NSLog( @"Audio player stopped" );
     }
     
+    // Stop the full screen timer
     if ( fullScreenTimer ) [ fullScreenTimer invalidate ];
 }
 
@@ -439,75 +445,61 @@
 /////////////////////////
 
 // Play the previous opus part
-- (IBAction)playPreviousOpusPart:(id)sender {
-    // Release the audio hardware
-    if ( audioPlayer ) [ self stopOpus ];
-    
-    if ( currentOpusPartNamesIndex <= 0 )
-    {
-        NSLog( @"Error: cannot decrease index: %d", currentOpusPartNamesIndex );
-        return;
-    }
-    currentOpusPartNamesIndex--;
-
-    [ _nextOpusPartButton setEnabled:YES ];
-    if ( currentOpusPartNamesIndex == 0 ) [ _previousOpusPartButton setEnabled:NO ];
-
-    [ self startPlayingOpusPart ];
+- (IBAction)playPreviousOpusPart:(id)sender
+{
+    // play the previous opus part of the current opus
+    [ currentOpus playPreviousOpusPart ];
 }
 
 // Play or pause
 - (IBAction)playOrPause:(id)sender
 {
-    if ( opusIsPlaying ) [ self pauseOpus ];
-    else [ self playOpus ];
+    // if ( opusIsPlaying ) [ self pauseOpus ];
+    // else [ self playOpus ];
+    [ currentOpus playOrPause ];
 }
 
 // Play the next opus part
 - (IBAction)playNextOpusPart:(id)sender
 {
-    // Release the audio hardware
-    if ( audioPlayer ) [ self stopOpus ];
-    
-    if ( currentOpusPartNamesIndex >= ( [ currentOpusPartNames count ] - 1 ) )
-    {
-        NSLog( @"Error: cannot increase index to number of parts of current opus: %ld", [ currentOpusPartNames count ] );
-        return;
-    }
-    currentOpusPartNamesIndex++;
-
-    [ _previousOpusPartButton setEnabled:YES ];
-    if ( currentOpusPartNamesIndex == ( [ currentOpusPartNames count ] - 1 ) ) [ _nextOpusPartButton setEnabled:NO ];
-
-    [ self startPlayingOpusPart ];
+    // play the next opus part of the current opus
+    [ currentOpus playNextOpusPart ];
 }
 
 // Play the next opus
 - (IBAction)playNextOpus:(id)sender
 {
-    // Release the audio hardware
-    if ( audioPlayer ) [ self stopOpus ];
-
-    // update the played opus items
-    if ( currentOpus ) [ self updatePlayedOpusItems ];
-
+    // Check if there is a current opus
+    if ( currentOpus )
+    {
+        // stop playing the current opus
+        [ currentOpus stopPlaying ];
+    
+        // update the played opus items
+        [ self updatePlayedOpusItems ];
+    }
+    
     // Get a random new opus
     // Use the arranged objects from the array controller to get the opus item
     int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
-    currentOpus = [ [ _arrayController arrangedObjects ] objectAtIndex:randomOpusItemsIndex ];
-    if ( [ currentOpus.tracks count ] == 0 )
+    Opus* opus = [ [ _arrayController arrangedObjects ] objectAtIndex:randomOpusItemsIndex ];
+    if ( [ opus.tracks count ] == 0 )
     {
         NSLog( @"tracks empty" );
         return;
     }
+    
+    // Initialize a new current opus item
+    // (let ARM delete the previous current opus)
+    currentOpus = [ [ CurrentOpus alloc ] initWithOpus:opus andDelegate:self ];
+    
+    // Start playing the current opus item
+    [ currentOpus startPlaying ];
 
     // Select the opus item in the table view, and show it
-    // [ _playlistTableView selectRowIndexes:[ NSIndexSet indexSetWithIndex:randomOpusItemsIndex ] byExtendingSelection:NO ];
+    // must be done via the array controller (because of sorting the input array by the array controller)
     [ _arrayController setSelectionIndex:randomOpusItemsIndex ];
     [ _playlistTableView scrollRowToVisible:[ _playlistTableView selectedRow ] ];
-   
-    // Start playing the current opus
-    [ self startPlayingCurrentOpus ];
 }
 
 // Shuffle: If nothing is playing, start playing a randomly chosen opus.
@@ -517,14 +509,11 @@
 {
     if ( [ _shuffleButton state ] == NSOnState )
     {
-        if ( !opusIsPlaying )
-        {
-            // Release the audio hardware
-            if ( audioPlayer ) [ self stopOpus ];
+        // Release the audio hardware
+        if ( currentOpus ) [ currentOpus stopPlaying ];
 
-            // Play the next opus item, chosen randomly
-            [ self playNextOpus:nil ];
-        }
+        // Play the next opus item, chosen randomly
+        [ self playNextOpus:nil ];
         
         // Enable playing the next random opus item from the playlist
         [ _nextOpusButton setEnabled:YES ];
@@ -535,128 +524,16 @@
 // Helper methods
 /////////////////////////////
 
-// Prepare for playing a new opus item
-- (void)startPlayingCurrentOpus
-{
-    // Get the keys of the tracks dictionary, which are the names of all the parts of the opus.
-    // The track names cannot be used for sorting, since they may range above 9, and tracks 10=19 would be sorted after 1 and before 2.
-    // Therefore the track number, as stored in the Track object in the object stored with the key for sorting the opus parts.
-    currentOpusPartNames = [ currentOpus.tracks keysSortedByValueUsingComparator: ^(id obj1, id obj2)
-                            {
-                                if ( [ obj1 trackNumber ] > [ obj2 trackNumber ] ) return (NSComparisonResult)NSOrderedDescending;
-                                if ( [ obj1 trackNumber ] > [ obj2 trackNumber ] ) return (NSComparisonResult)NSOrderedAscending;
-                                return (NSComparisonResult)NSOrderedSame;
-                            } ];
-    currentOpusPartNamesIndex = 0;
-
-    [ _previousOpusPartButton setEnabled:NO ];
-
-    if ( [ currentOpusPartNames count ] > 1 ) [ _nextOpusPartButton setEnabled:YES ];
-    else [ _nextOpusPartButton setEnabled:NO ];
-    
-    // Get time at which the current opus starts playing
-    currentOpusStartsPlayingDate = [ NSDate date ];
-    
-    // Output the composer, opus and artist
-    NSString* composerOpus = [ [ currentOpus.composer stringByAppendingString:@": " ] stringByAppendingString:currentOpus.name ];
-
-    // Output opus total time only when more than one track
-    if ( [ currentOpus.tracks count ] > 1 )
-    {
-        // Determine opus total time
-        unsigned long opusTotalTime = 0;
-        for ( Track* track in [ currentOpus.tracks allValues ] ) opusTotalTime += track.totalTime;
- 
-        if ( opusTotalTime > 0 )
-        {
-            // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
-            NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-            NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
-                                                                                fromDate:[ NSDate date ]
-                                                                                toDate:[ NSDate dateWithTimeIntervalSinceNow:( opusTotalTime / 1000 ) ]
-                                                                                options:0 ];
-            NSString* opusDuration = @" (";
-            if ( [ timeComponents hour ] > 0 ) opusDuration = [ opusDuration stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
-            opusDuration = [ opusDuration stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
-            composerOpus = [ composerOpus stringByAppendingString:opusDuration ];
-        }
-    }
-    
-    [ _composerOpus setStringValue:composerOpus ];
-    [ _artist setStringValue:currentOpus.artist ];
-
-    [ _fullScreenComposerOpus setStringValue:composerOpus ];
-    [ _fullScreenArtist setStringValue:currentOpus.artist ];
-    
-    [ self startPlayingOpusPart ];
-}
-
-// Start playing the part at the current opus part names index of the current opus
-- (void)startPlayingOpusPart
-{
-    // Safety check on current audio player still playing
-    if ( audioPlayer )
-    {
-        if ( audioPlayer.playing ) [ self stopOpus ];
-    }
-
-    if ( currentOpusPartNamesIndex < 0 || currentOpusPartNamesIndex >= [ currentOpusPartNames count ] )
-    {
-        NSLog( @"Error: invalid index in current opus part names: %d", currentOpusPartNamesIndex );
-        return;
-    }
-    NSString* partName = [ currentOpusPartNames objectAtIndex:currentOpusPartNamesIndex ];
-    
-    Track* opusTrack = [ currentOpus.tracks valueForKey:partName ];
-    NSURL* locationUrl = [ NSURL URLWithString:opusTrack.location ];
-    audioPlayer = [ [ AVAudioPlayer alloc ] init ];
-    audioPlayer = [ audioPlayer initWithContentsOfURL:locationUrl error:NULL ];
-    if ( !audioPlayer)
-    {
-        NSLog( @"Error initializing audio player with URL %@", locationUrl );
-        return;
-    }
-    [ audioPlayer setDelegate:self ];
-    [ self playOpus ];
-    
-    NSString* partDetails = @"(";
-
-    // Add total # parts if number of tracks > 1
-    if ( [ currentOpusPartNames count ] > 1 ) partDetails = [ partDetails stringByAppendingFormat:@"%d/%ld, ", ( currentOpusPartNamesIndex + 1), [ currentOpusPartNames count ] ];
-    
-    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
-    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
-                                                                        fromDate:[ NSDate date ]
-                                                                        toDate:[ NSDate dateWithTimeIntervalSinceNow:audioPlayer.duration ]
-                                                                        options:0 ];
-
-    if ( [ timeComponents hour ] > 0 ) partDetails = [ partDetails stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
-    partDetails = [ partDetails stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
-    
-    // Set the part name, if different from the opus name, and add the duration of part
-    if ( [ partName isEqualToString:currentOpus.name ] )
-    {
-        [ _opusPart setStringValue:partDetails ];
-        [ _fullScreenOpusPart setStringValue:partDetails ];
-    }
-    else
-    {
-        [ _opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] ];
-        [ _fullScreenOpusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] ];
-    }
-}
-
 // Update the played opus items
 - (void)updatePlayedOpusItems
 {
     PlayedOpus* playedOpus = [ [ PlayedOpus alloc ] init ];
-    playedOpus.opus = currentOpus;
-    playedOpus.atDate = currentOpusStartsPlayingDate;
+    playedOpus.opus = currentOpus.opus;
+    playedOpus.atDate = currentOpus.startsPlayingDate;
     
     // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpusStartsPlayingDate  toDate:[ NSDate date ]  options:0 ];
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
     playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
     
     // Notify the array controller that the contents will be changed
@@ -667,35 +544,6 @@
 
     // Notify the array controller that the contents has been changed
     [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
-}
-
-//////////////////////////////
-// Low level helper methods
-//////////////////////////////
-
-// Start playing the audio player
-- (void)playOpus
-{
-    [ audioPlayer play ];
-    [ _playOrPauseButton setTitle:@"Pause" ];
-    [ _playOrPauseButton setEnabled:YES ];
-    opusIsPlaying = YES;
-}
-
-// Pause the audio player
-- (void)pauseOpus
-{
-    [ audioPlayer pause ];
-    [ _playOrPauseButton setTitle:@"Play" ];
-    opusIsPlaying = NO;
-}
-
-// Stop the audio player
-- (void)stopOpus
-{
-    [ audioPlayer stop ];
-    [ _playOrPauseButton setTitle:@"Play" ];
-    opusIsPlaying = NO;
 }
 
 @end
