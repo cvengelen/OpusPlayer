@@ -384,7 +384,7 @@
     NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
     [ _arrayController setSortDescriptors:playListSortDescriptors ];
 
-    // Set full screen time every 10 seconds (to be moved to separate full screen class)
+    // Set full screen time every 5 seconds (to be moved to separate full screen class)
     fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
 }
 
