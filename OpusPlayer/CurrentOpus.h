@@ -34,6 +34,10 @@
     
     // The audio player
     AVAudioPlayer* audioPlayer;
+    
+    // Font size of the composerOpus string
+    CGFloat composerOpusFontSize;
+    CGFloat fullScreenComposerOpusFontSize;
 }
 
 @property (readonly) Opus* opus;
