@@ -565,7 +565,7 @@
 }
 
 // Set a string in a text field, adjusting the font size if the string does not fit
--(void)setStringValue:(NSString*)aString onTextField:(NSTextField*)aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize
+-( CGFloat )setStringValue:( NSString* )aString onTextField:( NSTextField* )aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize
 {
     NSFont* textFieldFont = [ aTextField font ];
     NSDictionary* fontAttributes;
@@ -595,6 +595,9 @@
 
     // Set the string in the text field
     [ aTextField setStringValue:aString ];
+
+    // Return the selected font size
+    return fontPointSize;
 }
 
 
