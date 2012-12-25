@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B1034DF91688C67A0062646C /* beethoven.icns in Resources */ = {isa = PBXBuildFile; fileRef = B1034DF81688C67A0062646C /* beethoven.icns */; };
 		B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11155D816727EE60016C406 /* AVFoundation.framework */; };
 		B15CCD461674C2F300FEEB9C /* PlayedOpus.m in Sources */ = {isa = PBXBuildFile; fileRef = B15CCD451674C2F300FEEB9C /* PlayedOpus.m */; };
 		B16DC3B7166B5F220003B297 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B16DC3B6166B5F220003B297 /* Cocoa.framework */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B1034DF81688C67A0062646C /* beethoven.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = beethoven.icns; sourceTree = "<group>"; };
 		B11155D816727EE60016C406 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = ../../../../System/Library/Frameworks/AVFoundation.framework; sourceTree = "<group>"; };
 		B15CCD441674C2F300FEEB9C /* PlayedOpus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayedOpus.h; sourceTree = "<group>"; };
 		B15CCD451674C2F300FEEB9C /* PlayedOpus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayedOpus.m; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 		B16DC3A7166B5F220003B297 = {
 			isa = PBXGroup;
 			children = (
+				B1034DF81688C67A0062646C /* beethoven.icns */,
 				B16DC3BC166B5F220003B297 /* OpusPlayer */,
 				B16DC3B5166B5F220003B297 /* Frameworks */,
 				B16DC3B3166B5F220003B297 /* Products */,
@@ -183,6 +186,7 @@
 				B16DC3C1166B5F220003B297 /* InfoPlist.strings in Resources */,
 				B16DC3C7166B5F220003B297 /* Credits.rtf in Resources */,
 				B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */,
+				B1034DF91688C67A0062646C /* beethoven.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
