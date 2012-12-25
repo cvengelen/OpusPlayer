@@ -81,11 +81,11 @@
         }
     }
  
-    [ delegate setStringValue:composerOpus onTextField:delegate.composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
-    [ delegate setStringValue:opus.artist onTextField:delegate.artist withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+    composerOpusFontSize = [ delegate setStringValue:composerOpus onTextField:delegate.composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+    [ delegate setStringValue:opus.artist onTextField:delegate.artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
 
-    [ delegate setStringValue:composerOpus onTextField:delegate.fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
-    [ delegate setStringValue:opus.artist onTextField:delegate.fullScreenArtist withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
+    fullScreenComposerOpusFontSize = [ delegate setStringValue:composerOpus onTextField:delegate.fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
+    [ delegate setStringValue:opus.artist onTextField:delegate.fullScreenArtist withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:10.0 ];
     
     [ self startPlayingOpusPart ];
 }
@@ -147,13 +147,15 @@
     // Set the part name, if different from the opus name, and add the duration of part
     if ( [ partName isEqualToString:opus.name ] )
     {
-        [ delegate setStringValue:partDetails onTextField:delegate.opusPart withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
-        [ delegate setStringValue:partDetails onTextField:delegate.fullScreenOpusPart withMaximumFontSize:50.0 andMinimumFontSize:12.0 ];
+        // Use the font size selected for the composerOpus output as maximum, to avoid that the font used for the opus part is larger that the font for the opus
+        [ delegate setStringValue:partDetails onTextField:delegate.opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+        [ delegate setStringValue:partDetails onTextField:delegate.fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
     }
     else
     {
-        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.opusPart withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
-        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.fullScreenOpusPart withMaximumFontSize:50.0 andMinimumFontSize:12.0 ];
+        // Use the font size selected for the composerOpus output as maximum, to avoid that the font used for the opus part is larger that the font for the opus
+        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
     }
 }
 
