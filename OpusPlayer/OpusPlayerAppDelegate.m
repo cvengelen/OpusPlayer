@@ -564,4 +564,38 @@
     [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
 }
 
+// Set a string in a text field, adjusting the font size if the string does not fit
+-(void)setStringValue:(NSString*)aString onTextField:(NSTextField*)aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize
+{
+    NSFont* textFieldFont = [ aTextField font ];
+    NSDictionary* fontAttributes;
+    NSSize stringSize;
+    CGFloat textFieldWidth = aTextField.frame.size.width - 10;
+    CGFloat textFieldHeight = aTextField.frame.size.height;
+    CGFloat fontPointSize = maximumFontSize;
+    
+    // Start at the maximum allowed font size, but don't go below the minimum font size
+    while ( fontPointSize > minimumFontSize )
+    {
+        // Set the font size.
+        textFieldFont = [ NSFont fontWithName:textFieldFont.fontName size:fontPointSize ];
+        // Make a dictionary of the font with as key the font name
+        fontAttributes = [ [ NSDictionary alloc ] initWithObjectsAndKeys:textFieldFont, NSFontAttributeName, nil];
+        // Get the size of the string with the font attributes
+        stringSize = [ aString sizeWithAttributes:fontAttributes ];
+        int nLines = textFieldHeight / stringSize.height;
+        // Break out of the loop if the string fits in the size of the text field, allowing for a little margin
+        if ( stringSize.width < (nLines * textFieldWidth ) ) break;
+        // Try again with a smaller font size
+        fontPointSize -= 1;
+    }
+    
+    // Set the resulting font in the text field
+    [ aTextField setFont:textFieldFont ];
+
+    // Set the string in the text field
+    [ aTextField setStringValue:aString ];
+}
+
+
 @end
