@@ -29,6 +29,6 @@
 @property (weak) IBOutlet NSTextField *fullScreenTime;
 
 -( void )opusDidFinishPlaying;
--( void )setStringValue:(NSString*)aString onTextField:(NSTextField*)aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize;
+-( CGFloat )setStringValue:(NSString*)aString onTextField:(NSTextField*)aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize;
 
 @end
