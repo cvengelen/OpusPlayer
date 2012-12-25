@@ -80,12 +80,12 @@
             composerOpus = [ composerOpus stringByAppendingString:opusDuration ];
         }
     }
-    
-    [ delegate.composerOpus setStringValue:composerOpus ];
-    [ delegate.artist setStringValue:opus.artist ];
-    
-    [ delegate.fullScreenComposerOpus setStringValue:composerOpus ];
-    [ delegate.fullScreenArtist setStringValue:opus.artist ];
+ 
+    [ delegate setStringValue:composerOpus onTextField:delegate.composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+    [ delegate setStringValue:opus.artist onTextField:delegate.artist withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+
+    [ delegate setStringValue:composerOpus onTextField:delegate.fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
+    [ delegate setStringValue:opus.artist onTextField:delegate.fullScreenArtist withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
     
     [ self startPlayingOpusPart ];
 }
@@ -147,13 +147,13 @@
     // Set the part name, if different from the opus name, and add the duration of part
     if ( [ partName isEqualToString:opus.name ] )
     {
-        [ delegate.opusPart setStringValue:partDetails ];
-        [ delegate.fullScreenOpusPart setStringValue:partDetails ];
+        [ delegate setStringValue:partDetails onTextField:delegate.opusPart withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+        [ delegate setStringValue:partDetails onTextField:delegate.fullScreenOpusPart withMaximumFontSize:50.0 andMinimumFontSize:12.0 ];
     }
     else
     {
-        [ delegate.opusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] ];
-        [ delegate.fullScreenOpusPart setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] ];
+        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.opusPart withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.fullScreenOpusPart withMaximumFontSize:50.0 andMinimumFontSize:12.0 ];
     }
 }
 
