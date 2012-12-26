@@ -10,7 +10,7 @@
 #import "Opus.h"
 #import "CurrentOpus.h"
 
-@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, CurrentOpusDelegate>
+@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate>
 {
     // The complete iTuns music dictionary (all 10 Mb)
     NSDictionary* iTunesMusicDictionary;
@@ -40,6 +40,10 @@
     // Font size of the composerOpus string
     CGFloat composerOpusFontSize;
     CGFloat fullScreenComposerOpusFontSize;
+    
+    // Selected composer and artist
+    NSString *selectedComposer;
+    NSString *selectedArtist;
 }
 
 @property (readwrite) NSMutableArray* opusItems;
@@ -55,7 +59,11 @@
 - (IBAction)playOrPause:(id)sender;
 - (IBAction)playNextOpusPart:(id)sender;
 - (IBAction)playNextOpus:(id)sender;
-- (IBAction)shuffleButton:(id)sender;
+- (IBAction)shuffleOpusItemsFromPlaylist:(id)sender;
+
+@property (weak) IBOutlet NSComboBox *composers;
+@property (weak) IBOutlet NSComboBox *artists;
+@property (weak) IBOutlet NSTextField *selectItems;
 
 @property (weak) IBOutlet NSButton *previousOpusPartButton;
 @property (weak) IBOutlet NSButton *playOrPauseButton;
