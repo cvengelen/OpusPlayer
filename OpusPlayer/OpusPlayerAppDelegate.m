@@ -11,6 +11,40 @@
 #import "Track.h"
 
 @implementation OpusPlayerAppDelegate
+{
+    // The complete iTuns music dictionary (all 10 Mb)
+    NSDictionary* iTunesMusicDictionary;
+    
+    // All child playlists of a parent playlist, key is the persistent ID of the parent playlist
+    NSMutableDictionary* childPlaylistsOfParent;
+    
+    // All playlists which do not have a parent playlist
+    NSMutableArray* rootPlaylists;
+    
+    // All opus items of the selected playlist
+    NSMutableArray* opusItems;
+    
+    // Current playing opus item
+    CurrentOpus* currentOpus;
+    
+    // All previously played opus items
+    NSMutableArray* playedOpusItems;
+    
+    // Full screen timer
+    NSTimer* fullScreenTimer;
+    
+    int fullScreenBoxXIncr;
+    int fullScreenBoxYIncr;
+    int fullScreenTimeYIncr;
+    
+    // Font size of the composerOpus string
+    CGFloat composerOpusFontSize;
+    CGFloat fullScreenComposerOpusFontSize;
+    
+    // Selected composer and artist
+    NSString *selectedComposer;
+    NSString *selectedArtist;
+}
 
 @synthesize opusItems;
 @synthesize playedOpusItems;
