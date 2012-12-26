@@ -19,16 +19,12 @@
 @property (weak) IBOutlet NSButton *nextOpusButton;
 @property (weak) IBOutlet NSButton *shuffleButton;
 
-@property (weak) IBOutlet NSTextField *composerOpus;
-@property (weak) IBOutlet NSTextField *opusPart;
-@property (weak) IBOutlet NSTextField *artist;
-
-@property (weak) IBOutlet NSTextField *fullScreenComposerOpus;
-@property (weak) IBOutlet NSTextField *fullScreenOpusPart;
-@property (weak) IBOutlet NSTextField *fullScreenArtist;
-@property (weak) IBOutlet NSTextField *fullScreenTime;
-
+// Notify the delegate that the opus did finish playing
 -( void )opusDidFinishPlaying;
--( CGFloat )setStringValue:(NSString*)aString onTextField:(NSTextField*)aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize;
+
+// Notify the delegate of new string values for the composerOpus, artist and opus part.
+-( void )setStringComposerOpus:( NSString* )aComposerOpus;
+-( void )setStringArtist:( NSString* )anArtist;
+-( void )setStringOpusPart:( NSString* )anOpusPart;
 
 @end
