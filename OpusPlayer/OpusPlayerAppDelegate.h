@@ -36,6 +36,10 @@
     int fullScreenBoxXIncr;
     int fullScreenBoxYIncr;
     int fullScreenTimeYIncr;
+    
+    // Font size of the composerOpus string
+    CGFloat composerOpusFontSize;
+    CGFloat fullScreenComposerOpusFontSize;
 }
 
 @property (readwrite) NSMutableArray* opusItems;
