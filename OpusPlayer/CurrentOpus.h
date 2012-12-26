@@ -35,9 +35,11 @@
     // The audio player
     AVAudioPlayer* audioPlayer;
     
-    // Font size of the composerOpus string
-    CGFloat composerOpusFontSize;
-    CGFloat fullScreenComposerOpusFontSize;
+    // OpusPart string, updated by the current time timer
+    NSString* opusPartString;
+    
+    // Update current time timer
+    NSTimer* currentTimeTimer;
 }
 
 @property (readonly) Opus* opus;
