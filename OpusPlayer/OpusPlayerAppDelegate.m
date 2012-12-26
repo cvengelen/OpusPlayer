@@ -290,6 +290,16 @@
     
     // Trigger KVC/KVO by posting KVO notification
     [ _arrayController didChangeValueForKey:@"arrangedObjects" ];
+    
+    // Insert values for the composers combobox
+    [ self setComboBox:_composers withProperty:@"composer" ];
+    
+    // Insert values for the artists combobox
+    [ self setComboBox:_artists withProperty:@"artist" ];
+    
+    // Set the label before the composers and artists combo boxes only if both are enabled
+    if ( [ _composers isEnabled ] && [ _artists isEnabled ] ) [ _selectItems setStringValue:@"Select:" ];
+    else [ _selectItems setStringValue:@"" ];
 
     // Check if the playlist tableview actually contains on or more opus items
     if ( [ _arrayController.arrangedObjects count ] > 0 )
@@ -493,7 +503,7 @@
     
     // Get a random new opus
     // Use the arranged objects from the array controller to get the opus item
-    int randomOpusItemsIndex = arc4random( ) % [ opusItems count ];
+    int randomOpusItemsIndex = arc4random( ) % [ [ _arrayController arrangedObjects ] count ];
     Opus* opus = [ [ _arrayController arrangedObjects ] objectAtIndex:randomOpusItemsIndex ];
     if ( [ opus.tracks count ] == 0 )
     {
@@ -515,11 +525,11 @@
 }
 
 // Shuffle is activated or deactivated
-- (IBAction)shuffleButton:(id)sender
+- (IBAction)shuffleOpusItemsFromPlaylist:(id)sender
 {
     // Check if there is no current opus playing, and shuffle is activated
     if ( ( ( currentOpus == nil ) || !currentOpus.isPlaying ) &&
-         ( [ _shuffleButton state ] == NSOnState ) )
+        ( [ _shuffleButton state ] == NSOnState ) )
     {
         // Shuffle is activated, and there is no current opus item playing: start playing a randomly chosen opus.
         // If an opus is finished, continue with another randomly chosen opus.
@@ -562,7 +572,8 @@
     NSFont* textFieldFont = [ aTextField font ];
     NSDictionary* fontAttributes;
     NSSize stringSize;
-    CGFloat textFieldWidth = aTextField.frame.size.width - 10;
+    // Use a generous margin in the text field width to allow for word wrap (e.g., "blaasinstrumenten" in Mozart's Gran Partita)
+    CGFloat textFieldWidth = 0.8 * aTextField.frame.size.width;
     CGFloat textFieldHeight = aTextField.frame.size.height;
     CGFloat fontPointSize = maximumFontSize;
     
@@ -628,6 +639,84 @@
     // to avoid that the font used for the opus part is larger that the font for the opus
     [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Combobox delegate
+/////////////////////////////////////////////////////////////////////////////
+
+-( void )setComboBox:( NSComboBox* )aComboBox withProperty:( NSString* )aProperty
+{
+    NSMutableArray *comboBoxItems = [ NSMutableArray array ];
+    for ( Opus *opusItem in _arrayController.arrangedObjects )
+    {
+        if ( ![ comboBoxItems containsObject:[ opusItem valueForKey:aProperty ] ] ) [ comboBoxItems addObject:[ opusItem valueForKey:aProperty ] ];
+    }
+    [ aComboBox removeAllItems ];
+    if ( [ comboBoxItems count ] > 0 )
+    {
+        [ comboBoxItems sortUsingComparator:^(id property1, id property2) { return [ property1 compare:property2 ]; } ];
+        [ comboBoxItems insertObject:@"" atIndex:0 ];
+        [ aComboBox addItemsWithObjectValues:comboBoxItems ];
+        [ aComboBox setEnabled:YES ];
+    }
+    else
+    {
+        [ aComboBox setEnabled:NO ];
+    }
+    [ aComboBox reloadData ];
+}
+
+- (void)comboBoxSelectionDidChange:(NSNotification *)notification
+{
+    NSComboBox* comboBox = (NSComboBox*)notification.object;
+    NSString *selectedItem = [ comboBox objectValueOfSelectedItem ];
+
+    // Return immediately when no item is selected
+    if ( !selectedItem ) return;
+
+    NSLog( @"%@ combobox selection did change to %@", comboBox.identifier, selectedItem );
+
+    if ( [ comboBox.identifier isEqualToString:@"composers" ] )
+    {
+        if ([ selectedItem isEqualToString:@"" ] ) selectedComposer = nil;
+        else selectedComposer = selectedItem;
+    }
+    else if ( [ comboBox.identifier isEqualToString:@"artists" ] )
+    {
+        if ([ selectedItem isEqualToString:@"" ] ) selectedArtist = nil;
+        else selectedArtist = selectedItem;
+    }
+
+    // With composer and artist not selected, the predicate is removed by setting it to nil;
+    NSPredicate *predicate = nil;
+    
+    if ( selectedArtist && selectedComposer )
+    {
+        // Use the selected composer and artist as a selection on the opus items in the playlist
+        predicate = [ NSPredicate predicateWithFormat:@"( composer like %@ ) AND ( artist like %@ )", selectedComposer, selectedArtist ];
+    }
+    else if ( selectedArtist )
+    {
+        // Use the selected artist as a selection on the opus items in the playlist
+        predicate = [ NSPredicate predicateWithFormat:@"artist like %@", selectedArtist ];
+       
+    }
+    else if ( selectedComposer )
+    {
+        // Use the selected composer as a selection on the opus items in the playlist
+        predicate = [ NSPredicate predicateWithFormat:@"composer like %@", selectedComposer ];
+    }
+ 
+    // Filter the arranged objects in the playlist view array controller with the predicate (nil removes the predicate)
+    [ _arrayController setFilterPredicate:predicate ];
+    NSLog( @"#arranged objects with predicate: %ld", [ _arrayController.arrangedObjects count ] );
+    
+    // Let the composer combobox only show the selected composer, and a blank item to get back to all composers
+    [ self setComboBox:_composers withProperty:@"composer" ];
+    
+    // Let the artist combobox only show the selected artist, and a blank item to get back to all artists
+    [ self setComboBox:_artists withProperty:@"artist" ];
 }
 
 @end
