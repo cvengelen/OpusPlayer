@@ -352,14 +352,6 @@
     [ currentOpus startPlaying ];
 }
 
-// Notification from the current opus that it did finish playing the complete opus (all tracks)
--( void )opusDidFinishPlaying
-{
-    // Play the next randomly chosen opus if the shuffle button is on
-    // (this is the same as activating the "Next opus" button)
-    if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
-}
-
 // NSApplicationDelegate: Sent by the default notification center after the application
 // has been launched and initialized but before it has received its first event
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -600,5 +592,42 @@
     return fontPointSize;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// Current Opus Delegate methods
+/////////////////////////////////////////////////////////////////////////////
+
+// Notification from the current opus that it did finish playing the complete opus (all tracks)
+-( void )opusDidFinishPlaying
+{
+    // Play the next randomly chosen opus if the shuffle button is on
+    // (this is the same as activating the "Next opus" button)
+    if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
+}
+
+// Notification from the current opus with the string value for composerOpus
+-( void )setStringComposerOpus:( NSString* )aComposerOpus
+{
+    composerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+
+    fullScreenComposerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
+}
+
+// Notification from the current opus with the string value for artist
+-( void )setStringArtist:( NSString* )anArtist
+{
+    // Use the font size selected for the composerOpus output as maximum,
+    // to avoid that the font used for the artist is larger that the font for the opus
+    [ self setStringValue:anArtist onTextField:_artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+    [ self setStringValue:anArtist onTextField:_fullScreenArtist withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:10.0 ];
+}
+
+// Notification from the current opus with the string value for opusPart
+-( void )setStringOpusPart:( NSString* )anOpusPart
+{
+    // Use the font size selected for the composerOpus output as maximum,
+    // to avoid that the font used for the opus part is larger that the font for the opus
+    [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+    [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
+}
 
 @end
