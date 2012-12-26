@@ -80,16 +80,14 @@
             composerOpus = [ composerOpus stringByAppendingString:opusDuration ];
         }
     }
- 
-    composerOpusFontSize = [ delegate setStringValue:composerOpus onTextField:delegate.composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
-    [ delegate setStringValue:opus.artist onTextField:delegate.artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
-
-    fullScreenComposerOpusFontSize = [ delegate setStringValue:composerOpus onTextField:delegate.fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
-    [ delegate setStringValue:opus.artist onTextField:delegate.fullScreenArtist withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:10.0 ];
     
+    // Notify the delegate of the new composerOpus and artist string values
+    [ delegate setStringComposerOpus:composerOpus ];
+    [ delegate setStringArtist:opus.artist ];
+
+    // Start playing the first (or only) opus part
     [ self startPlayingOpusPart ];
 }
-
 
 // Start playing the part at the current opus part names index of the current opus
 - (void)startPlayingOpusPart
@@ -134,6 +132,9 @@
     // Add total # parts if number of tracks > 1
     if ( [ partNames count ] > 1 ) partDetails = [ partDetails stringByAppendingFormat:@"%d/%ld, ", ( partNamesIndex + 1), [ partNames count ] ];
     
+    // Add placeholder for current time
+    partDetails = [ partDetails stringByAppendingString:@"%@/" ];
+    
     // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
     NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
@@ -145,18 +146,28 @@
     partDetails = [ partDetails stringByAppendingFormat:@"%02ld:%02ld)", [ timeComponents minute ], [ timeComponents second ] ];
     
     // Set the part name, if different from the opus name, and add the duration of part
-    if ( [ partName isEqualToString:opus.name ] )
-    {
-        // Use the font size selected for the composerOpus output as maximum, to avoid that the font used for the opus part is larger that the font for the opus
-        [ delegate setStringValue:partDetails onTextField:delegate.opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
-        [ delegate setStringValue:partDetails onTextField:delegate.fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
-    }
-    else
-    {
-        // Use the font size selected for the composerOpus output as maximum, to avoid that the font used for the opus part is larger that the font for the opus
-        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
-        [ delegate setStringValue:[ partName stringByAppendingFormat:@" %@", partDetails ] onTextField:delegate.fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
-    }
+    if ( [ partName isEqualToString:opus.name ] ) { opusPartString = partDetails; }
+    else { opusPartString = [ partName stringByAppendingFormat:@" %@", partDetails ]; }
+
+    // Notify the delegate of the new opus part string value, with current duration 00:00
+    [ delegate setStringOpusPart:[ NSString stringWithFormat:opusPartString, @"00:00" ] ];
+}
+
+// Handle notification from currentTime timer
+- (void)handleCurrentTimeTimer:(NSTimer *)timer
+{
+    // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes:seconds
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits
+                                                                          fromDate:[ NSDate date ]
+                                                                            toDate:[ NSDate dateWithTimeIntervalSinceNow:audioPlayer.currentTime ]
+                                                                            options:0 ];
+    NSString* currentTime = @"";
+    if ( [ timeComponents hour ] > 0 ) currentTime = [ currentTime stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
+    currentTime = [ currentTime stringByAppendingFormat:@"%02ld:%02ld", [ timeComponents minute ], [ timeComponents second ] ];
+    
+    // Notify the delegate of the new opus part string value, with actual current duration
+    [ delegate setStringOpusPart:[ NSString stringWithFormat:opusPartString, currentTime ] ];
 }
 
 
@@ -211,6 +222,9 @@
     [ delegate.playOrPauseButton setTitle:@"Pause" ];
     [ delegate.playOrPauseButton setEnabled:YES ];
     isPlaying = YES;
+    
+    // Set current time timer every second
+    currentTimeTimer = [ NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector( handleCurrentTimeTimer: ) userInfo:nil repeats:YES ];
 }
 
 // Pause playing
@@ -219,6 +233,9 @@
     [ audioPlayer pause ];
     [ delegate.playOrPauseButton setTitle:@"Play" ];
     isPlaying = NO;
+    
+    // Stop the current time timer
+    if ( currentTimeTimer ) [ currentTimeTimer invalidate ];
 }
 
 // Stop playing (releases the hardware)
@@ -227,13 +244,17 @@
     [ audioPlayer stop ];
     [ delegate.playOrPauseButton setTitle:@"Play" ];
     isPlaying = NO;
+    
+    // Stop the current time timer
+    if ( currentTimeTimer ) [ currentTimeTimer invalidate ];
 }
 
 // AVAudioPlayerDelegate: Called when a sound has finished playing
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     // Release the audio hardware
-    [ self stopPlaying ];
+    // Do not release the audio hardware: this may give interruption of sound when played via airport
+    // [ self stopPlaying ];
     
     // Play the next opus part, if there is one in the part names array of the current opus
     // else signal the delegate that the player did finish playing
