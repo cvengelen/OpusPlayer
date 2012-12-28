@@ -319,6 +319,14 @@
     // Set the sort descriptors
     [ _arrayController setSortDescriptors:sortDescriptors ];
 
+    // Remove the filter predicate if it was set: show all composers and artists
+    [ _arrayController setFilterPredicate:nil ];
+
+    // Remove the selected composer and artist, otherwise selecting a composer will reuse
+    // the previously selected artist (and vice versa), giving unpredictable results
+    selectedArtist = nil;
+    selectedComposer = nil;
+
     // Trigger rearrangement of the array controller arranged objects according to the new content and sorting
     [ _arrayController rearrangeObjects ];
     
@@ -690,7 +698,7 @@
     if ( [ comboBoxItems count ] > 0 )
     {
         [ comboBoxItems sortUsingComparator:^(id property1, id property2) { return [ property1 compare:property2 ]; } ];
-        [ comboBoxItems insertObject:@"" atIndex:0 ];
+        [ comboBoxItems insertObject:@"All" atIndex:0 ];
         [ aComboBox addItemsWithObjectValues:comboBoxItems ];
         [ aComboBox setEnabled:YES ];
     }
@@ -701,50 +709,35 @@
     [ aComboBox reloadData ];
 }
 
-- (void)comboBoxSelectionDidChange:(NSNotification *)notification
+// Filter the opus items in the playlist on the current settings of selected composer, and selected artist, if any
+-( void )filterPlaylistOnComposerAndArtist
 {
-    NSComboBox* comboBox = (NSComboBox*)notification.object;
-    NSString *selectedItem = [ comboBox objectValueOfSelectedItem ];
-
-    // Return immediately when no item is selected
-    if ( !selectedItem ) return;
-
-    NSLog( @"%@ combobox selection did change to %@", comboBox.identifier, selectedItem );
-
-    if ( [ comboBox.identifier isEqualToString:@"composers" ] )
-    {
-        if ([ selectedItem isEqualToString:@"" ] ) selectedComposer = nil;
-        else selectedComposer = selectedItem;
-    }
-    else if ( [ comboBox.identifier isEqualToString:@"artists" ] )
-    {
-        if ([ selectedItem isEqualToString:@"" ] ) selectedArtist = nil;
-        else selectedArtist = selectedItem;
-    }
-
     // With composer and artist not selected, the predicate is removed by setting it to nil;
     NSPredicate *predicate = nil;
     
     if ( selectedArtist && selectedComposer )
     {
         // Use the selected composer and artist as a selection on the opus items in the playlist
-        predicate = [ NSPredicate predicateWithFormat:@"( composer like %@ ) AND ( artist like %@ )", selectedComposer, selectedArtist ];
+        predicate = [ NSPredicate predicateWithFormat:@"( composer like[cd] %@ ) AND ( artist like[cd] %@ )", selectedComposer, selectedArtist ];
     }
     else if ( selectedArtist )
     {
         // Use the selected artist as a selection on the opus items in the playlist
-        predicate = [ NSPredicate predicateWithFormat:@"artist like %@", selectedArtist ];
-       
+        predicate = [ NSPredicate predicateWithFormat:@"artist like[cd] %@", selectedArtist ];
+        
     }
     else if ( selectedComposer )
     {
         // Use the selected composer as a selection on the opus items in the playlist
-        predicate = [ NSPredicate predicateWithFormat:@"composer like %@", selectedComposer ];
+        predicate = [ NSPredicate predicateWithFormat:@"composer like[cd] %@", selectedComposer ];
     }
- 
+    
     // Filter the arranged objects in the playlist view array controller with the predicate (nil removes the predicate)
     [ _arrayController setFilterPredicate:predicate ];
     NSLog( @"#arranged objects with predicate: %ld", [ _arrayController.arrangedObjects count ] );
+    
+    // Do not change combobox list if there are no items in the filtered playlist
+    if ( [ _arrayController.arrangedObjects count ] == 0 ) return;
     
     // Let the composer combobox only show the selected composer, and a blank item to get back to all composers
     [ self setComboBox:_composers withProperty:@"composer" ];
@@ -753,4 +746,64 @@
     [ self setComboBox:_artists withProperty:@"artist" ];
 }
 
+-( void )comboBoxSelectionDidChange:(NSNotification *)aNotification
+{
+    NSComboBox* comboBox = ( NSComboBox* )aNotification.object;
+    NSString *selectedItem = [ comboBox objectValueOfSelectedItem ];
+
+    // Return immediately when no item is selected
+    if ( !selectedItem ) return;
+    
+    // Clear any possible typed in value
+    [ comboBox setStringValue:@"" ];
+
+    NSLog( @"comboBoxSelectionDidChange - %@ combobox selection did change to %@", comboBox.identifier, selectedItem );
+
+    if ( [ comboBox.identifier isEqualToString:@"composers" ] )
+    {
+        if ([ selectedItem isEqualToString:@"All" ] ) selectedComposer = nil;
+        else selectedComposer = selectedItem;
+    }
+    else if ( [ comboBox.identifier isEqualToString:@"artists" ] )
+    {
+        if ([ selectedItem isEqualToString:@"All" ] ) selectedArtist = nil;
+        else selectedArtist = selectedItem;
+    }
+
+    // Filter the playlist
+    [ self filterPlaylistOnComposerAndArtist ];
+}
+
+- (IBAction)composersEndEditing:(NSComboBox *)sender
+{
+    NSString *selectedItem = [ sender stringValue ];
+    NSLog( @"composersEndEditing - composers combobox selection did change to %@", selectedItem );
+    
+    // Return immediately when no item is selected,
+    // or when item is selected with combobox selection, in which case the textfield is empty
+    if ( !selectedItem || [ selectedItem isEqualToString:@"" ] ) return;
+    
+    if ([ selectedItem isEqualToString:@"All" ] ) selectedComposer = nil;
+    else selectedComposer = selectedItem;
+
+    // Filter the playlist
+    [ self filterPlaylistOnComposerAndArtist ];
+}
+
+- (IBAction)artistsEndEditing:(NSComboBox *)sender
+{
+    NSString *selectedItem = [ sender stringValue ];
+    NSLog( @"artistsEndEditing - artists combobox selection did change to %@", selectedItem );
+    
+    // Return immediately when no item is selected,
+    // or when item is selected with combobox selection, in which case the textfield is empty
+
+    if ( !selectedItem || [ selectedItem isEqualToString:@"" ] ) return;
+    
+    if ([ selectedItem isEqualToString:@"All" ] ) selectedArtist = nil;
+    else selectedArtist = selectedItem;
+
+    // Filter the playlist
+    [ self filterPlaylistOnComposerAndArtist ];
+}
 @end
