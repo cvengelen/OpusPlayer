@@ -47,4 +47,7 @@
 @property (weak) IBOutlet NSTextField *fullScreenTime;
 @property (weak) IBOutlet NSTextField *fullScreenComposerOpus;
 
+- (IBAction)composersEndEditing:(NSComboBox *)sender;
+- (IBAction)artistsEndEditing:(NSComboBox *)sender;
+
 @end
