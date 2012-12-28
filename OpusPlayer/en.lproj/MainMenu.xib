@@ -1352,7 +1352,7 @@
 															<string key="NSFrameSize">{175, 368}</string>
 															<reference key="NSSuperview" ref="548966368"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="23747298"/>
+															<reference key="NSNextKeyView" ref="25723255"/>
 															<string key="NSReuseIdentifierKey">_NS:13</string>
 															<bool key="NSEnabled">YES</bool>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -1517,7 +1517,7 @@
 											<string key="NSFrameSize">{177, 386}</string>
 											<reference key="NSSuperview" ref="997431118"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="25723255"/>
+											<reference key="NSNextKeyView" ref="548966368"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<int key="NSsFlags">657458</int>
 											<reference key="NSVScroller" ref="641265816"/>
@@ -1555,7 +1555,7 @@
 															<string key="NSFrameSize">{664, 368}</string>
 															<reference key="NSSuperview" ref="187352057"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="289404288"/>
+															<reference key="NSNextKeyView" ref="308593903"/>
 															<string key="NSReuseIdentifierKey">_NS:13</string>
 															<bool key="NSEnabled">YES</bool>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -1759,7 +1759,7 @@
 											<string key="NSFrameSize">{666, 386}</string>
 											<reference key="NSSuperview" ref="788040125"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="308593903"/>
+											<reference key="NSNextKeyView" ref="187352057"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<int key="NSsFlags">133682</int>
 											<reference key="NSVScroller" ref="289404288"/>
@@ -2049,7 +2049,7 @@
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSComboBoxCell" key="NSCell" id="823786851">
-								<int key="NSCellFlags">609222720</int>
+								<int key="NSCellFlags">879755329</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="940739682"/>
@@ -2061,6 +2061,7 @@
 								<reference key="NSTextColor" ref="264457895"/>
 								<int key="NSVisibleItemCount">20</int>
 								<bool key="NSHasVerticalScroller">YES</bool>
+								<bool key="NSCompletes">YES</bool>
 								<reference key="NSDelegate" ref="173714000"/>
 								<object class="NSComboTableView" key="NSTableView" id="923808431">
 									<reference key="NSNextResponder"/>
@@ -2136,7 +2137,7 @@
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSComboBoxCell" key="NSCell" id="522139212">
-								<int key="NSCellFlags">609222720</int>
+								<int key="NSCellFlags">879755329</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="940739682"/>
@@ -2148,6 +2149,7 @@
 								<reference key="NSTextColor" ref="264457895"/>
 								<int key="NSVisibleItemCount">20</int>
 								<bool key="NSHasVerticalScroller">YES</bool>
+								<bool key="NSCompletes">YES</bool>
 								<reference key="NSDelegate" ref="567197402"/>
 								<object class="NSComboTableView" key="NSTableView" id="862643786">
 									<reference key="NSNextResponder"/>
@@ -2292,7 +2294,7 @@
 											<string key="NSFrameSize">{592, 575}</string>
 											<reference key="NSSuperview" ref="586184402"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="1027182894"/>
+											<reference key="NSNextKeyView" ref="791231422"/>
 											<string key="NSReuseIdentifierKey">_NS:13</string>
 											<bool key="NSEnabled">YES</bool>
 											<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -2549,7 +2551,7 @@
 							<string key="NSFrame">{{-1, -6}, {594, 593}}</string>
 							<reference key="NSSuperview" ref="1055678112"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="791231422"/>
+							<reference key="NSNextKeyView" ref="586184402"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<int key="NSsFlags">133682</int>
 							<reference key="NSVScroller" ref="1027182894"/>
@@ -3631,6 +3633,22 @@
 						<reference key="destination" ref="402112676"/>
 					</object>
 					<int key="connectionID">1552</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">composersEndEditing:</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="173714000"/>
+					</object>
+					<int key="connectionID">1554</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">artistsEndEditing:</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="567197402"/>
+					</object>
+					<int key="connectionID">1555</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -7496,7 +7514,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1553</int>
+			<int key="maxID">1555</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -7512,6 +7530,8 @@
 					<string key="className">OpusPlayerAppDelegate</string>
 					<string key="superclassName">NSObject</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="artistsEndEditing:">NSComboBox</string>
+						<string key="composersEndEditing:">NSComboBox</string>
 						<string key="playNextOpus:">id</string>
 						<string key="playNextOpusPart:">id</string>
 						<string key="playOrPause:">id</string>
@@ -7519,6 +7539,14 @@
 						<string key="shuffleOpusItemsFromPlaylist:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="artistsEndEditing:">
+							<string key="name">artistsEndEditing:</string>
+							<string key="candidateClassName">NSComboBox</string>
+						</object>
+						<object class="IBActionInfo" key="composersEndEditing:">
+							<string key="name">composersEndEditing:</string>
+							<string key="candidateClassName">NSComboBox</string>
+						</object>
 						<object class="IBActionInfo" key="playNextOpus:">
 							<string key="name">playNextOpus:</string>
 							<string key="candidateClassName">id</string>
