@@ -130,6 +130,8 @@
     return self;
 }
 
+#pragma mark -
+#pragma mark NSOutlineViewDataSource
 
 ////////////////////////////////////////////////////
 // Playlist outline view data source methods:
@@ -172,6 +174,8 @@
     return [ item objectForKey:@"Name" ];
 }
 
+#pragma mark -
+#pragma mark NSOutlineViewDelegate
 
 ////////////////////////////////////////////////////
 // Delegate methods: handle notifications
@@ -326,6 +330,8 @@
     // the previously selected artist (and vice versa), giving unpredictable results
     selectedArtist = nil;
     selectedComposer = nil;
+    [ _artists setStringValue:@"" ];
+    [ _composers setStringValue:@"" ];
 
     // Trigger rearrangement of the array controller arranged objects according to the new content and sorting
     [ _arrayController rearrangeObjects ];
@@ -363,6 +369,9 @@
         [ _nextOpusButton setEnabled:NO ];
     }
 }
+
+#pragma mark -
+#pragma mark NSTableViewDelegate
 
 // NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
@@ -403,6 +412,9 @@
     // Start playing the opus item
     [ currentOpus startPlaying ];
 }
+
+#pragma mark -
+#pragma mark NSApplicationDelegate
 
 // NSApplicationDelegate: Sent by the default notification center after the application
 // has been launched and initialized but before it has received its first event
@@ -509,6 +521,9 @@
 // Button actions
 /////////////////////////
 
+#pragma mark -
+#pragma mark Button actions
+
 // Play the previous opus part
 - (IBAction)playPreviousOpusPart:(id)sender
 {
@@ -586,6 +601,9 @@
 // Helper methods
 /////////////////////////////
 
+#pragma mark -
+#pragma mark Helper methods
+
 // Update the played opus items
 - (void)updatePlayedOpusItems
 {
@@ -645,6 +663,9 @@
     return fontPointSize;
 }
 
+#pragma mark -
+#pragma mark CurrentOpusDelegate
+
 /////////////////////////////////////////////////////////////////////////////
 // Current Opus Delegate methods
 /////////////////////////////////////////////////////////////////////////////
@@ -682,6 +703,9 @@
     [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
 }
+
+#pragma mark -
+#pragma mark NSComboBoxDelegate
 
 /////////////////////////////////////////////////////////////////////////////
 // Combobox delegate
@@ -806,4 +830,5 @@
     // Filter the playlist
     [ self filterPlaylistOnComposerAndArtist ];
 }
+
 @end
