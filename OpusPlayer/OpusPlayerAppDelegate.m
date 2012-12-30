@@ -54,8 +54,6 @@
     self = [ super init ];
     if ( self )
     {
-        NSLog( @"init" );
-
         // Get path to Music directy under user home
         NSString* iTunesMusicLibraryPath = [ NSSearchPathForDirectoriesInDomains( NSMusicDirectory, NSUserDomainMask, YES ) objectAtIndex:0 ];
         iTunesMusicLibraryPath = [ iTunesMusicLibraryPath stringByAppendingPathComponent:@"iTunes/iTunes Music Library" ];
@@ -85,13 +83,10 @@
         NSArray* playlists = [ iTunesMusicDictionary valueForKey:@"Playlists" ];
         for ( NSDictionary* playlist in playlists )
         {
-            NSLog( @"playlist: %@", [ playlist valueForKey:@"Name" ] );
-
             // Check if the playlist has a Folder key, which indicates thay the playlist is the parent of child playlists
             if ( [ playlist valueForKey:@"Folder" ] )
             {
                 NSString* playlistPersistentId = [ playlist valueForKey:@"Playlist Persistent ID" ];
-                NSLog( @" is folder with ID %@", playlistPersistentId );
                 
                 // Define a test block to look for child playlists for this parent playlist
                 testForPlaylistChild = ^( id playlistToTest, NSUInteger playlistToTestIndex, BOOL *stop )
@@ -103,7 +98,6 @@
                 
                 NSIndexSet* indexSet = [ playlists indexesOfObjectsPassingTest:testForPlaylistChild ];
                 NSArray* childPlayLists = [ playlists objectsAtIndexes:indexSet ];
-                NSLog( @"#children: %ld", [ childPlayLists count ] );
                 [ childPlaylistsOfParent setValue:childPlayLists forKey:playlistPersistentId ];
             }
 
@@ -419,25 +413,109 @@
 -( void )windowDidEnterFullScreen:( NSNotification* )notification
 {
     NSWindow *window = ( NSWindow* )notification.object;
-    NSLog( @"Entering full screen for window %@", window.identifier );
     if ( [ window.identifier isEqualToString:@"fullScreenWindow" ] )
     {
-        // See "Controlling the Mouse Cursor"
+        // Set full screen time every 5 seconds (to be moved to separate full screen class)
+        fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
+
+        // Hide the cursor. See "Controlling the Mouse Cursor"
         // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
-        CGDisplayHideCursor( kCGNullDirectDisplay );
+        CGDisplayHideCursor( kCGDirectMainDisplay );
+
+        // Clear the last cursor delta (now suddenly called Mouse?)
+        int32_t deltaX, deltaY;
+        CGGetLastMouseDelta( &deltaX, &deltaY );
+
+        // Set the current time in the full screen
+        [self setFullScreenTime ];
     }
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     NSWindow *window = ( NSWindow* )notification.object;
-    NSLog( @"Exiting full screen for window %@", window.identifier );
     if ( [ window.identifier isEqualToString:@"fullScreenWindow" ] )
     {
-        // See "Controlling the Mouse Cursor"
+        // Stop the full screen timer
+        [ fullScreenTimer invalidate ];
+
+        // Display the cursor if it was not visible. See "Controlling the Mouse Cursor"
         // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
-        CGDisplayShowCursor( kCGNullDirectDisplay );
-    }    
+        if ( !( CGCursorIsVisible( ) ) ) CGDisplayShowCursor( kCGDirectMainDisplay );
+    }
+}
+
+-( void )setFullScreenTime
+{
+    // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:[ NSDate date ] ];
+    
+    // Set the time on the full screen window
+    [ _fullScreenTime setStringValue:[ NSString stringWithFormat:@"%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ] ] ]; 
+}
+
+- (void)handleFullScreenTimer:(NSTimer *)timer
+{
+    // Set the current time in the full screen
+    [self setFullScreenTime ];
+     
+    // Get the frame of the box in the full screen window
+    NSRect fullScreenBoxFrame = [ _fullScreenBox frame ];
+    
+    // Get the bounds of the parent view of the box
+    NSRect fullScreenViewBounds = [ [ _fullScreenBox superview ] bounds ];
+    
+    // Determine the direction of the x increment of the box position in the full screen window
+    if ( fullScreenBoxXIncr > 0 )
+    {
+        // Take care not to overwrite the timer at the left of the screen
+        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxFrame.size.width + fullScreenBoxXIncr ) > ( fullScreenViewBounds.size.width - _fullScreenTime.frame.size.width ) ) fullScreenBoxXIncr = -fullScreenBoxXIncr;
+    }
+    else
+    {
+        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxXIncr ) < 0 ) fullScreenBoxXIncr = - fullScreenBoxXIncr;
+    }
+    
+    // Determine the direction of the y increment of the box position in the full screen window
+    if ( fullScreenBoxYIncr > 0 )
+    {
+        if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxFrame.size.height + fullScreenBoxYIncr ) > fullScreenViewBounds.size.height ) fullScreenBoxYIncr = -fullScreenBoxYIncr;
+    }
+    else
+    {
+        if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxYIncr ) < 0 ) fullScreenBoxYIncr = - fullScreenBoxYIncr;
+    }
+    
+    // Move the box in the full screen window a bit
+    fullScreenBoxFrame.origin.x += fullScreenBoxXIncr;
+    fullScreenBoxFrame.origin.y += fullScreenBoxYIncr;
+    [ _fullScreenBox setFrameOrigin:fullScreenBoxFrame.origin ];
+    
+    // Get the frame of the Time text label in the full screen window
+    NSRect fullScreenTimeFrame = [ _fullScreenTime frame ];
+    
+    // Determine the direction of the y increment of the time label position in the full screen window
+    if ( fullScreenTimeYIncr > 0 )
+    {
+        if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeFrame.size.height + fullScreenTimeYIncr ) > fullScreenViewBounds.size.height ) fullScreenTimeYIncr = -fullScreenTimeYIncr;
+    }
+    else
+    {
+        if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeYIncr ) < 0 ) fullScreenTimeYIncr = - fullScreenTimeYIncr;
+    }
+    
+    // Move the time label in the full screen window a bit
+    fullScreenTimeFrame.origin.y += fullScreenTimeYIncr;
+    [ _fullScreenTime setFrameOrigin:fullScreenTimeFrame.origin ];
+
+    // Get the last cursor delta
+    int32_t deltaX, deltaY;
+    CGGetLastMouseDelta( &deltaX, &deltaY );
+
+    // Show the cursor if it is moving, else hide it again if it was visible
+    if ( ( ( deltaX != 0 ) || ( deltaY != 0 ) ) && !( CGCursorIsVisible( ) ) ) { CGDisplayShowCursor( kCGDirectMainDisplay ); }
+    else if ( ( deltaX == 0 ) && ( deltaY == 0 ) && CGCursorIsVisible( ) ) { CGDisplayHideCursor( kCGDirectMainDisplay ); }
 }
 
 #pragma mark -
@@ -466,81 +544,14 @@
     // Sort the play list tableview on composer, opus name, and artist
     NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
     [ _arrayController setSortDescriptors:playListSortDescriptors ];
-
-    // Set full screen time every 5 seconds (to be moved to separate full screen class)
-    fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
-}
-
-- (void)handleFullScreenTimer:(NSTimer *)timer
-{
-    // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes
-    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit;
-    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:[ NSDate date ] ];
-    
-    // Set the time on the full screen window
-    [ _fullScreenTime setStringValue:[ NSString stringWithFormat:@"%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ] ] ];
-    
-    // Get the frame of the box in the full screen window
-    NSRect fullScreenBoxFrame = [ _fullScreenBox frame ];
-
-    // Get the bounds of the parent view of the box
-    NSRect fullScreenViewBounds = [ [ _fullScreenBox superview ] bounds ];
-
-    // Determine the direction of the x increment of the box position in the full screen window
-    if ( fullScreenBoxXIncr > 0 )
-    {
-        // Take care not to overwrite the timer at the left of the screen
-        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxFrame.size.width + fullScreenBoxXIncr ) > ( fullScreenViewBounds.size.width - _fullScreenTime.frame.size.width ) ) fullScreenBoxXIncr = -fullScreenBoxXIncr;
-    }
-    else
-    {
-        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxXIncr ) < 0 ) fullScreenBoxXIncr = - fullScreenBoxXIncr;
-    }
-    
-    // Determine the direction of the y increment of the box position in the full screen window
-    if ( fullScreenBoxYIncr > 0 )
-    {
-        if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxFrame.size.height + fullScreenBoxYIncr ) > fullScreenViewBounds.size.height ) fullScreenBoxYIncr = -fullScreenBoxYIncr;
-    }
-    else
-    {
-        if ( ( fullScreenBoxFrame.origin.y + fullScreenBoxYIncr ) < 0 ) fullScreenBoxYIncr = - fullScreenBoxYIncr;
-    }
- 
-    // Move the box in the full screen window a bit
-    fullScreenBoxFrame.origin.x += fullScreenBoxXIncr;
-    fullScreenBoxFrame.origin.y += fullScreenBoxYIncr;
-    [ _fullScreenBox setFrameOrigin:fullScreenBoxFrame.origin ];
-
-    // Get the frame of the Time text label in the full screen window
-    NSRect fullScreenTimeFrame = [ _fullScreenTime frame ];
-    
-    // Determine the direction of the y increment of the time label position in the full screen window
-    if ( fullScreenTimeYIncr > 0 )
-    {
-        if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeFrame.size.height + fullScreenTimeYIncr ) > fullScreenViewBounds.size.height ) fullScreenTimeYIncr = -fullScreenTimeYIncr;
-    }
-    else
-    {
-        if ( ( fullScreenTimeFrame.origin.y + fullScreenTimeYIncr ) < 0 ) fullScreenTimeYIncr = - fullScreenTimeYIncr;
-    }
-    
-    // Move the time label in the full screen window a bit
-    fullScreenTimeFrame.origin.y += fullScreenTimeYIncr;
-    [ _fullScreenTime setFrameOrigin:fullScreenTimeFrame.origin ];
-
 }
 
 // NSApplicationDelegate: Sent by the default notification center immediately before the application terminates
 -( void )applicationWillTerminate:(NSNotification *)notification
 {
     // Release the audio hardware
-    if ( currentOpus )
-    {
-        [ currentOpus stopPlaying ];
-        NSLog( @"Audio player stopped" );
-    }
-    
+    if ( currentOpus ) [ currentOpus stopPlaying ];
+
     // Stop the full screen timer
     if ( fullScreenTimer ) [ fullScreenTimer invalidate ];
 }
@@ -836,7 +847,7 @@
 - (IBAction)composersEndEditing:(NSComboBox *)sender
 {
     NSString *selectedItem = [ sender stringValue ];
-    NSLog( @"composersEndEditing - composers combobox selection did change to %@", selectedItem );
+    // NSLog( @"composersEndEditing - composers combobox selection did change to %@", selectedItem );
     
     // Return immediately when no item is selected,
     // or when item is selected with combobox selection, in which case the textfield is empty
@@ -854,7 +865,7 @@
 - (IBAction)artistsEndEditing:(NSComboBox *)sender
 {
     NSString *selectedItem = [ sender stringValue ];
-    NSLog( @"artistsEndEditing - artists combobox selection did change to %@", selectedItem );
+    // NSLog( @"artistsEndEditing - artists combobox selection did change to %@", selectedItem );
     
     // Return immediately when no item is selected,
     // or when item is selected with combobox selection, in which case the textfield is empty
