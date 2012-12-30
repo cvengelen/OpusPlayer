@@ -123,9 +123,9 @@
         currentOpus = nil;
 
         // Set the full screen data (to be moved to separate full screen class)
-        fullScreenBoxXIncr = 10;
-        fullScreenBoxYIncr = 10;
-        fullScreenTimeYIncr = 10;
+        fullScreenBoxXIncr = 2;
+        fullScreenBoxYIncr = 2;
+        fullScreenTimeYIncr = 2;
      }
     return self;
 }
@@ -346,7 +346,7 @@
     [ self setComboBox:_artists withProperty:@"artist" ];
     
     // Set the label before the composers and artists combo boxes only if both are enabled
-    if ( [ _composers isEnabled ] && [ _artists isEnabled ] ) [ _selectItems setStringValue:@"Select:" ];
+    if ( [ _composers isEnabled ] && [ _artists isEnabled ] ) [ _selectItems setStringValue:@"Select composer/artist:" ];
     else [ _selectItems setStringValue:@"" ];
 
     // Check if the playlist tableview actually contains on or more opus items
@@ -414,6 +414,33 @@
 }
 
 #pragma mark -
+#pragma mark NSWindowDelegate
+
+-( void )windowDidEnterFullScreen:( NSNotification* )notification
+{
+    NSWindow *window = ( NSWindow* )notification.object;
+    NSLog( @"Entering full screen for window %@", window.identifier );
+    if ( [ window.identifier isEqualToString:@"fullScreenWindow" ] )
+    {
+        // See "Controlling the Mouse Cursor"
+        // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
+        CGDisplayHideCursor( kCGNullDirectDisplay );
+    }
+}
+
+- (void)windowDidExitFullScreen:(NSNotification *)notification
+{
+    NSWindow *window = ( NSWindow* )notification.object;
+    NSLog( @"Exiting full screen for window %@", window.identifier );
+    if ( [ window.identifier isEqualToString:@"fullScreenWindow" ] )
+    {
+        // See "Controlling the Mouse Cursor"
+        // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
+        CGDisplayShowCursor( kCGNullDirectDisplay );
+    }    
+}
+
+#pragma mark -
 #pragma mark NSApplicationDelegate
 
 // NSApplicationDelegate: Sent by the default notification center after the application
@@ -462,7 +489,8 @@
     // Determine the direction of the x increment of the box position in the full screen window
     if ( fullScreenBoxXIncr > 0 )
     {
-        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxFrame.size.width + fullScreenBoxXIncr ) > fullScreenViewBounds.size.width ) fullScreenBoxXIncr = -fullScreenBoxXIncr;
+        // Take care not to overwrite the timer at the left of the screen
+        if ( ( fullScreenBoxFrame.origin.x + fullScreenBoxFrame.size.width + fullScreenBoxXIncr ) > ( fullScreenViewBounds.size.width - _fullScreenTime.frame.size.width ) ) fullScreenBoxXIncr = -fullScreenBoxXIncr;
     }
     else
     {
@@ -736,6 +764,9 @@
 // Filter the opus items in the playlist on the current settings of selected composer, and selected artist, if any
 -( void )filterPlaylistOnComposerAndArtist
 {
+    // Remove the current predicate
+    [ _arrayController setFilterPredicate:nil ];
+
     // With composer and artist not selected, the predicate is removed by setting it to nil;
     NSPredicate *predicate = nil;
     
@@ -785,11 +816,15 @@
 
     if ( [ comboBox.identifier isEqualToString:@"composers" ] )
     {
+        // If "All" is selected then remove the selected composer,
+        // else set the selected composer to the selected combobox item
         if ([ selectedItem isEqualToString:@"All" ] ) selectedComposer = nil;
         else selectedComposer = selectedItem;
     }
     else if ( [ comboBox.identifier isEqualToString:@"artists" ] )
     {
+        // If "All" is selected then remove the selected artist,
+        // else set the selected artist to the selected combobox item
         if ([ selectedItem isEqualToString:@"All" ] ) selectedArtist = nil;
         else selectedArtist = selectedItem;
     }
@@ -807,7 +842,9 @@
     // or when item is selected with combobox selection, in which case the textfield is empty
     if ( !selectedItem || [ selectedItem isEqualToString:@"" ] ) return;
     
-    if ([ selectedItem isEqualToString:@"All" ] ) selectedComposer = nil;
+    // If "All" (case insensitive) is entered then remove the selected composer,
+    // else set the selected composer to the entered string
+    if ( [ [ selectedItem lowercaseString ] isEqualToString:@"all" ] ) selectedComposer = nil;
     else selectedComposer = selectedItem;
 
     // Filter the playlist
@@ -824,7 +861,9 @@
 
     if ( !selectedItem || [ selectedItem isEqualToString:@"" ] ) return;
     
-    if ([ selectedItem isEqualToString:@"All" ] ) selectedArtist = nil;
+    // If "All" (case insensitive) is entered then remove the selected artist,
+    // else set the selected artist to the entered string
+    if ( [ [ selectedItem lowercaseString ] isEqualToString:@"all" ] ) selectedArtist = nil;
     else selectedArtist = selectedItem;
 
     // Filter the playlist
