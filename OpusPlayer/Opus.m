@@ -21,9 +21,11 @@
     self = [ super init ];
     if ( self )
     {
-        composer = aComposer;
-        artist = anArtist;
-        album = anAlbum;
+        // Make sure an empty composer, artist or album is replaced by an empty string
+        // for the combo boxes do not allow nil values
+        composer = ( aComposer == nil ? @"" : aComposer );
+        artist = ( anArtist == nil ? @"" : anArtist );
+        album = ( anAlbum == nil ? @"" : anAlbum );
         tracks = [ [ NSMutableDictionary alloc ] init ];
     }
     return self;
