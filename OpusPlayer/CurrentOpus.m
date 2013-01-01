@@ -151,6 +151,12 @@
 
     // Notify the delegate of the new opus part string value, with current duration 00:00
     [ delegate setStringOpusPart:[ NSString stringWithFormat:opusPartString, @"00:00" ] ];
+
+    // Notify the delegate of the new opus part duration
+    [ delegate setOpusPartDuration:audioPlayer.duration ];
+    
+    // Notify the delegate of the current time of the playing track
+    [ delegate setOpusPartCurrentTime:0 ];
 }
 
 // Handle notification from currentTime timer
@@ -162,14 +168,20 @@
                                                                           fromDate:[ NSDate date ]
                                                                             toDate:[ NSDate dateWithTimeIntervalSinceNow:audioPlayer.currentTime ]
                                                                             options:0 ];
-    NSString* currentTime = @"";
-    if ( [ timeComponents hour ] > 0 ) currentTime = [ currentTime stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
-    currentTime = [ currentTime stringByAppendingFormat:@"%02ld:%02ld", [ timeComponents minute ], [ timeComponents second ] ];
+    NSString* currentTimeAsString = @"";
+    if ( [ timeComponents hour ] > 0 ) currentTimeAsString = [ currentTimeAsString stringByAppendingFormat:@"%02ld:", [ timeComponents hour ] ];
+    currentTimeAsString = [ currentTimeAsString stringByAppendingFormat:@"%02ld:%02ld", [ timeComponents minute ], [ timeComponents second ] ];
     
     // Notify the delegate of the new opus part string value, with actual current duration
-    [ delegate setStringOpusPart:[ NSString stringWithFormat:opusPartString, currentTime ] ];
+    [ delegate setStringOpusPart:[ NSString stringWithFormat:opusPartString, currentTimeAsString ] ];
+
+    // Notify the delegate of the current time of the playing track
+    [ delegate setOpusPartCurrentTime:audioPlayer.currentTime ];
 }
 
+
+#pragma mark -
+#pragma mark Button actions
 
 -( void )playNextOpusPart
 {
@@ -248,6 +260,15 @@
     // Stop the current time timer
     if ( currentTimeTimer ) [ currentTimeTimer invalidate ];
 }
+
+-( void )setCurrentTime:( NSTimeInterval )aCurrentTime
+{
+    NSLog( @"Set current time to: %f", aCurrentTime );
+    audioPlayer.currentTime = aCurrentTime;
+}
+
+#pragma mark -
+#pragma mark AVAudioPlayerDelegate
 
 // AVAudioPlayerDelegate: Called when a sound has finished playing
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
