@@ -14,6 +14,7 @@
 
 @property (readwrite) NSMutableArray* opusItems;
 @property (readwrite) NSMutableArray* playedOpusItems;
+@property (readwrite) NSTimeInterval currentOpusCurrentTime;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSOutlineView *outlineView;
@@ -26,6 +27,7 @@
 - (IBAction)playNextOpusPart:(id)sender;
 - (IBAction)playNextOpus:(id)sender;
 - (IBAction)shuffleOpusItemsFromPlaylist:(id)sender;
+- (IBAction)setCurrentTime:(NSSlider *)sender;
 
 @property (weak) IBOutlet NSComboBox *composers;
 @property (weak) IBOutlet NSComboBox *artists;
@@ -40,6 +42,7 @@
 @property (weak) IBOutlet NSTextField *composerOpus;
 @property (weak) IBOutlet NSTextField *opusPart;
 @property (weak) IBOutlet NSTextField *artist;
+@property (weak) IBOutlet NSSlider *currentTimeSlider;
 
 @property (weak) IBOutlet NSBox *fullScreenBox;
 @property (weak) IBOutlet NSTextField *fullScreenOpusPart;
