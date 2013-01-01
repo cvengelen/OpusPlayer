@@ -55,4 +55,6 @@
 -( void )playOrPause;
 -( void )stopPlaying;
 
+-( void )setCurrentTime:( NSTimeInterval )aCurrentTime;
+
 @end
