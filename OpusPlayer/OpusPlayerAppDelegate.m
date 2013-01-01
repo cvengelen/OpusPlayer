@@ -26,6 +26,9 @@
     
     // Current playing opus item
     CurrentOpus* currentOpus;
+
+    // Current time of the currently playing opus track
+    NSTimeInterval currentOpusCurrentTime;
     
     // All previously played opus items
     NSMutableArray* playedOpusItems;
@@ -48,6 +51,7 @@
 
 @synthesize opusItems;
 @synthesize playedOpusItems;
+@synthesize currentOpusCurrentTime;
 
 - ( id )init
 {
@@ -115,6 +119,7 @@
 
         // There is no current opus yet
         currentOpus = nil;
+        currentOpusCurrentTime = 0;
 
         // Set the full screen data (to be moved to separate full screen class)
         fullScreenBoxXIncr = 2;
@@ -544,6 +549,9 @@
     // Sort the play list tableview on composer, opus name, and artist
     NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
     [ _arrayController setSortDescriptors:playListSortDescriptors ];
+
+    // Set the minimum slider value
+    _currentTimeSlider.minValue = 0;
 }
 
 // NSApplicationDelegate: Sent by the default notification center immediately before the application terminates
@@ -634,6 +642,11 @@
         // Play an opus item, chosen randomly
         [ self playNextOpus:nil ];
     }
+}
+
+- (IBAction)setCurrentTime:(NSSlider *)currentTimeSlider
+{
+    [ currentOpus setCurrentTime:[ currentTimeSlider floatValue ] ];
 }
 
 /////////////////////////////
@@ -743,6 +756,20 @@
     [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
 }
 
+// Notification from the current opus of the opus track duration
+-( void )setOpusPartDuration:( NSTimeInterval )duration
+{
+    _currentTimeSlider.maxValue = duration;
+}
+
+// Notify the delegate of the current time of a track
+-( void )setOpusPartCurrentTime:( NSTimeInterval )currentTime
+{
+    // Use the current opus current time setter method to allow for a key-value observer to pick up the value (i.e., the slider)
+    [ self setCurrentOpusCurrentTime:currentTime ];
+}
+
+
 #pragma mark -
 #pragma mark NSComboBoxDelegate
 
@@ -781,21 +808,24 @@
     // With composer and artist not selected, the predicate is removed by setting it to nil;
     NSPredicate *predicate = nil;
     
-    if ( selectedArtist && selectedComposer )
+    if ( ( selectedArtist != nil ) && ( selectedComposer != nil ) )
     {
         // Use the selected composer and artist as a selection on the opus items in the playlist
-        predicate = [ NSPredicate predicateWithFormat:@"( composer like[cd] %@ ) AND ( artist like[cd] %@ )", selectedComposer, selectedArtist ];
+        if ( [ selectedComposer isEqualToString:@"" ] ) predicate = [ NSPredicate predicateWithFormat:@"( composer == '' ) AND ( artist like[cd] %@ )", selectedArtist ];
+        else predicate = [ NSPredicate predicateWithFormat:@"( composer like[cd] %@ ) AND ( artist like[cd] %@ )", selectedComposer, selectedArtist ];
     }
-    else if ( selectedArtist )
+    else if ( selectedArtist != nil )
     {
         // Use the selected artist as a selection on the opus items in the playlist
-        predicate = [ NSPredicate predicateWithFormat:@"artist like[cd] %@", selectedArtist ];
+        if ( [ selectedArtist isEqualToString:@"" ] ) predicate = [ NSPredicate predicateWithFormat:@"artist == ''" ];
+        else predicate = [ NSPredicate predicateWithFormat:@"artist like[cd] %@", selectedArtist ];
         
     }
-    else if ( selectedComposer )
+    else if ( selectedComposer != nil )
     {
         // Use the selected composer as a selection on the opus items in the playlist
-        predicate = [ NSPredicate predicateWithFormat:@"composer like[cd] %@", selectedComposer ];
+        if ( [ selectedComposer isEqualToString:@"" ] ) predicate = [ NSPredicate predicateWithFormat:@"composer == ''" ];
+        else predicate = [ NSPredicate predicateWithFormat:@"composer like[cd] %@", selectedComposer ];
     }
     
     // Filter the arranged objects in the playlist view array controller with the predicate (nil removes the predicate)
@@ -818,7 +848,7 @@
     NSString *selectedItem = [ comboBox objectValueOfSelectedItem ];
 
     // Return immediately when no item is selected
-    if ( !selectedItem ) return;
+    if ( selectedItem == nil ) return;
     
     // Clear any possible typed in value
     [ comboBox setStringValue:@"" ];
