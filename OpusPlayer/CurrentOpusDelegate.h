@@ -27,4 +27,10 @@
 -( void )setStringArtist:( NSString* )anArtist;
 -( void )setStringOpusPart:( NSString* )anOpusPart;
 
+// Notify the delegate of a track duration
+-( void )setOpusPartDuration:( NSTimeInterval )duration;
+
+// Notify the delegate of the current time of a track
+-( void )setOpusPartCurrentTime:( NSTimeInterval )currentTime;
+
 @end
