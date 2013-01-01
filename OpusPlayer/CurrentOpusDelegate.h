@@ -3,7 +3,8 @@
 //
 //  Protocol for a delegate of the CurrentOpus class
 //  - Send opusDidFinishPlaying message to delegate when de audio player has finished playing.
-//  - Use XIB outlets from the delegate to handle buttons en text fields.
+//  - Send strings for composerOpus, artist, and opusPart textfields to delegate
+//  - Send track duration and current time to delegate
 //
 //  Created by Chris van Engelen on 22-12-12.
 //  Copyright (c) 2012 Chris van Engelen. All rights reserved.
