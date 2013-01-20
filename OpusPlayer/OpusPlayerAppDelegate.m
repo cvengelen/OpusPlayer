@@ -6,6 +6,9 @@
 //  Copyright (c) 2012 Chris van Engelen. All rights reserved.
 //
 
+// Technical Q&A QA1340: Preventing sleep using I/O Kit:
+#import <IOKit/pwr_mgt/IOPMLib.h>
+
 #import "OpusPlayerAppDelegate.h"
 #import "PlayedOpus.h"
 #import "Track.h"
@@ -39,6 +42,9 @@
     int fullScreenBoxXIncr;
     int fullScreenBoxYIncr;
     int fullScreenTimeYIncr;
+
+    // Enabling and disabling sleep
+    IOPMAssertionID assertionID;
     
     // Font size of the composerOpus string
     CGFloat composerOpusFontSize;
@@ -433,6 +439,17 @@
 
         // Set the current time in the full screen
         [self setFullScreenTime ];
+
+        // reasonForActivity is used by the system whenever it needs to tell
+        // the user why the system is not sleeping (limited to 128 chararcers).
+        CFStringRef reasonForActivity = CFSTR( "OpusPlayer Full Window is active" );
+        
+        IOReturn assertionCreateWithNameReturn = IOPMAssertionCreateWithName( kIOPMAssertionTypeNoDisplaySleep,
+                                                                             kIOPMAssertionLevelOn, reasonForActivity, &assertionID );
+        if ( assertionCreateWithNameReturn != kIOReturnSuccess )
+        {
+            NSLog( @"IOPMAssertionCreateWithName failed with error code %d", assertionCreateWithNameReturn );
+        }
     }
 }
 
@@ -444,9 +461,19 @@
         // Stop the full screen timer
         [ fullScreenTimer invalidate ];
 
+        // Clear the time on the full screen window
+        [ _fullScreenTime setStringValue:@"" ];
+
         // Display the cursor if it was not visible. See "Controlling the Mouse Cursor"
         // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
         if ( !( CGCursorIsVisible( ) ) ) CGDisplayShowCursor( kCGDirectMainDisplay );
+        
+        // Release the assertion, to enable the system to be able to sleep again
+        IOReturn assertionCreateWithNameReturn = IOPMAssertionRelease( assertionID );
+        if ( assertionCreateWithNameReturn != kIOReturnSuccess )
+        {
+            NSLog( @"IOPMAssertionRelease failed with error code %d", assertionCreateWithNameReturn );
+        }
     }
 }
 
