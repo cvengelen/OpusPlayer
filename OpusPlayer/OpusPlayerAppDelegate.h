@@ -9,8 +9,9 @@
 #import <Cocoa/Cocoa.h>
 #import "Opus.h"
 #import "CurrentOpus.h"
+#import "HIDRemote.h"
 
-@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, NSWindowDelegate, CurrentOpusDelegate>
+@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, NSWindowDelegate, CurrentOpusDelegate, HIDRemoteDelegate>
 
 @property (readwrite) NSMutableArray* opusItems;
 @property (readwrite) NSMutableArray* playedOpusItems;
