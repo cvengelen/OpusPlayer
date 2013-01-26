@@ -131,6 +131,27 @@
         fullScreenBoxXIncr = 2;
         fullScreenBoxYIncr = 2;
         fullScreenTimeYIncr = 2;
+        
+        // Initialise HID remote control
+        if ([HIDRemote isCandelairInstallationRequiredForRemoteMode:kHIDRemoteModeExclusiveAuto])
+        {
+            // Candelair needs to be installed. Inform the user about it.
+            NSLog( @"Candelair needs to be installed for handling remote control" );
+        }
+        else
+        {
+            // Start using HIDRemote ..
+            HIDRemote *sHIDRemote = [HIDRemote sharedHIDRemote];
+            if ([sHIDRemote startRemoteControl:kHIDRemoteModeExclusiveAuto])
+            {
+                [ sHIDRemote setDelegate:self ];
+                NSLog( @"HID remote successfully started" );
+            }
+            else
+            {
+                NSLog( @"HID remote failure" );
+            }
+        }
      }
     return self;
 }
@@ -220,7 +241,7 @@
         NSNumber* trackId= [ playlistTrack objectForKey:@"Track ID" ];
         NSDictionary* track = [ tracks objectForKey:[ trackId stringValue ] ];
 
-        // Initialise an opus objec with the composer, artist and album
+        // Initialise an opus object with the composer, artist and album
         Opus* opus = [ [ Opus alloc ] initWithComposer:[ track valueForKey:@"Composer" ]
                                       withArtist:[ track valueForKey:@"Artist" ]
                                       withAlbum:[ track valueForKey:@"Album" ] ];
@@ -257,9 +278,36 @@
         // a colon with possible spaces in front of the colon, and at least one space after the colon (see Haydn trios)
         // and followed by at least one digit (0-9). For example: Symfonie Nr. 5, Op. 67: 1. Allegro con brio
         NSString* opusDivider = @"\\s*:\\s+\\d";
-        int opusDividerBacktrack = 1;
+        unsigned long opusDividerBacktrack = 1;
         NSRange opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
-        
+
+        // Check if an opus divider string was not found in the track name
+        if ( opusDividerRange.location == NSNotFound )
+        {
+            // Try again, now with a colon, followed by one word, like Variatie, Section, etc., and a digit.
+            // Must come before check on dash, see Section 88 and Section 91 of Canto Ostinato, which contains both a colon and a dash.
+            // Must only be done after an unsuccusfull search for a colon.
+            opusDivider = @"\\s*:\\s+\\S+\\s\\d";
+            opusDividerRange = [ trackName rangeOfString:opusDivider options:NSRegularExpressionSearch ];
+            // Check if this opus divider string was found
+            if ( opusDividerRange.location != NSNotFound )
+            {
+                // Determine the opus divider backtrack: the part of the divider string that is part of the track name
+                
+                // Get the divider string
+                NSString *opusDividerString = [ trackName substringWithRange:opusDividerRange ];
+                // Search for the colon and following space in the divider string
+                NSString *colonDivider = @"\\s*:\\s+";
+                NSRange colonRange = [ opusDividerString rangeOfString:colonDivider options:NSRegularExpressionSearch ];
+                // The colon should always be found
+                if ( colonRange.location != NSNotFound )
+                {
+                    // The part of the divider string which is included is the total lenght, minus the lenght of the colon string
+                    opusDividerBacktrack = opusDividerRange.length - colonRange.length;
+                }
+            }
+        }
+
         // Check if an opus divider string was not found in the track name
         if ( opusDividerRange.location == NSNotFound )
         {
@@ -936,6 +984,52 @@
 
     // Filter the playlist
     [ self filterPlaylistOnComposerAndArtist ];
+}
+
+
+#pragma mark -
+#pragma mark HIDRemote
+
+/////////////////////////////////////////////////////////////////////////////
+// HID delegate
+/////////////////////////////////////////////////////////////////////////////
+
+- (void)hidRemote:(HIDRemote *)hidRemote eventWithButton:(HIDRemoteButtonCode)buttonCode isPressed:(BOOL)isPressed fromHardwareWithAttributes:(NSMutableDictionary *)attributes
+{
+	NSLog(@"%@: Button with code %d %@", hidRemote, buttonCode, (isPressed ? @"pressed" : @"released"));
+
+    // Only react to button pressed
+    if ( ! isPressed ) return;
+    
+    switch (buttonCode)
+    {
+        case kHIDRemoteButtonCodePlay:
+        case kHIDRemoteButtonCodeCenter:
+            if ( currentOpus )
+            {
+                [ currentOpus playOrPause ];
+            }
+            else
+            {
+                if ( [ _nextOpusButton isEnabled ] ) [ self playNextOpus:nil ];
+            }
+            return;
+
+        case kHIDRemoteButtonCodeDown:
+            if ( currentOpus && [ _previousOpusPartButton isEnabled ] ) [ currentOpus playPreviousOpusPart ];
+            return;
+
+        case kHIDRemoteButtonCodeUp:
+            if ( currentOpus && [ _nextOpusPartButton isEnabled ] ) [ currentOpus playNextOpusPart ];
+            return;
+
+        case kHIDRemoteButtonCodeRight:
+            if ( [ _nextOpusButton isEnabled ] ) [ self playNextOpus:nil ];
+            return;
+           
+        default:
+            NSLog( @"unsupported button: %d", buttonCode );
+    }
 }
 
 @end
