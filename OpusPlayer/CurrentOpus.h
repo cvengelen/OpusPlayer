@@ -51,6 +51,7 @@
 -( void )startPlaying;
 -( void )playNextOpusPart;
 -( void )playPreviousOpusPart;
+-( void )playFirstOpusPart;
 
 -( void )playOrPause;
 -( void )stopPlaying;

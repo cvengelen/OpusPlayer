@@ -44,12 +44,7 @@
 }
 
 -( void )startPlaying
-{
-    [ delegate.previousOpusPartButton setEnabled:NO ];
-    
-    if ( [ partNames count ] > 1 ) [ delegate.nextOpusPartButton setEnabled:YES ];
-    else [ delegate.nextOpusPartButton setEnabled:NO ];
-    
+{    
     // Get time at which the opus starts playing
     startsPlayingDate = [ NSDate date ];
     
@@ -87,6 +82,13 @@
 
     // Start playing the first (or only) opus part
     [ self startPlayingOpusPart ];
+    
+    // Disable the previous opus part button
+    [ delegate.previousOpusPartButton setEnabled:NO ];
+    
+    // Enable the next opus part button when there is more than one opus part
+    if ( [ partNames count ] > 1 ) [ delegate.nextOpusPartButton setEnabled:YES ];
+    else [ delegate.nextOpusPartButton setEnabled:NO ];
 }
 
 // Start playing the part at the current opus part names index of the current opus
@@ -217,6 +219,24 @@
     [ delegate.nextOpusPartButton setEnabled:YES ];
     if ( partNamesIndex == 0 ) [ delegate.previousOpusPartButton setEnabled:NO ];
 
+    [ self startPlayingOpusPart ];
+}
+
+-( void )playFirstOpusPart
+{
+    // Release the audio hardware
+    if ( audioPlayer ) [ self stopPlaying ];
+
+    // Start with the first opus part
+    partNamesIndex = 0;
+    
+    // Disable the previous opus part button
+    [ delegate.previousOpusPartButton setEnabled:NO ];
+    
+    // Enable the next opus part button when there is more than one opus part
+    if ( [ partNames count ] > 1 ) [ delegate.nextOpusPartButton setEnabled:YES ];
+    else [ delegate.nextOpusPartButton setEnabled:NO ];
+    
     [ self startPlayingOpusPart ];
 }
 
