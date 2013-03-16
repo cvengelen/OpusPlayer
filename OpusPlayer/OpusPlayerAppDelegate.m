@@ -12,6 +12,7 @@
 #import "OpusPlayerAppDelegate.h"
 #import "PlayedOpus.h"
 #import "Track.h"
+#import "WebApp.h"
 
 @implementation OpusPlayerAppDelegate
 {
@@ -152,8 +153,20 @@
                 NSLog( @"HID remote failure" );
             }
         }
-     }
+        
+        // Start a separate thread to run WebApp
+        [ NSThread detachNewThreadSelector:@selector( webAppThreadMethod: ) toTarget:self withObject:nil ];
+    }
+
     return self;
+}
+
+// Run WebApp on a separate thread
+- ( void )webAppThreadMethod:( id )options
+{
+    // WASetDevelopmentMode(YES);
+    // Run WebApp
+    [ WebApp run ];
 }
 
 #pragma mark -
@@ -811,6 +824,8 @@
     composerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
 
     fullScreenComposerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
+
+    [ WebApp setComposerOpus:aComposerOpus ];
 }
 
 // Notification from the current opus with the string value for artist
@@ -820,6 +835,8 @@
     // to avoid that the font used for the artist is larger that the font for the opus
     [ self setStringValue:anArtist onTextField:_artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anArtist onTextField:_fullScreenArtist withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:10.0 ];
+
+    [ WebApp setArtist:anArtist ];
 }
 
 // Notification from the current opus with the string value for opusPart
@@ -829,6 +846,8 @@
     // to avoid that the font used for the opus part is larger that the font for the opus
     [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
+
+    [ WebApp setOpusPart:anOpusPart ];
 }
 
 // Notification from the current opus of the opus track duration
@@ -996,7 +1015,7 @@
 
 - (void)hidRemote:(HIDRemote *)hidRemote eventWithButton:(HIDRemoteButtonCode)buttonCode isPressed:(BOOL)isPressed fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 {
-	NSLog(@"%@: Button with code %d %@", hidRemote, buttonCode, (isPressed ? @"pressed" : @"released"));
+	// NSLog(@"%@: Button with code %d %@", hidRemote, buttonCode, (isPressed ? @"pressed" : @"released"));
 
     // Only react to button pressed
     if ( ! isPressed ) return;
@@ -1025,6 +1044,11 @@
 
         case kHIDRemoteButtonCodeRight:
             if ( [ _nextOpusButton isEnabled ] ) [ self playNextOpus:nil ];
+            return;
+            
+        case kHIDRemoteButtonCodeLeft:
+            // Play from the start of the current opus
+            if ( currentOpus) [ currentOpus playFirstOpusPart ];
             return;
            
         default:
