@@ -10,8 +10,9 @@
 #import "Opus.h"
 #import "CurrentOpus.h"
 #import "HIDRemote.h"
+#import "WebAppDelegate.h"
 
-@interface OpusPlayerAppDelegate : NSObject <NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, NSWindowDelegate, CurrentOpusDelegate, HIDRemoteDelegate>
+@interface OpusPlayerAppDelegate : NSObject < NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, NSWindowDelegate, CurrentOpusDelegate, HIDRemoteDelegate, WebAppDelegate >
 
 @property (readwrite) NSMutableArray* opusItems;
 @property (readwrite) NSMutableArray* playedOpusItems;
