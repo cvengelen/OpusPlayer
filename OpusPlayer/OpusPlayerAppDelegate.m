@@ -164,7 +164,12 @@
 // Run WebApp on a separate thread
 - ( void )webAppThreadMethod:( id )options
 {
+    // Uncomment the following to get some more logging from WebApp
     // WASetDevelopmentMode(YES);
+
+    // Set self as delegate for WebApp, to get the playOrPause and playNextOpus requests
+    [ WebApp setDelegate:self ];
+
     // Run WebApp
     [ WebApp run ];
 }
@@ -1053,6 +1058,34 @@
            
         default:
             NSLog( @"unsupported button: %d", buttonCode );
+    }
+}
+
+
+#pragma mark -
+#pragma mark WebAppDelegate
+
+/////////////////////////////////////////////////////////////////////////////
+// WebApp delegate
+/////////////////////////////////////////////////////////////////////////////
+
+// Request the delegate to play or pause the current opus
+-( void )webAppPlayOrPause
+{
+    // NSLog( @"Web Server delegate play or pause" );
+    @synchronized( self )
+    {
+        [ self playOrPause:nil ];
+    }
+}
+
+// Request the delegate to play the next opus
+-( void )webAppPlayNextOpus
+{
+    // NSLog( @"Web Server delegate play next opus" );
+    @synchronized( self )
+    {
+        [ self playNextOpus:nil ];
     }
 }
 
