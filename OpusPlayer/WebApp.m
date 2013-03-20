@@ -15,16 +15,19 @@ static NSString *composerOpus;
 static NSString *opusPart;
 static NSString *artist;
 
+// The delegate
+static NSObject<WebAppDelegate>* delegate;
+
 - (id)init
 {
 	if ( ( self = [ super init ] ) )
     {
 		[ self addRouteSelector:@selector( index ) HTTPMethod:@"GET" path:@"/" ];
+        [ self addRouteSelector:@selector( handlePost: ) HTTPMethod:@"POST" path:@"/*"];
         NSLog( @"Web Server initialised" );
 	}
 	return self;
 }
-
 
 - (id)index
 {
@@ -36,6 +39,19 @@ static NSString *artist;
 	[ template setValue:opusPart forKey:@"opusPart" ];
 	[ template setValue:artist forKey:@"artist" ];
 	return template;
+}
+
+
+- ( id )handlePost:( NSString* )name
+{
+    // NSLog( @"Web Server POST request: %@", name );
+    
+    // Issue request to delegate, as set in the action attribute of the form
+    if ( [ name isEqualToString:@"playOrPause" ] ) [ delegate webAppPlayOrPause ];
+    else if ( [ name isEqualToString:@"playNextOpus" ] ) [ delegate webAppPlayNextOpus ];
+
+    // Return the original template
+    return [ self index ];
 }
 
 + ( void )setComposerOpus:( NSString * )aComposerOpus
@@ -51,6 +67,12 @@ static NSString *artist;
 + ( void )setArtist:( NSString * )anArtist
 {
     artist = anArtist;
+}
+
++ ( void )setDelegate:( NSObject<WebAppDelegate>* )aDelegate
+{
+    // NSLog( @"Web Server delegate set to %@", aDelegate );
+    delegate = aDelegate;
 }
 
 @end

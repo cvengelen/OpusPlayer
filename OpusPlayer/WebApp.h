@@ -8,11 +8,13 @@
 //
 
 #import <WebAppKit/WebAppKit.h>
+#import "WebAppDelegate.h"
 
 @interface WebApp : WAApplication
 
-+ ( void )setComposerOpus:( NSString * )aComposerOpus;
-+ ( void )setOpusPart:( NSString * )anOpusPart;
-+ ( void )setArtist:( NSString * )anArtist;
++ ( void )setComposerOpus:( NSString* )aComposerOpus;
++ ( void )setOpusPart:( NSString* )anOpusPart;
++ ( void )setArtist:( NSString* )anArtist;
++ ( void )setDelegate:( NSObject< WebAppDelegate >* )aDelegate;
 
 @end
