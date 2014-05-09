@@ -36,7 +36,10 @@
     
     // All previously played opus items
     NSMutableArray* playedOpusItems;
-    
+
+    // All opus items played during the current shuffle, reset after all opus items have been played
+    NSMutableArray* shuffledOpusItems;
+
     // Full screen timer
     NSTimer* fullScreenTimer;
     
@@ -123,6 +126,9 @@
         
         // Initialise the array with the played opus items
         playedOpusItems = [ NSMutableArray array ];
+        
+        // Initialise the array with the shuffled opus items
+        shuffledOpusItems = [ NSMutableArray array ];
 
         // There is no current opus yet
         currentOpus = nil;
@@ -461,6 +467,8 @@
         // In that case this method does not need to take any action.
         if ( [ currentOpus.opus isEqual:[ [ _arrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ] ] ) return;
 
+        // NSLog( @"Selected play list row changed manually: stop playing current opus %@", currentOpus.opus.name );
+
         // Release the audio hardware
         [ currentOpus stopPlaying ];
     
@@ -475,6 +483,7 @@
         NSLog( @"tracks empty" );
         return;
     }
+    // NSLog( @"Selected play list row changed manually: start playing opus %@", opus.name );
 
     // Initialize a new current opus with the selected opus item
     // (let ARM delete the previous current opus)
@@ -696,17 +705,71 @@
     
         // update the played opus items
         [ self updatePlayedOpusItems ];
+
+        // Add the opus to the list of shuffled opus items
+        [ shuffledOpusItems addObject:currentOpus ];
     }
     
-    // Get a random new opus
-    // Use the arranged objects from the array controller to get the opus item
-    int randomOpusItemsIndex = arc4random( ) % [ [ _arrayController arrangedObjects ] count ];
-    Opus* opus = [ [ _arrayController arrangedObjects ] objectAtIndex:randomOpusItemsIndex ];
+    // Get a random new opus from the opus items in the selected playlist,
+    // with the played opus items removed
+    
+    // Initialise an array with the opus items in the playlist: the arranged objects from the array controller
+    NSMutableArray* remainingOpusItems = [ NSMutableArray arrayWithArray:[ _arrayController arrangedObjects ] ];
+    NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
+
+    // Remove the already shuffled items from the playlist
+    for ( CurrentOpus* shuffledOpusItem in shuffledOpusItems )
+    {
+        [ remainingOpusItems removeObject:shuffledOpusItem.opus ];
+    }
+    NSLog( @"#remaining opus items in playlist after removing shuffled opus items: %ld", [ remainingOpusItems count ] );
+
+    // Check if all items in the playlist have been played
+    if ( [ remainingOpusItems count ] == 0 )
+    {
+        // Use all items again
+        [ shuffledOpusItems removeAllObjects ];
+        NSLog( @"restart shuffle: list of shuffled opus items cleared" );
+
+        remainingOpusItems = [ NSMutableArray arrayWithArray:[ _arrayController arrangedObjects ] ];
+        NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
+    }
+
+    // Try removing the composer from the remaining list of opus items
+    NSPredicate* predicate = [ NSPredicate predicateWithFormat:@"!( composer like[cd] %@ )", currentOpus.opus.composer ];
+    NSArray* remainingOpusItemsAfterRemovingComposer = [ remainingOpusItems filteredArrayUsingPredicate:predicate ];
+    NSLog( @"#filtered remaining opus items after removing composer %@: %ld",
+          currentOpus.opus.composer, [ remainingOpusItemsAfterRemovingComposer count ] );
+
+    // Check if there are opus items left after removing the opus items with the same composer
+    if ( [ remainingOpusItemsAfterRemovingComposer count ] != 0 )
+    {
+        // Continue with the filtered list of opus items
+        remainingOpusItems = [ NSMutableArray arrayWithArray:remainingOpusItemsAfterRemovingComposer ];
+    }
+
+    // Try removing the artist from the filtered remaining list of opus items
+    predicate = [ NSPredicate predicateWithFormat:@"!( artist like[cd] %@ )", currentOpus.opus.artist ];
+    NSArray* remainingOpusItemsAfterRemovingArtist = [ remainingOpusItems filteredArrayUsingPredicate:predicate ];
+    NSLog( @"#filtered remaining opus items after removing artist %@: %ld",
+          currentOpus.opus.artist, [ remainingOpusItemsAfterRemovingArtist count ] );
+
+    // Check if there are opus items left after removing the opus items with the same artist
+    if ( [ remainingOpusItemsAfterRemovingArtist count ] != 0 )
+    {
+        // Continue with the filtered list of opus items
+        remainingOpusItems = [ NSMutableArray arrayWithArray:remainingOpusItemsAfterRemovingArtist ];
+    }
+
+    // Use a random index to get an opus item from the list of remaining opus items
+    int remainingOpusItemsIndex = arc4random( ) % [ remainingOpusItems count ];
+    Opus* opus = [ remainingOpusItems objectAtIndex:remainingOpusItemsIndex ];
     if ( [ opus.tracks count ] == 0 )
     {
         NSLog( @"tracks empty" );
         return;
     }
+    NSLog( @"Play next opus %@", opus.name );
     
     // Initialize a new current opus item
     // (let ARM delete the previous current opus)
@@ -715,9 +778,11 @@
     // Start playing the current opus item
     [ currentOpus startPlaying ];
 
-    // Select the opus item in the table view, and show it
-    // must be done via the array controller (because of sorting the input array by the array controller)
-    [ _arrayController setSelectionIndex:randomOpusItemsIndex ];
+    // Set the selected opus item in the play list table view to the index of the selected opus item in the array of arranged objects.
+    // This must be done via the array controller (because of sorting the input array by the array controller)
+    [ _arrayController setSelectionIndex:[ [ _arrayController arrangedObjects ] indexOfObject:opus ] ];
+
+    // Make sure the selected row in the play list table view is visible
     [ _playlistTableView scrollRowToVisible:[ _playlistTableView selectedRow ] ];
 }
 
