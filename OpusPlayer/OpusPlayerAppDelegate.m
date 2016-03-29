@@ -12,7 +12,7 @@
 #import "OpusPlayerAppDelegate.h"
 #import "PlayedOpus.h"
 #import "Track.h"
-#import "WebApp.h"
+// #import "WebApp.h"
 
 @implementation OpusPlayerAppDelegate
 {
@@ -161,12 +161,13 @@
         }
         
         // Start a separate thread to run WebApp
-        [ NSThread detachNewThreadSelector:@selector( webAppThreadMethod: ) toTarget:self withObject:nil ];
+        // [ NSThread detachNewThreadSelector:@selector( webAppThreadMethod: ) toTarget:self withObject:nil ];
     }
 
     return self;
 }
 
+/*
 // Run WebApp on a separate thread
 - ( void )webAppThreadMethod:( id )options
 {
@@ -179,6 +180,7 @@
     // Run WebApp
     [ WebApp run ];
 }
+*/
 
 #pragma mark -
 #pragma mark NSOutlineViewDataSource
@@ -895,7 +897,7 @@
 
     fullScreenComposerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
 
-    [ WebApp setComposerOpus:aComposerOpus ];
+    // [ WebApp setComposerOpus:aComposerOpus ];
 }
 
 // Notification from the current opus with the string value for artist
@@ -906,7 +908,7 @@
     [ self setStringValue:anArtist onTextField:_artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anArtist onTextField:_fullScreenArtist withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:10.0 ];
 
-    [ WebApp setArtist:anArtist ];
+    // [ WebApp setArtist:anArtist ];
 }
 
 // Notification from the current opus with the string value for opusPart
@@ -917,7 +919,7 @@
     [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
 
-    [ WebApp setOpusPart:anOpusPart ];
+    // [ WebApp setOpusPart:anOpusPart ];
 }
 
 // Notification from the current opus of the opus track duration

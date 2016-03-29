@@ -24,8 +24,6 @@
 		B1D56DCF16710A620021D240 /* Opus.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D56DCE16710A620021D240 /* Opus.m */; };
 		B1DA16E616E39015005D09DC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1DA16E516E39015005D09DC /* Security.framework */; };
 		B1E382DA1685FD7D00ABC7D2 /* CurrentOpus.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E382D91685FD7D00ABC7D2 /* CurrentOpus.m */; };
-		B1EE23EF16ECA41100BD428B /* WebAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1EE23EE16ECA41100BD428B /* WebAppKit.framework */; };
-		B1EE23F116ECA67600BD428B /* WebAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1EE23EE16ECA41100BD428B /* WebAppKit.framework */; };
 		B1EE23F416ECAC1200BD428B /* WebApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EE23F316ECAC1200BD428B /* WebApp.m */; };
 /* End PBXBuildFile section */
 
@@ -46,7 +44,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B1EE23F116ECA67600BD428B /* WebAppKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,7 +81,6 @@
 		B1E382D61685FCE600ABC7D2 /* CurrentOpusDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CurrentOpusDelegate.h; sourceTree = "<group>"; };
 		B1E382D81685FD7D00ABC7D2 /* CurrentOpus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentOpus.h; sourceTree = "<group>"; };
 		B1E382D91685FD7D00ABC7D2 /* CurrentOpus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CurrentOpus.m; sourceTree = "<group>"; };
-		B1EE23EE16ECA41100BD428B /* WebAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebAppKit.framework; sourceTree = "<group>"; };
 		B1EE23F216ECAC1200BD428B /* WebApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApp.h; sourceTree = "<group>"; };
 		B1EE23F316ECAC1200BD428B /* WebApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebApp.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -98,7 +94,6 @@
 				B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */,
 				B1204A98168A5F57004378A3 /* IOKit.framework in Frameworks */,
 				B1DA16E616E39015005D09DC /* Security.framework in Frameworks */,
-				B1EE23EF16ECA41100BD428B /* WebAppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +138,6 @@
 		B16DC3B8166B5F220003B297 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B1EE23EE16ECA41100BD428B /* WebAppKit.framework */,
 				B1DA16E516E39015005D09DC /* Security.framework */,
 				B1204A97168A5F57004378A3 /* IOKit.framework */,
 				B11155D816727EE60016C406 /* AVFoundation.framework */,
