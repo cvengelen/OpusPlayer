@@ -24,7 +24,6 @@
 		B1D56DCF16710A620021D240 /* Opus.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D56DCE16710A620021D240 /* Opus.m */; };
 		B1DA16E616E39015005D09DC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1DA16E516E39015005D09DC /* Security.framework */; };
 		B1E382DA1685FD7D00ABC7D2 /* CurrentOpus.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E382D91685FD7D00ABC7D2 /* CurrentOpus.m */; };
-		B1EE23F416ECAC1200BD428B /* WebApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EE23F316ECAC1200BD428B /* WebApp.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,15 +73,12 @@
 		B18EFDBA167F9690003B2371 /* Track.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Track.m; sourceTree = "<group>"; };
 		B1CAEC6D16B07659006BCACA /* HIDRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDRemote.h; sourceTree = "<group>"; };
 		B1CAEC6E16B07659006BCACA /* HIDRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HIDRemote.m; sourceTree = "<group>"; };
-		B1CBE4E116FA27E7009E9A28 /* WebAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAppDelegate.h; sourceTree = "<group>"; };
 		B1D56DCD16710A620021D240 /* Opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opus.h; sourceTree = "<group>"; };
 		B1D56DCE16710A620021D240 /* Opus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Opus.m; sourceTree = "<group>"; };
 		B1DA16E516E39015005D09DC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		B1E382D61685FCE600ABC7D2 /* CurrentOpusDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CurrentOpusDelegate.h; sourceTree = "<group>"; };
 		B1E382D81685FD7D00ABC7D2 /* CurrentOpus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentOpus.h; sourceTree = "<group>"; };
 		B1E382D91685FD7D00ABC7D2 /* CurrentOpus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CurrentOpus.m; sourceTree = "<group>"; };
-		B1EE23F216ECAC1200BD428B /* WebApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApp.h; sourceTree = "<group>"; };
-		B1EE23F316ECAC1200BD428B /* WebApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebApp.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,9 +162,6 @@
 				B1E382D91685FD7D00ABC7D2 /* CurrentOpus.m */,
 				B1CAEC6D16B07659006BCACA /* HIDRemote.h */,
 				B1CAEC6E16B07659006BCACA /* HIDRemote.m */,
-				B1CBE4E116FA27E7009E9A28 /* WebAppDelegate.h */,
-				B1EE23F216ECAC1200BD428B /* WebApp.h */,
-				B1EE23F316ECAC1200BD428B /* WebApp.m */,
 			);
 			path = OpusPlayer;
 			sourceTree = "<group>";
@@ -263,7 +256,6 @@
 				B18EFDBB167F9690003B2371 /* Track.m in Sources */,
 				B1E382DA1685FD7D00ABC7D2 /* CurrentOpus.m in Sources */,
 				B1CAEC6F16B07659006BCACA /* HIDRemote.m in Sources */,
-				B1EE23F416ECAC1200BD428B /* WebApp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

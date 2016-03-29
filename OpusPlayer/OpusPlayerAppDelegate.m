@@ -12,7 +12,6 @@
 #import "OpusPlayerAppDelegate.h"
 #import "PlayedOpus.h"
 #import "Track.h"
-// #import "WebApp.h"
 
 @implementation OpusPlayerAppDelegate
 {
@@ -159,28 +158,10 @@
                 NSLog( @"HID remote failure" );
             }
         }
-        
-        // Start a separate thread to run WebApp
-        // [ NSThread detachNewThreadSelector:@selector( webAppThreadMethod: ) toTarget:self withObject:nil ];
     }
 
     return self;
 }
-
-/*
-// Run WebApp on a separate thread
-- ( void )webAppThreadMethod:( id )options
-{
-    // Uncomment the following to get some more logging from WebApp
-    // WASetDevelopmentMode(YES);
-
-    // Set self as delegate for WebApp, to get the playOrPause and playNextOpus requests
-    [ WebApp setDelegate:self ];
-
-    // Run WebApp
-    [ WebApp run ];
-}
-*/
 
 #pragma mark -
 #pragma mark NSOutlineViewDataSource
@@ -896,8 +877,6 @@
     composerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
 
     fullScreenComposerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_fullScreenComposerOpus withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
-
-    // [ WebApp setComposerOpus:aComposerOpus ];
 }
 
 // Notification from the current opus with the string value for artist
@@ -907,8 +886,6 @@
     // to avoid that the font used for the artist is larger that the font for the opus
     [ self setStringValue:anArtist onTextField:_artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anArtist onTextField:_fullScreenArtist withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:10.0 ];
-
-    // [ WebApp setArtist:anArtist ];
 }
 
 // Notification from the current opus with the string value for opusPart
@@ -918,8 +895,6 @@
     // to avoid that the font used for the opus part is larger that the font for the opus
     [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
     [ self setStringValue:anOpusPart onTextField:_fullScreenOpusPart withMaximumFontSize:fullScreenComposerOpusFontSize andMinimumFontSize:12.0 ];
-
-    // [ WebApp setOpusPart:anOpusPart ];
 }
 
 // Notification from the current opus of the opus track duration
@@ -1125,34 +1100,6 @@
            
         default:
             NSLog( @"unsupported button: %d", buttonCode );
-    }
-}
-
-
-#pragma mark -
-#pragma mark WebAppDelegate
-
-/////////////////////////////////////////////////////////////////////////////
-// WebApp delegate
-/////////////////////////////////////////////////////////////////////////////
-
-// Request the delegate to play or pause the current opus
--( void )webAppPlayOrPause
-{
-    // NSLog( @"Web Server delegate play or pause" );
-    @synchronized( self )
-    {
-        [ self playOrPause:nil ];
-    }
-}
-
-// Request the delegate to play the next opus
--( void )webAppPlayNextOpus
-{
-    // NSLog( @"Web Server delegate play next opus" );
-    @synchronized( self )
-    {
-        [ self playNextOpus:nil ];
     }
 }
 
