@@ -3,38 +3,104 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FullScreenViewController">
             <connections>
+                <outlet property="ComposerOpusTextField" destination="3uc-u3-1xJ" id="ZmR-kV-EoL"/>
+                <outlet property="artistTextField" destination="Hdm-Th-bjb" id="D5X-Xn-uL3"/>
+                <outlet property="opusPartTextField" destination="mSb-Of-jCM" id="mUz-lr-bnU"/>
+                <outlet property="textBox" destination="hfj-9f-9kY" id="7F0-iZ-qoq"/>
+                <outlet property="timeTextField" destination="yUG-Md-VYq" id="Tp5-92-1CL"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <rect key="frame" x="0.0" y="0.0" width="1980" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZUT-he-Xd4">
-                    <rect key="frame" x="84" y="196" width="115" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Full screen view" id="dor-3n-zqA">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                <box autoresizesSubviews="NO" transparent="YES" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="hfj-9f-9kY">
+                    <rect key="frame" x="28" y="643" width="967" height="359"/>
+                    <view key="contentView" id="z15-UZ-PlS">
+                        <rect key="frame" x="0.0" y="0.0" width="967" height="359"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="3uc-u3-1xJ">
+                                <rect key="frame" x="16" y="244" width="933" height="110"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="929" id="evF-uZ-8m6"/>
+                                    <constraint firstAttribute="height" constant="110" id="ghG-Go-hUO"/>
+                                </constraints>
+                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Composer: Opus (total duration)" id="Ehj-JD-eb5">
+                                    <font key="font" metaFont="systemBold" size="40"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="mSb-Of-jCM">
+                                <rect key="frame" x="16" y="114" width="933" height="110"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="110" id="wIc-ob-dyO"/>
+                                </constraints>
+                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Opus Part (details)" id="TOF-or-7pX">
+                                    <font key="font" metaFont="systemBold" size="40"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="Hdm-Th-bjb">
+                                <rect key="frame" x="16" y="-16" width="933" height="110"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="110" id="f3H-ri-lLm"/>
+                                </constraints>
+                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Artist" id="6aX-Vw-EBk">
+                                    <font key="font" metaFont="systemBold" size="40"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Hdm-Th-bjb" firstAttribute="top" secondItem="mSb-Of-jCM" secondAttribute="bottom" constant="20" id="0n9-ks-hGZ"/>
+                            <constraint firstItem="3uc-u3-1xJ" firstAttribute="top" secondItem="z15-UZ-PlS" secondAttribute="top" constant="5" id="Eaz-01-N0J"/>
+                            <constraint firstItem="3uc-u3-1xJ" firstAttribute="trailing" secondItem="mSb-Of-jCM" secondAttribute="trailing" id="VcS-W0-cV7"/>
+                            <constraint firstItem="3uc-u3-1xJ" firstAttribute="leading" secondItem="mSb-Of-jCM" secondAttribute="leading" id="WM2-ZA-Kec"/>
+                            <constraint firstAttribute="trailing" secondItem="3uc-u3-1xJ" secondAttribute="trailing" constant="20" symbolic="YES" id="YJc-lC-Mqd"/>
+                            <constraint firstItem="mSb-Of-jCM" firstAttribute="top" secondItem="3uc-u3-1xJ" secondAttribute="bottom" constant="20" id="ZOW-yZ-GSr"/>
+                            <constraint firstItem="mSb-Of-jCM" firstAttribute="trailing" secondItem="Hdm-Th-bjb" secondAttribute="trailing" id="ajA-AG-dO5"/>
+                            <constraint firstItem="mSb-Of-jCM" firstAttribute="leading" secondItem="Hdm-Th-bjb" secondAttribute="leading" id="eHr-mO-JaO"/>
+                        </constraints>
+                    </view>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="961" id="fBX-tD-jfC"/>
+                        <constraint firstAttribute="height" constant="353" id="jOE-9h-ty7"/>
+                    </constraints>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yUG-Md-VYq">
+                    <rect key="frame" x="1825" y="980" width="127" height="56"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="56" id="CfY-ce-5X6"/>
+                        <constraint firstAttribute="width" constant="123" id="cGW-h5-yKl"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" placeholderString="Time" id="ZkA-VH-5Yy">
+                        <font key="font" metaFont="systemBold" size="40"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0YB-TO-tTD">
-                    <rect key="frame" x="122" y="99" width="124" height="32"/>
-                    <buttonCell key="cell" type="push" title="Exit full screen" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cbi-ZX-wug">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="exitFullScreen:" target="-2" id="3g8-K4-dKm"/>
-                    </connections>
-                </button>
             </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="yUG-Md-VYq" secondAttribute="trailing" constant="30" id="9Rd-kC-dlt"/>
+                <constraint firstItem="yUG-Md-VYq" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="44" id="FFN-xQ-PJY"/>
+                <constraint firstItem="hfj-9f-9kY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="31" id="rBg-F3-QhE"/>
+                <constraint firstItem="hfj-9f-9kY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="80" id="xMA-xH-2FA"/>
+            </constraints>
+            <point key="canvasLocation" x="705" y="560"/>
         </customView>
     </objects>
 </document>

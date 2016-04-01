@@ -12,11 +12,13 @@
 #import "Track.h"
 #import "PlayedOpus.h"
 
-// @interface NormalViewController ()
-
-// @end
-
 @implementation NormalViewController {
+    // The OpusPlayerAppDelegate for sending the played opus items to
+    OpusPlayerAppDelegate *opusPlayerAppDelegate;
+
+    // The full screen view controller, needs to know the current opus
+    FullScreenViewController *fullScreenViewController;
+
     // The iTunes music dictionary
     NSDictionary* iTunesMusicDictionary;
     
@@ -50,10 +52,16 @@
 @synthesize opusItems;
 @synthesize currentOpusCurrentTime;
 
-- (id)init {
+- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)anOpusPlayerAppDelegate andWithFullScreenViewController:(FullScreenViewController *)anFullScreenViewController {
     self = [super initWithNibName:@"NormalViewController" bundle:nil];
     if (self) {
         [self setTitle:@"Opus Player Normal View"];
+
+        // Save the OpusPlayerAppDelegate, for sending the played opus items to
+        opusPlayerAppDelegate = anOpusPlayerAppDelegate;
+
+        // Save the full screen view controller, for sending the current opus, artist, etc.
+        fullScreenViewController = anFullScreenViewController;
 
         // Get path to Music directy under user home
         NSString* iTunesMusicLibraryPath = [ NSSearchPathForDirectoriesInDomains( NSMusicDirectory, NSUserDomainMask, YES ) objectAtIndex:0 ];
@@ -767,15 +775,9 @@
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
     NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
     playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
-    
-    // Notify the array controller that the contents will be changed
-    // [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
-    
-    // Add the played opus item to the array with played opus items
-    // [ playedOpusItems addObject:playedOpus ];
-    
-    // Notify the array controller that the contents has been changed
-    // [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
+
+    // Send the played opus to the opus player app delegate
+    [opusPlayerAppDelegate addPlayedOpus:playedOpus];
 }
 
 // Set a string in a text field, adjusting the font size if the string does not fit
@@ -834,6 +836,9 @@
 -( void )setStringComposerOpus:( NSString* )aComposerOpus
 {
     composerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+
+    // Also set the composer and opus in the full screen view
+    [fullScreenViewController setStringComposerOpus:aComposerOpus];
 }
 
 // Notification from the current opus with the string value for artist
@@ -842,6 +847,9 @@
     // Use the font size selected for the composerOpus output as maximum,
     // to avoid that the font used for the artist is larger that the font for the opus
     [ self setStringValue:anArtist onTextField:_artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+
+    // Also set the artist in the full screen view
+    [fullScreenViewController setStringArtist:anArtist];
 }
 
 // Notification from the current opus with the string value for opusPart
@@ -850,6 +858,9 @@
     // Use the font size selected for the composerOpus output as maximum,
     // to avoid that the font used for the opus part is larger that the font for the opus
     [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+    
+    // Also set the opus part in the full screen view
+    [fullScreenViewController setStringOpusPart:anOpusPart];
 }
 
 // Notification from the current opus of the opus track duration

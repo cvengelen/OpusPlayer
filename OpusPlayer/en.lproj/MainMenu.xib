@@ -1358,27 +1358,33 @@
         <window identifier="testFullScreenWindow" title="TestFullScreen" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="whj-0V-vrk">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="207" width="877" height="624"/>
+            <rect key="contentRect" x="196" y="207" width="877" height="629"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="IAL-ur-F7B">
-                <rect key="frame" x="0.0" y="0.0" width="877" height="624"/>
+                <rect key="frame" x="0.0" y="0.0" width="877" height="629"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box fixedFrame="YES" title="Box" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3p2-bb-tc8">
-                        <rect key="frame" x="0.0" y="0.0" width="877" height="624"/>
-                        <view key="contentView" ambiguous="YES" id="EYz-v4-FOp">
-                            <rect key="frame" x="0.0" y="0.0" width="877" height="624"/>
+                    <box borderWidth="0.0" title="Box" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3p2-bb-tc8">
+                        <rect key="frame" x="0.0" y="0.0" width="883" height="635"/>
+                        <view key="contentView" id="EYz-v4-FOp">
+                            <rect key="frame" x="0.0" y="0.0" width="883" height="635"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         </view>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                 </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="3p2-bb-tc8" secondAttribute="bottom" constant="4" id="ZCR-sP-cmu"/>
+                    <constraint firstItem="3p2-bb-tc8" firstAttribute="leading" secondItem="IAL-ur-F7B" secondAttribute="leading" constant="3" id="ai0-Jt-vXr"/>
+                    <constraint firstAttribute="trailing" secondItem="3p2-bb-tc8" secondAttribute="trailing" constant="-3" id="hGG-7L-s3K"/>
+                    <constraint firstItem="3p2-bb-tc8" firstAttribute="top" secondItem="IAL-ur-F7B" secondAttribute="top" constant="-4" id="p4C-uW-OHu"/>
+                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="494" id="Q0r-Sg-sFZ"/>
             </connections>
-            <point key="canvasLocation" x="-310.5" y="536.5"/>
+            <point key="canvasLocation" x="-276" y="567.5"/>
         </window>
     </objects>
 </document>

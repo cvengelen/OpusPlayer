@@ -7,10 +7,21 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "OpusPlayerAppDelegate.h"
 
 @interface FullScreenViewController : NSViewController
 
-- (id)init:(OpusPlayerAppDelegate *)opusPlayerAppDelegateIn;
+@property (weak) IBOutlet NSBox       *textBox;
+@property (weak) IBOutlet NSTextField *opusPartTextField;
+@property (weak) IBOutlet NSTextField *artistTextField;
+@property (weak) IBOutlet NSTextField *ComposerOpusTextField;
+
+@property (weak) IBOutlet NSTextField *timeTextField;
+
+-(void) windowDidEnterFullScreen;
+-(void) windowDidExitFullScreen;
+
+-(void) setStringComposerOpus:( NSString* )aComposerOpus;
+-(void) setStringArtist:( NSString* )anArtist;
+-(void) setStringOpusPart:( NSString* )anOpusPart;
 
 @end

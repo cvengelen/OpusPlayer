@@ -7,10 +7,17 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
+#import "OpusPlayerAppDelegate.h"
+#import "FullScreenViewController.h"
 #import "CurrentOpus.h"
 
 @interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate>
 
+// Initialise with a pointer to the full screen view controller
+- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)anOpusPlayerAppDelegate andWithFullScreenViewController:(FullScreenViewController *)anFullScreenViewController;
+
+// The array containing the collected opus items from a playlist
 @property (readwrite) NSMutableArray *opusItems;
 
 // The outline view with the iTunes playlists overview

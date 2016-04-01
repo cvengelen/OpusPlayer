@@ -10,7 +10,7 @@
 #import <IOKit/pwr_mgt/IOPMLib.h>
 
 #import "OpusPlayerAppDelegate.h"
-#import "PlayedOpus.h"
+#import "CurrentOpus.h"
 #import "Track.h"
 
 #import "NormalViewController.h"
@@ -166,8 +166,8 @@
             }
         }
 
-        fullScreenViewController = [[FullScreenViewController alloc] init:self];
-        normalViewController = [[NormalViewController alloc] init];
+        fullScreenViewController = [[FullScreenViewController alloc] init];
+        normalViewController = [[NormalViewController alloc] initWithOpusPlayerAppDelegate:self andWithFullScreenViewController:fullScreenViewController];
     }
 
     return self;
@@ -520,6 +520,7 @@
         }
     } else if ( [ window.identifier isEqualToString:@"testFullScreenWindow" ] ) {
         NSLog( @"test full screen window did enter full screen" );
+        [fullScreenViewController windowDidEnterFullScreen];
         NSView *view = [fullScreenViewController view];
         [_testFullScreenBox setContentView:view];
     }
@@ -548,6 +549,7 @@
         }
     } else if ( [ window.identifier isEqualToString:@"testFullScreenWindow" ] ) {
         NSLog( @"test full screen window did exit full screen" );
+        [fullScreenViewController windowDidExitFullScreen];
         NSView *view = [normalViewController view];
         [_testFullScreenBox setContentView:view];
     }
@@ -833,7 +835,11 @@
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
     NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
     playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
-    
+
+    [self addPlayedOpus:playedOpus];
+}
+
+- (void) addPlayedOpus:(PlayedOpus*)playedOpus {
     // Notify the array controller that the contents will be changed
     [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
 
