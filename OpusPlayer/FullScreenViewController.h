@@ -7,7 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "OpusPlayerAppDelegate.h"
 
 @interface FullScreenViewController : NSViewController
+
+- (id)init:(OpusPlayerAppDelegate *)opusPlayerAppDelegateIn;
 
 @end

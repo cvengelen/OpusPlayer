@@ -12,11 +12,26 @@
 
 @end
 
-@implementation FullScreenViewController
+@implementation FullScreenViewController {
+    OpusPlayerAppDelegate *opusPlayerAppDelegate;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do view setup here.
+}
+
+- (id)init:(OpusPlayerAppDelegate *)opusPlayerAppDelegateIn {
+    self = [super initWithNibName:@"FullScreenViewController" bundle:nil];
+    if (self) {
+        [self setTitle:@"Normal"];
+        opusPlayerAppDelegate = opusPlayerAppDelegateIn;
+    }
+    return self;
+}
+
+- (IBAction)exitFullScreen:(NSButton *)sender {
+    [opusPlayerAppDelegate toggleTestFullScreen];
 }
 
 @end
