@@ -13,9 +13,12 @@
 #import "PlayedOpus.h"
 #import "Track.h"
 
+#import "NormalViewController.h"
+#import "FullScreenViewController.h"
+
 @implementation OpusPlayerAppDelegate
 {
-    // The complete iTuns music dictionary (all 10 Mb)
+    // The complete iTunes music dictionary (all 10 Mb)
     NSDictionary* iTunesMusicDictionary;
     
     // All child playlists of a parent playlist, key is the persistent ID of the parent playlist
@@ -56,6 +59,10 @@
     // Selected composer and artist
     NSString *selectedComposer;
     NSString *selectedArtist;
+
+    // Normal and full screen view controllers
+    NormalViewController *normalViewController;
+    FullScreenViewController *fullScreenViewController;
 }
 
 @synthesize opusItems;
@@ -158,6 +165,9 @@
                 NSLog( @"HID remote failure" );
             }
         }
+
+        fullScreenViewController = [[FullScreenViewController alloc] init:self];
+        normalViewController = [[NormalViewController alloc] init];
     }
 
     return self;
@@ -508,6 +518,10 @@
         {
             NSLog( @"IOPMAssertionCreateWithName failed with error code %d", assertionCreateWithNameReturn );
         }
+    } else if ( [ window.identifier isEqualToString:@"testFullScreenWindow" ] ) {
+        NSLog( @"test full screen window did enter full screen" );
+        NSView *view = [fullScreenViewController view];
+        [_testFullScreenBox setContentView:view];
     }
 }
 
@@ -532,7 +546,15 @@
         {
             NSLog( @"IOPMAssertionRelease failed with error code %d", assertionCreateWithNameReturn );
         }
+    } else if ( [ window.identifier isEqualToString:@"testFullScreenWindow" ] ) {
+        NSLog( @"test full screen window did exit full screen" );
+        NSView *view = [normalViewController view];
+        [_testFullScreenBox setContentView:view];
     }
+}
+
+-( void )toggleTestFullScreen {
+    [_testFullScreenWindow toggleFullScreen:self];
 }
 
 -( void )setFullScreenTime
@@ -637,6 +659,9 @@
 
     // Set the minimum slider value
     _currentTimeSlider.minValue = 0;
+
+    // Initialise the test full screen box with the normal container view
+    [_testFullScreenBox setContentView:[normalViewController view]];
 }
 
 // NSApplicationDelegate: Sent by the default notification center immediately before the application terminates
@@ -649,12 +674,12 @@
     if ( fullScreenTimer ) [ fullScreenTimer invalidate ];
 }
 
+#pragma mark -
+#pragma mark Button actions
+
 /////////////////////////
 // Button actions
 /////////////////////////
-
-#pragma mark -
-#pragma mark Button actions
 
 // Play the previous opus part
 - (IBAction)playPreviousOpusPart:(id)sender

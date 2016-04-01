@@ -54,4 +54,9 @@
 - (IBAction)composersEndEditing:(NSComboBox *)sender;
 - (IBAction)artistsEndEditing:(NSComboBox *)sender;
 
+@property (weak) IBOutlet NSWindow *testFullScreenWindow;
+@property (weak) IBOutlet NSBox *testFullScreenBox;
+
+-( void )toggleTestFullScreen;
+
 @end
