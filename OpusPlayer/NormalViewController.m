@@ -10,10 +10,11 @@
 
 #import "Opus.h"
 #import "Track.h"
+#import "PlayedOpus.h"
 
-@interface NormalViewController ()
+// @interface NormalViewController ()
 
-@end
+// @end
 
 @implementation NormalViewController {
     // The iTunes music dictionary
@@ -31,16 +32,23 @@
     // Selected composer and artist
     NSString *selectedComposer;
     NSString *selectedArtist;
-
-}
-
-@synthesize opusItems;
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do view setup here.
     
+    // Current playing opus item
+    CurrentOpus* currentOpus;
+    
+    // All opus items played during the current shuffle, reset after all opus items have been played
+    NSMutableArray* shuffledOpusItems;
+
+    // Font size of the composerOpus string
+    CGFloat composerOpusFontSize;
+
+    // Current time of the currently playing opus track
+    NSNumber *currentOpusCurrentTime;
 }
+
+// Synthesize the get/set methods
+@synthesize opusItems;
+@synthesize currentOpusCurrentTime;
 
 - (id)init {
     self = [super initWithNibName:@"NormalViewController" bundle:nil];
@@ -107,6 +115,34 @@
     return self;
 }
 
+// Called when the view controller’s view has been loaded into memory.
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // Disable all player buttons: there is nothing to play yet.
+    [ _previousOpusPartButton setEnabled:NO ];
+    [ _playOrPauseButton setEnabled:NO ];
+    [ _nextOpusPartButton setEnabled:NO ];
+    [ _nextOpusButton setEnabled:NO ];
+    [ _shuffleButton setEnabled:NO ];
+    
+    // Set the default sorting of the play list tableview on composer, opus and artist (suitable for classical music)
+    // Define the sort descriptors for composer, opus name (special) and artist
+    NSSortDescriptor* composerSortDescriptor = [ NSSortDescriptor sortDescriptorWithKey:@"composer" ascending:YES ];
+    // Use numeric search in opus name sort descriptor: numeric fields are sorted numerically (magically).
+    NSSortDescriptor* opusNameSortDescription = [ NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES comparator:^(id name1, id name2) {
+        return [ name1 compare:name2 options:NSNumericSearch ];
+    } ];
+    NSSortDescriptor* artistSortDescriptor   = [ NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES ];
+    
+    // Sort the play list tableview on composer, opus name, and artist
+    NSArray* playListSortDescriptors = [ NSArray arrayWithObjects:composerSortDescriptor, opusNameSortDescription, artistSortDescriptor, nil ];
+    [ _playListArrayController setSortDescriptors:playListSortDescriptors ];
+
+    // Set the minimum slider value
+    _currentTimeSlider.minValue = 0;
+}
+
 #pragma mark -
 #pragma mark NSOutlineViewDataSource
 
@@ -150,7 +186,6 @@
     // NSLog( @"outline view retrieves item for item %@", [ item objectForKey:@"Name" ] );
     return [ item objectForKey:@"Name" ];
 }
-
 
 #pragma mark -
 #pragma mark NSOutlineViewDelegate
@@ -354,7 +389,6 @@
     if ( [ _composersComboBox isEnabled ] && [ _artistsComboBox isEnabled ] ) [ _selectItemsTextField setStringValue:@"Select composer/artist:" ];
     else [ _selectItemsTextField setStringValue:@"" ];
     
-    /*
     // Check if the playlist tableview actually contains on or more opus items
     if ( [ _playListArrayController.arrangedObjects count ] > 0 )
     {
@@ -374,7 +408,6 @@
         // Disable playing a random opus item from the playlist
         [ _nextOpusButton setEnabled:NO ];
     }
-     */
 }
 
 
@@ -519,5 +552,317 @@
     [ self filterPlaylistOnComposerAndArtist ];
 }
 
+#pragma mark -
+#pragma mark NSTableViewDelegate
+
+// NSTableViewDelegate: Informs the delegate that the table view’s selection has changed
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification
+{
+    // Get the index of the selected row in the playlist tableview
+    NSInteger selectedRowIndex = [ _playlistTableView selectedRow ];
+    
+    // Return if a selection has been removed, in which case the selected row is -1
+    if ( selectedRowIndex < 0 ) return;
+    
+    // Check if there is already a current opus
+    if ( currentOpus )
+    {
+        // Check if the current opus already equals the opus item at the selected index,
+        // which means that the row is being automatically selected by playNextOpus.
+        // In that case this method does not need to take any action.
+        if ( [ currentOpus.opus isEqual:[ [ _playListArrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ] ] ) return;
+        
+        // NSLog( @"Selected play list row changed manually: stop playing current opus %@", currentOpus.opus.name );
+        
+        // Release the audio hardware
+        [ currentOpus stopPlaying ];
+        
+        // update the played opus items
+        [ self updatePlayedOpusItems ];
+    }
+    
+    // Get the new selected opus item from the playlist table
+    Opus* opus = [ [ _playListArrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ];
+    if ( [ opus.tracks count ] == 0 )
+    {
+        NSLog( @"tracks empty" );
+        return;
+    }
+    // NSLog( @"Selected play list row changed manually: start playing opus %@", opus.name );
+    
+    // Initialize a new current opus with the selected opus item
+    // (let ARM delete the previous current opus)
+    currentOpus = [ [ CurrentOpus alloc ] initWithOpus:opus andDelegate:self ];
+    
+    // Start playing the opus item
+    [ currentOpus startPlaying ];
+}
+
+#pragma mark -
+#pragma mark Button actions
+
+/////////////////////////
+// Button actions
+/////////////////////////
+
+// Play the previous opus part
+- (IBAction)playPreviousOpusPart:(id)sender
+{
+    // play the previous opus part of the current opus
+    [ currentOpus playPreviousOpusPart ];
+}
+
+// Play or pause
+- (IBAction)playOrPause:(id)sender
+{
+    // Play the current opus if paused, or pause if playing
+    [ currentOpus playOrPause ];
+}
+
+// Play the next opus part
+- (IBAction)playNextOpusPart:(id)sender
+{
+    // play the next opus part of the current opus
+    [ currentOpus playNextOpusPart ];
+}
+
+// Play the next opus
+- (IBAction)playNextOpus:(id)sender
+{
+    // Check if there is a current opus
+    if ( currentOpus )
+    {
+        // stop playing the current opus
+        [ currentOpus stopPlaying ];
+        
+        // update the played opus items
+        [ self updatePlayedOpusItems ];
+        
+        // Add the opus to the list of shuffled opus items
+        [ shuffledOpusItems addObject:currentOpus ];
+    }
+    
+    // Get a random new opus from the opus items in the selected playlist,
+    // with the played opus items removed
+    
+    // Initialise an array with the opus items in the playlist: the arranged objects from the array controller
+    NSMutableArray* remainingOpusItems = [ NSMutableArray arrayWithArray:[ _playListArrayController arrangedObjects ] ];
+    NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
+    
+    // Remove the already shuffled items from the playlist
+    for ( CurrentOpus* shuffledOpusItem in shuffledOpusItems )
+    {
+        [ remainingOpusItems removeObject:shuffledOpusItem.opus ];
+    }
+    NSLog( @"#remaining opus items in playlist after removing shuffled opus items: %ld", [ remainingOpusItems count ] );
+    
+    // Check if all items in the playlist have been played
+    if ( [ remainingOpusItems count ] == 0 )
+    {
+        // Use all items again
+        [ shuffledOpusItems removeAllObjects ];
+        NSLog( @"restart shuffle: list of shuffled opus items cleared" );
+        
+        remainingOpusItems = [ NSMutableArray arrayWithArray:[ _playListArrayController arrangedObjects ] ];
+        NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
+    }
+    
+    // Try removing the composer from the remaining list of opus items
+    NSPredicate* predicate = [ NSPredicate predicateWithFormat:@"!( composer like[cd] %@ )", currentOpus.opus.composer ];
+    NSArray* remainingOpusItemsAfterRemovingComposer = [ remainingOpusItems filteredArrayUsingPredicate:predicate ];
+    NSLog( @"#filtered remaining opus items after removing composer %@: %ld",
+          currentOpus.opus.composer, [ remainingOpusItemsAfterRemovingComposer count ] );
+    
+    // Check if there are opus items left after removing the opus items with the same composer
+    if ( [ remainingOpusItemsAfterRemovingComposer count ] != 0 )
+    {
+        // Continue with the filtered list of opus items
+        remainingOpusItems = [ NSMutableArray arrayWithArray:remainingOpusItemsAfterRemovingComposer ];
+    }
+    
+    // Try removing the artist from the filtered remaining list of opus items
+    predicate = [ NSPredicate predicateWithFormat:@"!( artist like[cd] %@ )", currentOpus.opus.artist ];
+    NSArray* remainingOpusItemsAfterRemovingArtist = [ remainingOpusItems filteredArrayUsingPredicate:predicate ];
+    NSLog( @"#filtered remaining opus items after removing artist %@: %ld",
+          currentOpus.opus.artist, [ remainingOpusItemsAfterRemovingArtist count ] );
+    
+    // Check if there are opus items left after removing the opus items with the same artist
+    if ( [ remainingOpusItemsAfterRemovingArtist count ] != 0 )
+    {
+        // Continue with the filtered list of opus items
+        remainingOpusItems = [ NSMutableArray arrayWithArray:remainingOpusItemsAfterRemovingArtist ];
+    }
+    
+    // Use a random index to get an opus item from the list of remaining opus items
+    int remainingOpusItemsIndex = arc4random( ) % [ remainingOpusItems count ];
+    Opus* opus = [ remainingOpusItems objectAtIndex:remainingOpusItemsIndex ];
+    if ( [ opus.tracks count ] == 0 )
+    {
+        NSLog( @"tracks empty" );
+        return;
+    }
+    NSLog( @"Play next opus %@", opus.name );
+    
+    // Initialize a new current opus item
+    // (let ARM delete the previous current opus)
+    currentOpus = [ [ CurrentOpus alloc ] initWithOpus:opus andDelegate:self ];
+    
+    // Start playing the current opus item
+    [ currentOpus startPlaying ];
+    
+    // Set the selected opus item in the play list table view to the index of the selected opus item in the array of arranged objects.
+    // This must be done via the array controller (because of sorting the input array by the array controller)
+    [ _playListArrayController setSelectionIndex:[ [ _playListArrayController arrangedObjects ] indexOfObject:opus ] ];
+    
+    // Make sure the selected row in the play list table view is visible
+    [ _playlistTableView scrollRowToVisible:[ _playlistTableView selectedRow ] ];
+}
+
+// Shuffle is activated or deactivated
+- (IBAction)shuffleOpusItemsFromPlaylist:(id)sender
+{
+    // Check if there is no current opus playing, and shuffle is activated
+    if ( ( ( currentOpus == nil ) || !currentOpus.isPlaying ) &&
+        ( [ _shuffleButton state ] == NSOnState ) )
+    {
+        // Shuffle is activated, and there is no current opus item playing: start playing a randomly chosen opus.
+        // If an opus is finished, continue with another randomly chosen opus.
+        // See CurrentOpusDelegate method opusDidFinishPlaying
+        
+        // Play an opus item, chosen randomly
+        [ self playNextOpus:nil ];
+    }
+}
+
+#pragma mark -
+#pragma mark Time slider action
+
+/////////////////////////
+// Time slider action
+/////////////////////////
+
+- (IBAction)setCurrentTime:(NSSlider *)currentTimeSlider
+{
+    [ currentOpus setCurrentTime:[ currentTimeSlider floatValue ] ];
+}
+
+#pragma mark -
+#pragma mark Helper methods
+
+/////////////////////////////
+// Helper methods
+/////////////////////////////
+
+#pragma mark -
+#pragma mark Helper methods
+
+// Update the played opus items
+- (void)updatePlayedOpusItems
+{
+    PlayedOpus* playedOpus = [ [ PlayedOpus alloc ] init ];
+    playedOpus.opus = currentOpus.opus;
+    playedOpus.atDate = currentOpus.startsPlayingDate;
+    
+    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
+    playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
+    
+    // Notify the array controller that the contents will be changed
+    // [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
+    
+    // Add the played opus item to the array with played opus items
+    // [ playedOpusItems addObject:playedOpus ];
+    
+    // Notify the array controller that the contents has been changed
+    // [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
+}
+
+// Set a string in a text field, adjusting the font size if the string does not fit
+-( CGFloat )setStringValue:( NSString* )aString onTextField:( NSTextField* )aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize
+{
+    NSFont* textFieldFont = [ aTextField font ];
+    NSDictionary* fontAttributes;
+    NSSize stringSize;
+    // Use a generous margin in the text field width to allow for word wrap (e.g., "blaasinstrumenten" in Mozart's Gran Partita)
+    CGFloat textFieldWidth = 0.8 * aTextField.frame.size.width;
+    CGFloat textFieldHeight = aTextField.frame.size.height;
+    CGFloat fontPointSize = maximumFontSize;
+    
+    // Start at the maximum allowed font size, but don't go below the minimum font size
+    while ( fontPointSize > minimumFontSize )
+    {
+        // Set the font size.
+        textFieldFont = [ NSFont fontWithName:textFieldFont.fontName size:fontPointSize ];
+        // Make a dictionary of the font with as key the font name
+        fontAttributes = [ [ NSDictionary alloc ] initWithObjectsAndKeys:textFieldFont, NSFontAttributeName, nil];
+        // Get the size of the string with the font attributes
+        stringSize = [ aString sizeWithAttributes:fontAttributes ];
+        int nLines = textFieldHeight / stringSize.height;
+        // Break out of the loop if the string fits in the size of the text field, allowing for a little margin
+        if ( stringSize.width < (nLines * textFieldWidth ) ) break;
+        // Try again with a smaller font size
+        fontPointSize -= 1;
+    }
+    
+    // Set the resulting font in the text field
+    [ aTextField setFont:textFieldFont ];
+    
+    // Set the string in the text field
+    [ aTextField setStringValue:aString ];
+    
+    // Return the selected font size
+    return fontPointSize;
+}
+
+#pragma mark -
+#pragma mark CurrentOpusDelegate
+
+/////////////////////////////////////////////////////////////////////////////
+// Current Opus Delegate methods
+/////////////////////////////////////////////////////////////////////////////
+
+// Notification from the current opus that it did finish playing the complete opus (all tracks)
+-( void )opusDidFinishPlaying
+{
+    // Play the next randomly chosen opus if the shuffle button is on
+    // (this is the same as activating the "Next opus" button)
+    if ( [ _shuffleButton state ] == NSOnState ) [ self playNextOpus:nil ];
+}
+
+// Notification from the current opus with the string value for composerOpus
+-( void )setStringComposerOpus:( NSString* )aComposerOpus
+{
+    composerOpusFontSize = [ self setStringValue:aComposerOpus onTextField:_composerOpus withMaximumFontSize:20.0 andMinimumFontSize:8.0 ];
+}
+
+// Notification from the current opus with the string value for artist
+-( void )setStringArtist:( NSString* )anArtist
+{
+    // Use the font size selected for the composerOpus output as maximum,
+    // to avoid that the font used for the artist is larger that the font for the opus
+    [ self setStringValue:anArtist onTextField:_artist withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+}
+
+// Notification from the current opus with the string value for opusPart
+-( void )setStringOpusPart:( NSString* )anOpusPart
+{
+    // Use the font size selected for the composerOpus output as maximum,
+    // to avoid that the font used for the opus part is larger that the font for the opus
+    [ self setStringValue:anOpusPart onTextField:_opusPart withMaximumFontSize:composerOpusFontSize andMinimumFontSize:8.0 ];
+}
+
+// Notification from the current opus of the opus track duration
+-( void )setOpusPartDuration:( NSTimeInterval )duration
+{
+    _currentTimeSlider.maxValue = duration;
+}
+
+// Notify the delegate of the current time of a track
+-( void )setOpusPartCurrentTime:( NSTimeInterval )currentTime
+{
+    // Use the current opus current time setter method to allow for a key-value observer to pick up the value (i.e., the slider)
+    [self setCurrentOpusCurrentTime:[NSNumber numberWithDouble:currentTime] ];
+}
 
 @end

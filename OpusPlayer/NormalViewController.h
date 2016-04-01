@@ -7,17 +7,50 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "CurrentOpus.h"
 
-@interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate>
+@interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate>
 
 @property (readwrite) NSMutableArray *opusItems;
 
+// The outline view with the iTunes playlists overview
 @property (weak) IBOutlet NSOutlineView     *playListsOutlineView;
+
+// The array controller with the opus items shown in the playlist table view
 @property (weak) IBOutlet NSArrayController *playListArrayController;
+
+// The table view with all opus items of the selected playlist
 @property (weak) IBOutlet NSTableView       *playlistTableView;
 
+// The combo box with all composers of the opus items in the playlist table view
 @property (weak) IBOutlet NSComboBox *composersComboBox;
+
+// The combo box with all artists of the opus items in the playlist table view
 @property (weak) IBOutlet NSComboBox *artistsComboBox;
 @property (weak) IBOutlet NSTextField *selectItemsTextField;
+
+- (IBAction)composersEndEditing:(NSComboBox *)sender;
+- (IBAction)artistsEndEditing:(NSComboBox *)sender;
+
+@property (weak) IBOutlet NSButton *previousOpusPartButton;
+@property (weak) IBOutlet NSButton *playOrPauseButton;
+@property (weak) IBOutlet NSButton *nextOpusPartButton;
+@property (weak) IBOutlet NSButton *nextOpusButton;
+@property (weak) IBOutlet NSButton *shuffleButton;
+
+- (IBAction)playPreviousOpusPart:(id)sender;
+- (IBAction)playOrPause:(id)sender;
+- (IBAction)playNextOpusPart:(id)sender;
+- (IBAction)playNextOpus:(id)sender;
+- (IBAction)shuffleOpusItemsFromPlaylist:(id)sender;
+- (IBAction)setCurrentTime:(NSSlider *)sender;
+
+@property (weak) IBOutlet NSTextField *composerOpus;
+@property (weak) IBOutlet NSTextField *opusPart;
+@property (weak) IBOutlet NSTextField *artist;
+
+@property (weak) IBOutlet NSSlider *currentTimeSlider;
+
+@property (readwrite) NSNumber *currentOpusCurrentTime;
 
 @end
