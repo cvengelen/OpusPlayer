@@ -6,9 +6,9 @@
 //  Copyright © 2016 Chris van Engelen. All rights reserved.
 //
 
-#import "PlayedOpusItems.h"
+#import "PlayedOpusItemsWindowController.h"
 
-@implementation PlayedOpusItems {
+@implementation PlayedOpusItemsWindowController {
 
     // All previously played opus items
     NSMutableArray *playedOpusItems;
@@ -22,7 +22,7 @@
     if ( self )
     {
         // Initialise the array with the played opus items
-        // playedOpusItems = [ NSMutableArray arrayWithArray:aPlayedOpusItems ];
+        playedOpusItems = [ NSMutableArray arrayWithArray:aPlayedOpusItems ];
     }
     return self;
 }

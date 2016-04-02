@@ -1,5 +1,5 @@
 //
-//  PlayedOpusItems.h
+//  PlayedOpusItemsWindowController.h
 //  OpusPlayer
 //
 //  Created by Chris van Engelen on 02-04-16.
@@ -9,14 +9,13 @@
 #import <Cocoa/Cocoa.h>
 #import "PlayedOpus.h"
 
-@interface PlayedOpusItems : NSWindowController
+@interface PlayedOpusItemsWindowController : NSWindowController
 
 // The array containing the played opus items
 @property (readwrite) NSMutableArray *playedOpusItems;
 
 // The array controller for the played opus items
 @property (weak) IBOutlet NSArrayController *playedOpusItemsArrayController;
-
 
 - (id)initWithPlayedOpusItems:(NSMutableArray *)aPlayedOpusItems;
 
