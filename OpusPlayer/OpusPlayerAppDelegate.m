@@ -15,6 +15,7 @@
 
 #import "NormalViewController.h"
 #import "FullScreenViewController.h"
+#import "PlayedOpusItemsWindowController.h"
 
 @implementation OpusPlayerAppDelegate
 {
@@ -63,10 +64,12 @@
     // Normal and full screen view controllers
     NormalViewController *normalViewController;
     FullScreenViewController *fullScreenViewController;
+
+    // Played Opus Items window controller
+    PlayedOpusItemsWindowController *playedOpusItemsWindowController;
 }
 
 @synthesize opusItems;
-@synthesize playedOpusItems;
 @synthesize currentOpusCurrentTime;
 
 - ( id )init
@@ -166,8 +169,12 @@
             }
         }
 
+        // Create instances for the full screen and normal view controllers
         fullScreenViewController = [[FullScreenViewController alloc] init];
         normalViewController = [[NormalViewController alloc] initWithOpusPlayerAppDelegate:self andWithFullScreenViewController:fullScreenViewController];
+
+        // Create the played opus items window controller
+        playedOpusItemsWindowController = [[PlayedOpusItemsWindowController alloc] initWithPlayedOpusItems:playedOpusItems];
     }
 
     return self;
@@ -839,15 +846,12 @@
     [self addPlayedOpus:playedOpus];
 }
 
-- (void) addPlayedOpus:(PlayedOpus*)playedOpus {
-    // Notify the array controller that the contents will be changed
-    [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
-
+- (void) addPlayedOpus:(PlayedOpus *)playedOpus {
     // Add the played opus item to the array with played opus items
     [ playedOpusItems addObject:playedOpus ];
-
-    // Notify the array controller that the contents has been changed
-    [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
+    
+    // Send the played opus item to the played opus items window controller
+    [playedOpusItemsWindowController addPlayedOpus:playedOpus];
 }
 
 // Set a string in a text field, adjusting the font size if the string does not fit
@@ -1083,6 +1087,12 @@
     [ self filterPlaylistOnComposerAndArtist ];
 }
 
+#pragma mark -
+#pragma mark Menu
+
+- (IBAction)showPlayedOpusItems:(NSMenuItem *)sender {
+    [playedOpusItemsWindowController showWindow];
+}
 
 #pragma mark -
 #pragma mark HIDRemote

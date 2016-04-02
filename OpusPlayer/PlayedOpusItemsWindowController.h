@@ -17,8 +17,12 @@
 // The array controller for the played opus items
 @property (weak) IBOutlet NSArrayController *playedOpusItemsArrayController;
 
+@property (weak) IBOutlet NSWindow *playedOpusItemsWindow;
+
 - (id)initWithPlayedOpusItems:(NSMutableArray *)aPlayedOpusItems;
 
 - (void)addPlayedOpus:(PlayedOpus *)playedOpus;
+
+- (void)showWindow;
 
 @end

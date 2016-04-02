@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PlayedOpusItemsWindowController">
             <connections>
                 <outlet property="playedOpusItemsArrayController" destination="eQM-IV-tAE" id="dfd-hQ-uH3"/>
+                <outlet property="playedOpusItemsWindow" destination="mhk-Wg-5BC" id="lmb-Vf-fSz"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>

@@ -30,7 +30,9 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
     
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    // Make it possible to close the window (this is not default)
+    // The window can be shown with the menu item "Played opus items"
+    _playedOpusItemsWindow.styleMask |= NSClosableWindowMask;
 }
 
 - (void) addPlayedOpus:(PlayedOpus*)playedOpus {
@@ -42,6 +44,20 @@
     
     // Notify the array controller that the contents has been changed
     [ _playedOpusItemsArrayController didChangeValueForKey:@"arrangedObjects" ];
+}
+
+// Show the played opus items window
+- (void)showWindow {
+    [super showWindow:self];
+    
+    // Check if the window is miniaturized
+    if ([_playedOpusItemsWindow isMiniaturized]) {
+        // Deminiaturize the windows
+        [_playedOpusItemsWindow deminiaturize:self];
+    }
+    
+    // Put the window in front of other windowss
+    [_playedOpusItemsWindow orderFront:self];
 }
 
 @end

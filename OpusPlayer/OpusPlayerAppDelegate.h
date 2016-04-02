@@ -15,14 +15,12 @@
 @interface OpusPlayerAppDelegate : NSObject < NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, NSWindowDelegate, CurrentOpusDelegate, HIDRemoteDelegate >
 
 @property (readwrite) NSMutableArray* opusItems;
-@property (readwrite) NSMutableArray* playedOpusItems;
 @property (readwrite) NSTimeInterval currentOpusCurrentTime;
 
 @property (assign) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 @property (weak) IBOutlet NSArrayController *arrayController;
 @property (weak) IBOutlet NSTableView *playlistTableView;
-@property (weak) IBOutlet NSArrayController *playedOpusItemsArrayController;
 
 - (IBAction)playPreviousOpusPart:(id)sender;
 - (IBAction)playOrPause:(id)sender;
@@ -58,6 +56,6 @@
 @property (weak) IBOutlet NSWindow *testFullScreenWindow;
 @property (weak) IBOutlet NSBox *testFullScreenBox;
 
-- (void) addPlayedOpus:(PlayedOpus*)playedOpus;
+- (void) addPlayedOpus:(PlayedOpus *)playedOpus;
 
 @end

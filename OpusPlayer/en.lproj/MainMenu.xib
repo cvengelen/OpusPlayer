@@ -637,6 +637,13 @@
                                     <action selector="arrangeInFront:" target="-1" id="39"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="4xm-tc-Juj"/>
+                            <menuItem title="Played Opus Items" id="zjv-46-gyx" userLabel="Played Opus Items">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showPlayedOpusItems:" target="494" id="XoW-xP-mfZ"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -710,7 +717,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="540">
-                                            <rect key="frame" x="161" y="23" width="16" height="369"/>
+                                            <rect key="frame" x="162" y="23" width="15" height="369"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" id="539">
@@ -1076,7 +1083,6 @@
                 <outlet property="opusPart" destination="672" id="689"/>
                 <outlet property="outlineView" destination="537" id="559"/>
                 <outlet property="playOrPauseButton" destination="696" id="721"/>
-                <outlet property="playedOpusItemsArrayController" destination="857" id="875"/>
                 <outlet property="playlistTableView" destination="598" id="732"/>
                 <outlet property="previousOpusPartButton" destination="691" id="716"/>
                 <outlet property="selectItems" destination="1518" id="1552"/>
@@ -1099,170 +1105,6 @@
             </connections>
         </arrayController>
         <userDefaultsController representsSharedInstance="YES" id="627"/>
-        <window title="Played opus items" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" showsToolbarButton="NO" animationBehavior="default" id="830" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1254" y="406" width="592" height="554"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
-            <view key="contentView" id="831">
-                <rect key="frame" x="0.0" y="0.0" width="592" height="554"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="832">
-                        <rect key="frame" x="7" y="7" width="578" height="543"/>
-                        <clipView key="contentView" id="m1o-iW-7z3">
-                            <rect key="frame" x="1" y="0.0" width="576" height="542"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="835" id="833">
-                                    <rect key="frame" x="0.0" y="0.0" width="576" height="519"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <size key="intercellSpacing" width="3" height="2"/>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                    <tableColumns>
-                                        <tableColumn editable="NO" width="116" minWidth="40" maxWidth="1000" id="837">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Played at">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="840">
-                                                <dateFormatter key="formatter" dateStyle="short" timeStyle="short" id="872"/>
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                            <connections>
-                                                <binding destination="857" name="value" keyPath="arrangedObjects.atDate" id="874">
-                                                    <dictionary key="options">
-                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
-                                                    </dictionary>
-                                                </binding>
-                                            </connections>
-                                        </tableColumn>
-                                        <tableColumn editable="NO" width="62" minWidth="40" maxWidth="1000" id="838">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Played for">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="839">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                            <connections>
-                                                <binding destination="857" name="value" keyPath="arrangedObjects.forTime" id="865"/>
-                                            </connections>
-                                        </tableColumn>
-                                        <tableColumn editable="NO" width="100" minWidth="10" maxWidth="3.4028234663852886e+38" id="849">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Componist">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="850">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                            <connections>
-                                                <binding destination="857" name="value" keyPath="arrangedObjects.opus.composer" id="867"/>
-                                            </connections>
-                                        </tableColumn>
-                                        <tableColumn editable="NO" width="100" minWidth="10" maxWidth="3.4028234663852886e+38" id="851">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Opus">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="852">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                            <connections>
-                                                <binding destination="857" name="value" keyPath="arrangedObjects.opus.name" id="869"/>
-                                            </connections>
-                                        </tableColumn>
-                                        <tableColumn editable="NO" width="100" minWidth="10" maxWidth="3.4028234663852886e+38" id="853">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Artist">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="854">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                            <connections>
-                                                <binding destination="857" name="value" keyPath="arrangedObjects.opus.artist" id="870"/>
-                                            </connections>
-                                        </tableColumn>
-                                        <tableColumn editable="NO" width="80" minWidth="10" maxWidth="3.4028234663852886e+38" id="855">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="856">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                            <connections>
-                                                <binding destination="857" name="value" keyPath="arrangedObjects.opus.album" id="871"/>
-                                            </connections>
-                                        </tableColumn>
-                                    </tableColumns>
-                                </tableView>
-                            </subviews>
-                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="834">
-                            <rect key="frame" x="1" y="576" width="564" height="16"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="836">
-                            <rect key="frame" x="224" y="17" width="15" height="102"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <tableHeaderView key="headerView" id="835">
-                            <rect key="frame" x="0.0" y="0.0" width="576" height="23"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </tableHeaderView>
-                    </scrollView>
-                </subviews>
-                <constraints>
-                    <constraint firstItem="832" firstAttribute="leading" secondItem="831" secondAttribute="leading" constant="7" id="1693"/>
-                    <constraint firstItem="832" firstAttribute="centerX" secondItem="831" secondAttribute="centerX" id="1694"/>
-                    <constraint firstAttribute="bottom" secondItem="832" secondAttribute="bottom" constant="7" id="1703"/>
-                    <constraint firstItem="832" firstAttribute="top" secondItem="831" secondAttribute="top" constant="4" id="1704"/>
-                </constraints>
-            </view>
-            <point key="canvasLocation" x="695" y="-66"/>
-        </window>
-        <arrayController objectClassName="PlayedOpus" editable="NO" id="857">
-            <declaredKeys>
-                <string>atDate</string>
-                <string>forTime</string>
-                <string>opus.composer</string>
-                <string>opus.name</string>
-                <string>opus.artist</string>
-                <string>opus.album</string>
-            </declaredKeys>
-            <connections>
-                <binding destination="494" name="contentArray" keyPath="playedOpusItems" id="860"/>
-            </connections>
-        </arrayController>
         <window identifier="fullScreenWindow" title="Full screen" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="1227">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
