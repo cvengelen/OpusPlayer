@@ -36,9 +36,6 @@
 
     // Current time of the currently playing opus track
     NSTimeInterval currentOpusCurrentTime;
-    
-    // All previously played opus items
-    NSMutableArray* playedOpusItems;
 
     // All opus items played during the current shuffle, reset after all opus items have been played
     NSMutableArray* shuffledOpusItems;
@@ -133,9 +130,6 @@
         // Initialise the array with the opus items in the playlist
         opusItems = [ NSMutableArray array ];
         
-        // Initialise the array with the played opus items
-        playedOpusItems = [ NSMutableArray array ];
-        
         // Initialise the array with the shuffled opus items
         shuffledOpusItems = [ NSMutableArray array ];
 
@@ -174,7 +168,7 @@
         normalViewController = [[NormalViewController alloc] initWithOpusPlayerAppDelegate:self andWithFullScreenViewController:fullScreenViewController];
 
         // Create the played opus items window controller
-        playedOpusItemsWindowController = [[PlayedOpusItemsWindowController alloc] initWithPlayedOpusItems:playedOpusItems];
+        playedOpusItemsWindowController = [[PlayedOpusItemsWindowController alloc] init];
     }
 
     return self;
@@ -847,9 +841,6 @@
 }
 
 - (void) addPlayedOpus:(PlayedOpus *)playedOpus {
-    // Add the played opus item to the array with played opus items
-    [ playedOpusItems addObject:playedOpus ];
-    
     // Send the played opus item to the played opus items window controller
     [playedOpusItemsWindowController addPlayedOpus:playedOpus];
 }

@@ -16,13 +16,13 @@
 
 @synthesize playedOpusItems;
 
-- ( id )initWithPlayedOpusItems:(NSMutableArray *)aPlayedOpusItems {
+- (id)init {
 
-    self = [ super initWithWindowNibName:@"PlayedOpusItems" ];
+    self = [super initWithWindowNibName:@"PlayedOpusItems"];
     if ( self )
     {
         // Initialise the array with the played opus items
-        playedOpusItems = [ NSMutableArray arrayWithArray:aPlayedOpusItems ];
+        playedOpusItems = [ NSMutableArray array ];
     }
     return self;
 }

@@ -19,8 +19,6 @@
 
 @property (weak) IBOutlet NSWindow *playedOpusItemsWindow;
 
-- (id)initWithPlayedOpusItems:(NSMutableArray *)aPlayedOpusItems;
-
 - (void)addPlayedOpus:(PlayedOpus *)playedOpus;
 
 - (void)showWindow;
