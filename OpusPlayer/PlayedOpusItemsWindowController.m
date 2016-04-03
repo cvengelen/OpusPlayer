@@ -18,7 +18,7 @@
 
 - (id)init {
 
-    self = [super initWithWindowNibName:@"PlayedOpusItems"];
+    self = [super initWithWindowNibName:@"PlayedOpusItemsWindow"];
     if ( self )
     {
         // Initialise the array with the played opus items

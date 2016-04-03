@@ -25,7 +25,7 @@
 		B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B16DC3CB166B5F230003B297 /* MainMenu.xib */; };
 		B18EFDBB167F9690003B2371 /* Track.m in Sources */ = {isa = PBXBuildFile; fileRef = B18EFDBA167F9690003B2371 /* Track.m */; };
 		B1B6CEFC1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */; };
-		B1B6CEFD1CAFEE0100DEFEB0 /* PlayedOpusItems.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItems.xib */; };
+		B1B6CEFD1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */; };
 		B1CAEC6F16B07659006BCACA /* HIDRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CAEC6E16B07659006BCACA /* HIDRemote.m */; };
 		B1D56DCF16710A620021D240 /* Opus.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D56DCE16710A620021D240 /* Opus.m */; };
 		B1DA16E616E39015005D09DC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1DA16E516E39015005D09DC /* Security.framework */; };
@@ -85,7 +85,7 @@
 		B18EFDBA167F9690003B2371 /* Track.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Track.m; sourceTree = "<group>"; };
 		B1B6CEF91CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayedOpusItemsWindowController.h; sourceTree = "<group>"; };
 		B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayedOpusItemsWindowController.m; sourceTree = "<group>"; };
-		B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItems.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayedOpusItems.xib; sourceTree = "<group>"; };
+		B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayedOpusItemsWindow.xib; sourceTree = "<group>"; };
 		B1CAEC6D16B07659006BCACA /* HIDRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDRemote.h; sourceTree = "<group>"; };
 		B1CAEC6E16B07659006BCACA /* HIDRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HIDRemote.m; sourceTree = "<group>"; };
 		B1D56DCD16710A620021D240 /* Opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opus.h; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 				B13BFFAB1CAC02C200FECD9E /* FullScreenViewController.xib */,
 				B1B6CEF91CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.h */,
 				B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */,
-				B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItems.xib */,
+				B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */,
 			);
 			path = OpusPlayer;
 			sourceTree = "<group>";
@@ -262,7 +262,7 @@
 				B13BFFA81CABFDBE00FECD9E /* NormalViewController.xib in Resources */,
 				B13BFFAD1CAC02C200FECD9E /* FullScreenViewController.xib in Resources */,
 				B16DC3C7166B5F220003B297 /* Credits.rtf in Resources */,
-				B1B6CEFD1CAFEE0100DEFEB0 /* PlayedOpusItems.xib in Resources */,
+				B1B6CEFD1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib in Resources */,
 				B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */,
 				B1034DF91688C67A0062646C /* beethoven.icns in Resources */,
 				B149412F16F48ED500B25311 /* index.wat in Resources */,
