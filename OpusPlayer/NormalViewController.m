@@ -53,7 +53,7 @@
 
 - (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)thePlayedOpusItemsWindowController
               andWithFullScreenViewController:(FullScreenViewController *)theFullScreenViewController {
-    self = [super initWithNibName:@"NormalViewController" bundle:nil];
+    self = [super initWithNibName:@"NormalView" bundle:nil];
     if (self) {
         [self setTitle:@"Opus Player Normal View"];
 

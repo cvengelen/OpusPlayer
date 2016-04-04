@@ -31,7 +31,7 @@
 }
 
 - (id)init {
-    self = [super initWithNibName:@"FullScreenViewController" bundle:nil];
+    self = [super initWithNibName:@"FullScreenView" bundle:nil];
     if (self) {
         [self setTitle:@"Opus Player Full Screen View"];
         

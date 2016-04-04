@@ -11,9 +11,9 @@
 		B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11155D816727EE60016C406 /* AVFoundation.framework */; };
 		B1204A98168A5F57004378A3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1204A97168A5F57004378A3 /* IOKit.framework */; };
 		B13BFFA71CABFDBE00FECD9E /* NormalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B13BFFA51CABFDBE00FECD9E /* NormalViewController.m */; };
-		B13BFFA81CABFDBE00FECD9E /* NormalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13BFFA61CABFDBE00FECD9E /* NormalViewController.xib */; };
+		B13BFFA81CABFDBE00FECD9E /* NormalView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13BFFA61CABFDBE00FECD9E /* NormalView.xib */; };
 		B13BFFAC1CAC02C200FECD9E /* FullScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B13BFFAA1CAC02C200FECD9E /* FullScreenViewController.m */; };
-		B13BFFAD1CAC02C200FECD9E /* FullScreenViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13BFFAB1CAC02C200FECD9E /* FullScreenViewController.xib */; };
+		B13BFFAD1CAC02C200FECD9E /* FullScreenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13BFFAB1CAC02C200FECD9E /* FullScreenView.xib */; };
 		B149412F16F48ED500B25311 /* index.wat in Resources */ = {isa = PBXBuildFile; fileRef = B149412E16F48ED500B25311 /* index.wat */; };
 		B149413116F4901900B25311 /* beethoven.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = B149412B16F48B0A00B25311 /* beethoven.png */; };
 		B15CCD461674C2F300FEEB9C /* PlayedOpus.m in Sources */ = {isa = PBXBuildFile; fileRef = B15CCD451674C2F300FEEB9C /* PlayedOpus.m */; };
@@ -62,10 +62,10 @@
 		B1204A97168A5F57004378A3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
 		B13BFFA41CABFDBE00FECD9E /* NormalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalViewController.h; sourceTree = "<group>"; };
 		B13BFFA51CABFDBE00FECD9E /* NormalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalViewController.m; sourceTree = "<group>"; };
-		B13BFFA61CABFDBE00FECD9E /* NormalViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NormalViewController.xib; sourceTree = "<group>"; };
+		B13BFFA61CABFDBE00FECD9E /* NormalView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NormalView.xib; sourceTree = "<group>"; };
 		B13BFFA91CAC02C200FECD9E /* FullScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullScreenViewController.h; sourceTree = "<group>"; };
 		B13BFFAA1CAC02C200FECD9E /* FullScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreenViewController.m; sourceTree = "<group>"; };
-		B13BFFAB1CAC02C200FECD9E /* FullScreenViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FullScreenViewController.xib; sourceTree = "<group>"; };
+		B13BFFAB1CAC02C200FECD9E /* FullScreenView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FullScreenView.xib; sourceTree = "<group>"; };
 		B149412B16F48B0A00B25311 /* beethoven.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = beethoven.png; path = ../beethoven.png; sourceTree = "<group>"; };
 		B149412E16F48ED500B25311 /* index.wat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.wat; sourceTree = "<group>"; };
 		B15CCD441674C2F300FEEB9C /* PlayedOpus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayedOpus.h; sourceTree = "<group>"; };
@@ -187,10 +187,10 @@
 				B19CCF371CB2415D00C756BB /* OpusPlayerWindow.xib */,
 				B13BFFA41CABFDBE00FECD9E /* NormalViewController.h */,
 				B13BFFA51CABFDBE00FECD9E /* NormalViewController.m */,
-				B13BFFA61CABFDBE00FECD9E /* NormalViewController.xib */,
+				B13BFFA61CABFDBE00FECD9E /* NormalView.xib */,
 				B13BFFA91CAC02C200FECD9E /* FullScreenViewController.h */,
 				B13BFFAA1CAC02C200FECD9E /* FullScreenViewController.m */,
-				B13BFFAB1CAC02C200FECD9E /* FullScreenViewController.xib */,
+				B13BFFAB1CAC02C200FECD9E /* FullScreenView.xib */,
 				B1B6CEF91CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.h */,
 				B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */,
 				B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */,
@@ -267,8 +267,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B16DC3C1166B5F220003B297 /* InfoPlist.strings in Resources */,
-				B13BFFA81CABFDBE00FECD9E /* NormalViewController.xib in Resources */,
-				B13BFFAD1CAC02C200FECD9E /* FullScreenViewController.xib in Resources */,
+				B13BFFA81CABFDBE00FECD9E /* NormalView.xib in Resources */,
+				B13BFFAD1CAC02C200FECD9E /* FullScreenView.xib in Resources */,
 				B16DC3C7166B5F220003B297 /* Credits.rtf in Resources */,
 				B1B6CEFD1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib in Resources */,
 				B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */,
