@@ -9,7 +9,6 @@
 #import <Cocoa/Cocoa.h>
 #import "Opus.h"
 #import "CurrentOpusDelegate.h"
-#import "PlayedOpus.h"
 #import "HIDRemote.h"
 
 @interface OpusPlayerAppDelegate : NSObject < NSApplicationDelegate, NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, NSWindowDelegate, CurrentOpusDelegate, HIDRemoteDelegate >
@@ -55,7 +54,5 @@
 
 @property (weak) IBOutlet NSWindow *testFullScreenWindow;
 @property (weak) IBOutlet NSBox *testFullScreenBox;
-
-- (void) addPlayedOpus:(PlayedOpus *)playedOpus;
 
 @end

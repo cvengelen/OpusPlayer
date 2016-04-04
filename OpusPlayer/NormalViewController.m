@@ -10,11 +10,10 @@
 
 #import "Opus.h"
 #import "Track.h"
-#import "PlayedOpus.h"
 
 @implementation NormalViewController {
-    // The OpusPlayerAppDelegate for sending the played opus items to
-    OpusPlayerAppDelegate *opusPlayerAppDelegate;
+    // The played opus items window controller
+    PlayedOpusItemsWindowController *playedOpusItemsWindowController;
 
     // The full screen view controller, needs to know the current opus
     FullScreenViewController *fullScreenViewController;
@@ -52,16 +51,17 @@
 @synthesize opusItems;
 @synthesize currentOpusCurrentTime;
 
-- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)anOpusPlayerAppDelegate andWithFullScreenViewController:(FullScreenViewController *)anFullScreenViewController {
+- (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)thePlayedOpusItemsWindowController
+              andWithFullScreenViewController:(FullScreenViewController *)theFullScreenViewController {
     self = [super initWithNibName:@"NormalViewController" bundle:nil];
     if (self) {
         [self setTitle:@"Opus Player Normal View"];
 
-        // Save the OpusPlayerAppDelegate, for sending the played opus items to
-        opusPlayerAppDelegate = anOpusPlayerAppDelegate;
+        // Save the played opus items window controller, for sending the played opus items to
+        playedOpusItemsWindowController = thePlayedOpusItemsWindowController;
 
         // Save the full screen view controller, for sending the current opus, artist, etc.
-        fullScreenViewController = anFullScreenViewController;
+        fullScreenViewController = theFullScreenViewController;
 
         // Get path to Music directy under user home
         NSString* iTunesMusicLibraryPath = [ NSSearchPathForDirectoriesInDomains( NSMusicDirectory, NSUserDomainMask, YES ) objectAtIndex:0 ];
@@ -767,17 +767,8 @@
 // Update the played opus items
 - (void)updatePlayedOpusItems
 {
-    PlayedOpus* playedOpus = [ [ PlayedOpus alloc ] init ];
-    playedOpus.opus = currentOpus.opus;
-    playedOpus.atDate = currentOpus.startsPlayingDate;
-    
-    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
-    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
-    playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
-
-    // Send the played opus to the opus player app delegate
-    [opusPlayerAppDelegate addPlayedOpus:playedOpus];
+    // Send the played opus to the played opus items window controller
+    [playedOpusItemsWindowController addCurrentOpus:currentOpus];
 }
 
 // Set a string in a text field, adjusting the font size if the string does not fit

@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "OpusPlayerAppDelegate.h"
+#import "PlayedOpusItemsWindowController.h"
 
 @interface OpusPlayerWindowController : NSWindowController <NSWindowDelegate>
 
@@ -17,9 +17,8 @@
 // The box in the opus player window, in which the normal or full screen view is placed
 @property (weak) IBOutlet NSBox *opusPlayerBox;
 
-// Initialise with the opus player application delegate,
-// which is forwarded to the normal view controller.
-- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)opusPlayerAppDelegate;
+// Initialise with the played opus items window controller
+- (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)playedOpusItemsWindowController;
 
 - (void)showWindow;
 

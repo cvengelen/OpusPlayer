@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PlayedOpus.h"
+#import "CurrentOpus.h"
 
 @interface PlayedOpusItemsWindowController : NSWindowController
 
@@ -19,7 +19,7 @@
 
 @property (weak) IBOutlet NSWindow *playedOpusItemsWindow;
 
-- (void)addPlayedOpus:(PlayedOpus *)playedOpus;
+- (void)addCurrentOpus:(CurrentOpus *)currentOpus;
 
 - (void)showWindow;
 

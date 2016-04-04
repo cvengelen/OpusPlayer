@@ -160,12 +160,12 @@
                 NSLog( @"HID remote failure" );
             }
         }
-        
-        // Create the opus player window controller
-        opusPlayerWindowController = [[OpusPlayerWindowController alloc] initWithOpusPlayerAppDelegate:self];
 
         // Create the played opus items window controller
         playedOpusItemsWindowController = [[PlayedOpusItemsWindowController alloc] init];
+
+        // Create the opus player window controller, needs the played opus items window controller to send the played opus items to.
+        opusPlayerWindowController = [[OpusPlayerWindowController alloc] initWithPlayedOpusItemsWindowController:playedOpusItemsWindowController];
     }
 
     return self;
@@ -815,21 +815,8 @@
 // Update the played opus items
 - (void)updatePlayedOpusItems
 {
-    PlayedOpus* playedOpus = [ [ PlayedOpus alloc ] init ];
-    playedOpus.opus = currentOpus.opus;
-    playedOpus.atDate = currentOpus.startsPlayingDate;
-    
-    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
-    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
-    playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
-
-    [self addPlayedOpus:playedOpus];
-}
-
-- (void) addPlayedOpus:(PlayedOpus *)playedOpus {
     // Send the played opus item to the played opus items window controller
-    [playedOpusItemsWindowController addPlayedOpus:playedOpus];
+    [playedOpusItemsWindowController addCurrentOpus:currentOpus];
 }
 
 // Set a string in a text field, adjusting the font size if the string does not fit

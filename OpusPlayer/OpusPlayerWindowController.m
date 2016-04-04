@@ -15,14 +15,14 @@
     FullScreenViewController *fullScreenViewController;
 }
 
-- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)opusPlayerAppDelegate {
+- (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)playedOpusItemsWindowController {
     self = [super initWithWindowNibName:@"OpusPlayerWindow"];
     if (self) {
         fullScreenViewController = [[FullScreenViewController alloc] init];
         
-        // Forward the opus player app delegate to the normal view controller, for the played opus items.
-        normalViewController = [[NormalViewController alloc] initWithOpusPlayerAppDelegate:opusPlayerAppDelegate
-                                                           andWithFullScreenViewController:fullScreenViewController];
+        // Forward the played opus items window controller to the normal view controller, for the played opus items.
+        normalViewController = [[NormalViewController alloc] initWithPlayedOpusItemsWindowController:playedOpusItemsWindowController
+                                                                     andWithFullScreenViewController:fullScreenViewController];
     }
     return self;
 }

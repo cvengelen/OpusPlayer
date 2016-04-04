@@ -8,15 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "OpusPlayerAppDelegate.h"
+#import "PlayedOpusItemsWindowController.h"
 #import "FullScreenViewController.h"
 #import "CurrentOpus.h"
 
 @interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate>
 
-// Initialise with the opus player application delegate and the full screen view controller
-- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)anOpusPlayerAppDelegate
-    andWithFullScreenViewController:(FullScreenViewController *)anFullScreenViewController;
+// Initialise with the played opus items window controller and the full screen view controller
+- (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)thePlayedOpusItemsWindowController
+              andWithFullScreenViewController:(FullScreenViewController *)theFullScreenViewController;
 
 // The array containing the collected opus items from a playlist
 @property (readwrite) NSMutableArray *opusItems;

@@ -9,6 +9,7 @@
 //
 
 #import "PlayedOpusItemsWindowController.h"
+#import "PlayedOpus.h"
 
 @implementation PlayedOpusItemsWindowController {
 
@@ -37,7 +38,17 @@
     _playedOpusItemsWindow.styleMask |= NSClosableWindowMask;
 }
 
-- (void) addPlayedOpus:(PlayedOpus*)playedOpus {
+- (void)addCurrentOpus:(CurrentOpus *)currentOpus {
+    // Make a new played opus item for the current opus
+    PlayedOpus* playedOpus = [PlayedOpus new];
+    playedOpus.opus = currentOpus.opus;
+    playedOpus.atDate = currentOpus.startsPlayingDate;
+    
+    // Use NSCalendar and NSDateComponents to convert the duration in a string hours:minutes:seconds
+    NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:currentOpus.startsPlayingDate  toDate:[ NSDate date ]  options:0 ];
+    playedOpus.forTime = [ NSString stringWithFormat:@"%02ld:%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ], [ timeComponents second ] ];
+
     // Notify the array controller that the contents will be changed
     [ _playedOpusItemsArrayController willChangeValueForKey:@"arrangedObjects" ];
     
