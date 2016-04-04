@@ -13,8 +13,7 @@
 #import "CurrentOpus.h"
 #import "Track.h"
 
-#import "NormalViewController.h"
-#import "FullScreenViewController.h"
+#import "OpusPlayerWindowController.h"
 #import "PlayedOpusItemsWindowController.h"
 
 @implementation OpusPlayerAppDelegate
@@ -57,10 +56,9 @@
     // Selected composer and artist
     NSString *selectedComposer;
     NSString *selectedArtist;
-
-    // Normal and full screen view controllers
-    NormalViewController *normalViewController;
-    FullScreenViewController *fullScreenViewController;
+    
+    // Opus Player window controller
+    OpusPlayerWindowController *opusPlayerWindowController;
 
     // Played Opus Items window controller
     PlayedOpusItemsWindowController *playedOpusItemsWindowController;
@@ -162,10 +160,9 @@
                 NSLog( @"HID remote failure" );
             }
         }
-
-        // Create instances for the full screen and normal view controllers
-        fullScreenViewController = [[FullScreenViewController alloc] init];
-        normalViewController = [[NormalViewController alloc] initWithOpusPlayerAppDelegate:self andWithFullScreenViewController:fullScreenViewController];
+        
+        // Create the opus player window controller
+        opusPlayerWindowController = [[OpusPlayerWindowController alloc] initWithOpusPlayerAppDelegate:self];
 
         // Create the played opus items window controller
         playedOpusItemsWindowController = [[PlayedOpusItemsWindowController alloc] init];
@@ -519,11 +516,6 @@
         {
             NSLog( @"IOPMAssertionCreateWithName failed with error code %d", assertionCreateWithNameReturn );
         }
-    } else if ( [ window.identifier isEqualToString:@"testFullScreenWindow" ] ) {
-        NSLog( @"test full screen window did enter full screen" );
-        [fullScreenViewController windowDidEnterFullScreen];
-        NSView *view = [fullScreenViewController view];
-        [_testFullScreenBox setContentView:view];
     }
 }
 
@@ -548,11 +540,6 @@
         {
             NSLog( @"IOPMAssertionRelease failed with error code %d", assertionCreateWithNameReturn );
         }
-    } else if ( [ window.identifier isEqualToString:@"testFullScreenWindow" ] ) {
-        NSLog( @"test full screen window did exit full screen" );
-        [fullScreenViewController windowDidExitFullScreen];
-        NSView *view = [normalViewController view];
-        [_testFullScreenBox setContentView:view];
     }
 }
 
@@ -663,8 +650,8 @@
     // Set the minimum slider value
     _currentTimeSlider.minValue = 0;
 
-    // Initialise the test full screen box with the normal container view
-    [_testFullScreenBox setContentView:[normalViewController view]];
+    // Show the main opus player window
+    [opusPlayerWindowController showWindow:self];
 }
 
 // NSApplicationDelegate: Sent by the default notification center immediately before the application terminates

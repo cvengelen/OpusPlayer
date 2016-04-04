@@ -16,7 +16,7 @@
         <window title="Played opus items" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" showsToolbarButton="NO" animationBehavior="default" id="mhk-Wg-5BC" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1254" y="406" width="745" height="561"/>
+            <rect key="contentRect" x="100" y="406" width="745" height="561"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="vMe-gK-aBG">
                 <rect key="frame" x="0.0" y="0.0" width="745" height="561"/>

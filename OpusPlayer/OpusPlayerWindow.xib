@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="OpusPlayerWindowController">
+            <connections>
+                <outlet property="opusPlayerBox" destination="ZNb-3J-x6r" id="FiM-cJ-MFK"/>
+                <outlet property="opusPlayerWindow" destination="I3o-ui-U0I" id="pIl-0T-97M"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window identifier="opusPlayerWindow" title="Opus Player" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="I3o-ui-U0I">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="100" y="260" width="877" height="629"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <view key="contentView" id="56r-1m-WPM">
+                <rect key="frame" x="0.0" y="0.0" width="877" height="629"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <box borderWidth="0.0" title="Box" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="ZNb-3J-x6r">
+                        <rect key="frame" x="0.0" y="0.0" width="883" height="635"/>
+                        <view key="contentView" id="TEr-uO-eNl">
+                            <rect key="frame" x="0.0" y="0.0" width="883" height="635"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </box>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="ZNb-3J-x6r" secondAttribute="bottom" constant="4" id="5gM-iF-Uij"/>
+                    <constraint firstItem="ZNb-3J-x6r" firstAttribute="leading" secondItem="56r-1m-WPM" secondAttribute="leading" constant="3" id="8Gh-PU-G7d"/>
+                    <constraint firstItem="ZNb-3J-x6r" firstAttribute="top" secondItem="56r-1m-WPM" secondAttribute="top" constant="-4" id="FLa-Wt-qhQ"/>
+                    <constraint firstAttribute="trailing" secondItem="ZNb-3J-x6r" secondAttribute="trailing" constant="-3" id="PSm-LO-fwl"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="kVD-08-Ru5"/>
+            </connections>
+            <point key="canvasLocation" x="-276" y="567.5"/>
+        </window>
+    </objects>
+</document>

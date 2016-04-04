@@ -5,6 +5,8 @@
 //  Created by Chris van Engelen on 02-04-16.
 //  Copyright © 2016 Chris van Engelen. All rights reserved.
 //
+//  The played opus items window does not have any user input, and therefore cannot become a main window
+//
 
 #import "PlayedOpusItemsWindowController.h"
 

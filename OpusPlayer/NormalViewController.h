@@ -14,8 +14,9 @@
 
 @interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate>
 
-// Initialise with a pointer to the full screen view controller
-- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)anOpusPlayerAppDelegate andWithFullScreenViewController:(FullScreenViewController *)anFullScreenViewController;
+// Initialise with the opus player application delegate and the full screen view controller
+- (id)initWithOpusPlayerAppDelegate:(OpusPlayerAppDelegate *)anOpusPlayerAppDelegate
+    andWithFullScreenViewController:(FullScreenViewController *)anFullScreenViewController;
 
 // The array containing the collected opus items from a playlist
 @property (readwrite) NSMutableArray *opusItems;

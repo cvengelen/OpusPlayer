@@ -24,6 +24,8 @@
 		B16DC3CA166B5F220003B297 /* OpusPlayerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B16DC3C9166B5F220003B297 /* OpusPlayerAppDelegate.m */; };
 		B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B16DC3CB166B5F230003B297 /* MainMenu.xib */; };
 		B18EFDBB167F9690003B2371 /* Track.m in Sources */ = {isa = PBXBuildFile; fileRef = B18EFDBA167F9690003B2371 /* Track.m */; };
+		B19CCF381CB2415D00C756BB /* OpusPlayerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = B19CCF361CB2415D00C756BB /* OpusPlayerWindowController.m */; };
+		B19CCF391CB2415D00C756BB /* OpusPlayerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B19CCF371CB2415D00C756BB /* OpusPlayerWindow.xib */; };
 		B1B6CEFC1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */; };
 		B1B6CEFD1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */; };
 		B1CAEC6F16B07659006BCACA /* HIDRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CAEC6E16B07659006BCACA /* HIDRemote.m */; };
@@ -83,6 +85,9 @@
 		B16DC3CC166B5F230003B297 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		B18EFDB9167F9690003B2371 /* Track.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Track.h; sourceTree = "<group>"; };
 		B18EFDBA167F9690003B2371 /* Track.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Track.m; sourceTree = "<group>"; };
+		B19CCF351CB2415D00C756BB /* OpusPlayerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpusPlayerWindowController.h; sourceTree = "<group>"; };
+		B19CCF361CB2415D00C756BB /* OpusPlayerWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpusPlayerWindowController.m; sourceTree = "<group>"; };
+		B19CCF371CB2415D00C756BB /* OpusPlayerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OpusPlayerWindow.xib; sourceTree = "<group>"; };
 		B1B6CEF91CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayedOpusItemsWindowController.h; sourceTree = "<group>"; };
 		B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayedOpusItemsWindowController.m; sourceTree = "<group>"; };
 		B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayedOpusItemsWindow.xib; sourceTree = "<group>"; };
@@ -177,6 +182,9 @@
 				B1E382D91685FD7D00ABC7D2 /* CurrentOpus.m */,
 				B1CAEC6D16B07659006BCACA /* HIDRemote.h */,
 				B1CAEC6E16B07659006BCACA /* HIDRemote.m */,
+				B19CCF351CB2415D00C756BB /* OpusPlayerWindowController.h */,
+				B19CCF361CB2415D00C756BB /* OpusPlayerWindowController.m */,
+				B19CCF371CB2415D00C756BB /* OpusPlayerWindow.xib */,
 				B13BFFA41CABFDBE00FECD9E /* NormalViewController.h */,
 				B13BFFA51CABFDBE00FECD9E /* NormalViewController.m */,
 				B13BFFA61CABFDBE00FECD9E /* NormalViewController.xib */,
@@ -266,6 +274,7 @@
 				B16DC3CD166B5F230003B297 /* MainMenu.xib in Resources */,
 				B1034DF91688C67A0062646C /* beethoven.icns in Resources */,
 				B149412F16F48ED500B25311 /* index.wat in Resources */,
+				B19CCF391CB2415D00C756BB /* OpusPlayerWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +285,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B19CCF381CB2415D00C756BB /* OpusPlayerWindowController.m in Sources */,
 				B16DC3C3166B5F220003B297 /* main.m in Sources */,
 				B13BFFA71CABFDBE00FECD9E /* NormalViewController.m in Sources */,
 				B13BFFAC1CAC02C200FECD9E /* FullScreenViewController.m in Sources */,
