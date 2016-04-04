@@ -57,6 +57,11 @@
     [_opusPlayerWindow orderFront:self];
 }
 
+-( void )applicationWillTerminate {
+    [normalViewController applicationWillTerminate];
+    [fullScreenViewController applicationWillTerminate];
+}
+
 #pragma mark -
 #pragma mark NSWindowDelegate
 

@@ -139,7 +139,7 @@
                                         <autoresizingMask key="autoresizingMask"/>
                                     </scroller>
                                     <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="0.54761904761904767" horizontal="NO" id="JGT-QC-roa">
-                                        <rect key="frame" x="232" y="23" width="16" height="369"/>
+                                        <rect key="frame" x="233" y="23" width="15" height="369"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                     </scroller>
                                     <tableHeaderView key="headerView" id="5jf-cg-KpY">

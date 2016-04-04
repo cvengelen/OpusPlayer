@@ -47,15 +47,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    composerOpusFontSize = [ self setStringValue:composerOpus onTextField:_ComposerOpusTextField withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
-    [ self setStringValue:artist onTextField:_artistTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:10.0 ];
-    [ self setStringValue:opusPart onTextField:_opusPartTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:12.0 ];
+    if (composerOpus) {
+        composerOpusFontSize = [FullScreenViewController setStringValue:composerOpus onTextField:_ComposerOpusTextField withMaximumFontSize:50.0 andMinimumFontSize:10.0];
+        if (artist) [FullScreenViewController setStringValue:artist onTextField:_artistTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:10.0];
+        if (opusPart) [FullScreenViewController setStringValue:opusPart onTextField:_opusPartTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:12.0];
+    }
 
-    [ self setFullScreenTime ];
+    [self setFullScreenTime];
 }
 
--( void )windowDidEnterFullScreen
-{
+-(void)applicationWillTerminate {
+    // Stop the full screen timer
+    if (fullScreenTimer) [fullScreenTimer invalidate];
+}
+
+-(void)windowDidEnterFullScreen {
     // Set full screen time every 5 seconds (to be moved to separate full screen class)
     fullScreenTimer = [ NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(handleFullScreenTimer:) userInfo:nil repeats:YES ];
     
@@ -82,8 +88,7 @@
     }
 }
 
-- (void)windowDidExitFullScreen
-{
+- (void)windowDidExitFullScreen {
     // Stop the full screen timer
     [ fullScreenTimer invalidate ];
     
@@ -102,8 +107,7 @@
     }
 }
 
--( void )setFullScreenTime
-{
+-(void)setFullScreenTime {
     // Use NSCalendar and NSDateComponents to convert the current time in a string hours:minutes
     NSUInteger calendarUnits = NSHourCalendarUnit | NSMinuteCalendarUnit;
     NSDateComponents* timeComponents = [ [ NSCalendar currentCalendar ] components:calendarUnits fromDate:[ NSDate date ] ];
@@ -112,8 +116,7 @@
     [ _timeTextField setStringValue:[ NSString stringWithFormat:@"%02ld:%02ld", [ timeComponents hour ], [ timeComponents minute ] ] ];
 }
 
-- (void)handleFullScreenTimer:(NSTimer *)timer
-{
+- (void)handleFullScreenTimer:(NSTimer *)timer {
     // Set the current time
     [self setFullScreenTime ];
     
@@ -183,39 +186,39 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // Notification from the current opus with the string value for composerOpus
--( void )setStringComposerOpus:( NSString* )aComposerOpus
-{
+-(void)setStringComposerOpus:(NSString *)aComposerOpus {
+    if (!aComposerOpus) return;
     composerOpus = aComposerOpus;
-    composerOpusFontSize = [ self setStringValue:composerOpus onTextField:_ComposerOpusTextField withMaximumFontSize:50.0 andMinimumFontSize:10.0 ];
+    composerOpusFontSize = [FullScreenViewController setStringValue:composerOpus onTextField:_ComposerOpusTextField withMaximumFontSize:50.0 andMinimumFontSize:10.0];
 }
 
 // Notification from the current opus with the string value for artist
--( void )setStringArtist:( NSString* )anArtist
-{
+-(void)setStringArtist:(NSString *)anArtist {
+    if (!anArtist) return;
     artist = anArtist;
 
     // Use the font size selected for the composerOpus output as maximum,
     // to avoid that the font used for the artist is larger that the font for the opus
-    [ self setStringValue:artist onTextField:_artistTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:10.0 ];
+    [FullScreenViewController setStringValue:artist onTextField:_artistTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:10.0];
 }
 
 // Notification from the current opus with the string value for opusPart
--( void )setStringOpusPart:( NSString* )anOpusPart
-{
+-(void)setStringOpusPart:(NSString *)anOpusPart {
+    if (!anOpusPart) return;
     opusPart = anOpusPart;
 
     // Use the font size selected for the composerOpus output as maximum,
     // to avoid that the font used for the opus part is larger that the font for the opus
-    [ self setStringValue:opusPart onTextField:_opusPartTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:12.0 ];
+    [FullScreenViewController setStringValue:opusPart onTextField:_opusPartTextField withMaximumFontSize:composerOpusFontSize andMinimumFontSize:12.0];
 }
 
 #pragma mark -
 #pragma mark Helper methods
 
 // Set a string in a text field, adjusting the font size if the string does not fit
--( CGFloat )setStringValue:( NSString* )aString onTextField:( NSTextField* )aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize
++(CGFloat)setStringValue:(NSString*)aString onTextField:(NSTextField*)aTextField withMaximumFontSize:(CGFloat)maximumFontSize andMinimumFontSize:(CGFloat)minimumFontSize
 {
-    NSFont* textFieldFont = [ aTextField font ];
+    NSFont* textFieldFont = [aTextField font];
     NSDictionary* fontAttributes;
     NSSize stringSize;
     // Use a generous margin in the text field width to allow for word wrap (e.g., "blaasinstrumenten" in Mozart's Gran Partita)
@@ -224,30 +227,32 @@
     CGFloat fontPointSize = maximumFontSize;
     
     // Start at the maximum allowed font size, but don't go below the minimum font size
-    while ( fontPointSize > minimumFontSize )
-    {
+    while (fontPointSize > minimumFontSize) {
         // Set the font size.
-        textFieldFont = [ NSFont fontWithName:textFieldFont.fontName size:fontPointSize ];
+        textFieldFont = [NSFont fontWithName:textFieldFont.fontName size:fontPointSize];
+
         // Make a dictionary of the font with as key the font name
-        fontAttributes = [ [ NSDictionary alloc ] initWithObjectsAndKeys:textFieldFont, NSFontAttributeName, nil];
+        fontAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:textFieldFont, NSFontAttributeName, nil];
+
         // Get the size of the string with the font attributes
-        stringSize = [ aString sizeWithAttributes:fontAttributes ];
+        stringSize = [aString sizeWithAttributes:fontAttributes];
         int nLines = textFieldHeight / stringSize.height;
+
         // Break out of the loop if the string fits in the size of the text field, allowing for a little margin
-        if ( stringSize.width < (nLines * textFieldWidth ) ) break;
+        if (stringSize.width < (nLines * textFieldWidth)) break;
+
         // Try again with a smaller font size
         fontPointSize -= 1;
     }
     
     // Set the resulting font in the text field
-    [ aTextField setFont:textFieldFont ];
+    [aTextField setFont:textFieldFont];
     
     // Set the string in the text field
-    [ aTextField setStringValue:aString ];
+    [aTextField setStringValue:aString];
     
     // Return the selected font size
     return fontPointSize;
 }
-
 
 @end

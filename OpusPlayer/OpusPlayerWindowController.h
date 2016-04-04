@@ -22,4 +22,6 @@
 
 - (void)showWindow;
 
+-(void)applicationWillTerminate;
+
 @end

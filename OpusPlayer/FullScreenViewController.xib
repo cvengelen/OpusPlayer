@@ -23,13 +23,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <box autoresizesSubviews="NO" transparent="YES" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="hfj-9f-9kY">
-                    <rect key="frame" x="28" y="643" width="967" height="359"/>
+                    <rect key="frame" x="28" y="604" width="967" height="398"/>
                     <view key="contentView" id="z15-UZ-PlS">
-                        <rect key="frame" x="0.0" y="0.0" width="967" height="359"/>
+                        <rect key="frame" x="0.0" y="0.0" width="967" height="398"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="3uc-u3-1xJ">
-                                <rect key="frame" x="16" y="244" width="933" height="110"/>
+                                <rect key="frame" x="16" y="283" width="933" height="110"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="929" id="evF-uZ-8m6"/>
                                     <constraint firstAttribute="height" constant="110" id="ghG-Go-hUO"/>
@@ -41,7 +41,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="mSb-Of-jCM">
-                                <rect key="frame" x="16" y="114" width="933" height="110"/>
+                                <rect key="frame" x="16" y="153" width="933" height="110"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="110" id="wIc-ob-dyO"/>
                                 </constraints>
@@ -52,7 +52,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="Hdm-Th-bjb">
-                                <rect key="frame" x="16" y="-16" width="933" height="110"/>
+                                <rect key="frame" x="16" y="23" width="933" height="110"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="110" id="f3H-ri-lLm"/>
                                 </constraints>
@@ -74,10 +74,6 @@
                             <constraint firstItem="mSb-Of-jCM" firstAttribute="leading" secondItem="Hdm-Th-bjb" secondAttribute="leading" id="eHr-mO-JaO"/>
                         </constraints>
                     </view>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="961" id="fBX-tD-jfC"/>
-                        <constraint firstAttribute="height" constant="353" id="jOE-9h-ty7"/>
-                    </constraints>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </box>
@@ -95,10 +91,12 @@
                 </textField>
             </subviews>
             <constraints>
+                <constraint firstItem="hfj-9f-9kY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="80" id="7eg-uF-5RG"/>
                 <constraint firstAttribute="trailing" secondItem="yUG-Md-VYq" secondAttribute="trailing" constant="30" id="9Rd-kC-dlt"/>
                 <constraint firstItem="yUG-Md-VYq" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="44" id="FFN-xQ-PJY"/>
-                <constraint firstItem="hfj-9f-9kY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="31" id="rBg-F3-QhE"/>
-                <constraint firstItem="hfj-9f-9kY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="80" id="xMA-xH-2FA"/>
+                <constraint firstItem="hfj-9f-9kY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="31" id="T7u-Lw-IlQ"/>
+                <constraint firstAttribute="trailing" secondItem="hfj-9f-9kY" secondAttribute="trailing" constant="988" id="WPJ-yv-486"/>
+                <constraint firstAttribute="bottom" secondItem="hfj-9f-9kY" secondAttribute="bottom" constant="608" id="csX-K0-L66"/>
             </constraints>
             <point key="canvasLocation" x="705" y="560"/>
         </customView>

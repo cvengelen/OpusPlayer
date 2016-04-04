@@ -11,12 +11,15 @@
 #import "PlayedOpusItemsWindowController.h"
 #import "FullScreenViewController.h"
 #import "CurrentOpus.h"
+#import "HIDRemote.h"
 
-@interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate>
+@interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate, HIDRemoteDelegate>
 
 // Initialise with the played opus items window controller and the full screen view controller
 - (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)thePlayedOpusItemsWindowController
               andWithFullScreenViewController:(FullScreenViewController *)theFullScreenViewController;
+
+-(void)applicationWillTerminate;
 
 // The array containing the collected opus items from a playlist
 @property (readwrite) NSMutableArray *opusItems;

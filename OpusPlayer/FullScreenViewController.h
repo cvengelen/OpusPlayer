@@ -17,11 +17,13 @@
 
 @property (weak) IBOutlet NSTextField *timeTextField;
 
--(void) windowDidEnterFullScreen;
--(void) windowDidExitFullScreen;
+-(void)applicationWillTerminate;
 
--(void) setStringComposerOpus:( NSString* )aComposerOpus;
--(void) setStringArtist:( NSString* )anArtist;
--(void) setStringOpusPart:( NSString* )anOpusPart;
+-(void)windowDidEnterFullScreen;
+-(void)windowDidExitFullScreen;
+
+-(void)setStringComposerOpus:(NSString *)aComposerOpus;
+-(void)setStringArtist:(NSString *)anArtist;
+-(void)setStringOpusPart:(NSString *)anOpusPart;
 
 @end

@@ -119,6 +119,20 @@
         // Initialise the array with the opus items in the playlist
         opusItems = [ NSMutableArray array ];
 
+        // Initialise HID remote control
+        if ([HIDRemote isCandelairInstallationRequiredForRemoteMode:kHIDRemoteModeExclusiveAuto]) {
+            // Candelair needs to be installed. Inform the user about it.
+            NSLog( @"Candelair needs to be installed for handling remote control" );
+        } else {
+            // Start using HIDRemote ..
+            HIDRemote *sHIDRemote = [HIDRemote sharedHIDRemote];
+            if ([sHIDRemote startRemoteControl:kHIDRemoteModeExclusiveAuto]) {
+                [sHIDRemote setDelegate:self];
+                NSLog( @"HID remote successfully started" );
+            } else {
+                NSLog( @"HID remote failure" );
+            }
+        }
     }
     return self;
 }
@@ -149,6 +163,11 @@
 
     // Set the minimum slider value
     _currentTimeSlider.minValue = 0;
+}
+
+-(void)applicationWillTerminate {
+    // Release the audio hardware
+    if (currentOpus) [currentOpus stopPlaying];
 }
 
 #pragma mark -
@@ -865,6 +884,52 @@
 {
     // Use the current opus current time setter method to allow for a key-value observer to pick up the value (i.e., the slider)
     [self setCurrentOpusCurrentTime:[NSNumber numberWithDouble:currentTime] ];
+}
+
+#pragma mark -
+#pragma mark HIDRemote
+
+/////////////////////////////////////////////////////////////////////////////
+// HID delegate
+/////////////////////////////////////////////////////////////////////////////
+
+- (void)hidRemote:(HIDRemote *)hidRemote eventWithButton:(HIDRemoteButtonCode)buttonCode
+        isPressed:(BOOL)isPressed fromHardwareWithAttributes:(NSMutableDictionary *)attributes {
+    // NSLog(@"%@: Button with code %d %@", hidRemote, buttonCode, (isPressed ? @"pressed" : @"released"));
+    
+    // Only react to button pressed
+    if (!isPressed) return;
+    
+    switch (buttonCode) {
+        case kHIDRemoteButtonCodePlay:
+        case kHIDRemoteButtonCodeCenter:
+            if (currentOpus) {
+                [currentOpus playOrPause];
+            } else {
+                if ([_nextOpusButton isEnabled]) [self playNextOpus:nil];
+            }
+            return;
+            
+        case kHIDRemoteButtonCodeDown:
+            if (currentOpus && [_previousOpusPartButton isEnabled]) [currentOpus playPreviousOpusPart];
+            return;
+            
+        case kHIDRemoteButtonCodeUp:
+            if (currentOpus && [_nextOpusPartButton isEnabled]) [currentOpus playNextOpusPart];
+            return;
+            
+        case kHIDRemoteButtonCodeRight:
+            if ([_nextOpusButton isEnabled]) [self playNextOpus:nil];
+            return;
+            
+        case kHIDRemoteButtonCodeLeft:
+            // Play from the start of the current opus
+            if (currentOpus) [currentOpus playFirstOpusPart];
+            return;
+            
+        default:
+            NSLog(@"unsupported button: %d", buttonCode);
+    }
 }
 
 @end
