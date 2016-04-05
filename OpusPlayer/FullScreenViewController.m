@@ -28,6 +28,9 @@
 
     // Font size of the composerOpus string
     CGFloat composerOpusFontSize;
+
+    // Cursor display count
+    unsigned int cursorCount;
 }
 
 - (id)init {
@@ -40,6 +43,9 @@
         textBoxXIncr = 2;
         textBoxYIncr = 2;
         timeYIncr = 2;
+
+        // Initialise the cursor count
+        cursorCount = 0;
     }
     return self;
 }
@@ -67,7 +73,12 @@
     
     // Hide the cursor. See "Controlling the Mouse Cursor"
     // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
-    CGDisplayHideCursor( kCGDirectMainDisplay );
+    CGError cgError = CGDisplayHideCursor(kCGDirectMainDisplay);
+    if (kCGErrorSuccess == cgError ) {
+        cursorCount += 1;
+    } else {
+        NSLog( @"CGDisplayHideCursor failed with error code %d", cgError );
+    }
     
     // Clear the last cursor delta (now suddenly called Mouse?)
     int32_t deltaX, deltaY;
@@ -94,13 +105,21 @@
     
     // Clear the time
     [ _timeTextField setStringValue:@"" ];
-    
+
     // Display the cursor if it was not visible. See "Controlling the Mouse Cursor"
     // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
     // CGCursorIsVisible is deprecated from OS X 10.9
     // see https://developer.apple.com/library/mac/documentation/GraphicsImaging/Reference/Quartz_Services_Ref/#//apple_ref/c/func/CGCursorIsVisible
-    CGDisplayShowCursor( kCGDirectMainDisplay );
-    
+    while (cursorCount > 0 ) {
+        CGError cgError = CGDisplayShowCursor(kCGDirectMainDisplay);
+        if (kCGErrorSuccess == cgError ) {
+            cursorCount -= 1;
+        } else {
+            NSLog( @"CGDisplayShowCursor failed with error code %d", cgError );
+            break;
+        }
+    }
+
     // Release the assertion, to enable the system to be able to sleep again
     IOReturn assertionCreateWithNameReturn = IOPMAssertionRelease( assertionID );
     if ( assertionCreateWithNameReturn != kIOReturnSuccess )
@@ -177,9 +196,24 @@
     
     // Show the cursor if it is moving, else hide it
     if ((deltaX != 0) || (deltaY != 0)) {
-        CGDisplayShowCursor( kCGDirectMainDisplay );
+        while (cursorCount > 0) {
+            CGError cgError = CGDisplayShowCursor( kCGDirectMainDisplay );
+            if (kCGErrorSuccess == cgError ) {
+                cursorCount -= 1;
+            } else {
+                NSLog( @"CGDisplayShowCursor failed with error code %d", cgError );
+                break;
+            }
+        }
     } else if ((deltaX == 0) && (deltaY == 0)) {
-        CGDisplayHideCursor( kCGDirectMainDisplay );
+        if (0 == cursorCount) {
+            CGError cgError = CGDisplayHideCursor( kCGDirectMainDisplay );
+            if (kCGErrorSuccess == cgError ) {
+                cursorCount += 1;
+            } else {
+                NSLog( @"CGDisplayHideCursor failed with error code %d", cgError );
+            }
+        }
     }
 }
 
