@@ -4,6 +4,7 @@
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FullScreenViewController">
@@ -22,61 +23,6 @@
             <rect key="frame" x="0.0" y="0.0" width="1980" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <box autoresizesSubviews="NO" transparent="YES" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="hfj-9f-9kY">
-                    <rect key="frame" x="28" y="604" width="967" height="398"/>
-                    <view key="contentView" id="z15-UZ-PlS">
-                        <rect key="frame" x="0.0" y="0.0" width="967" height="398"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="3uc-u3-1xJ">
-                                <rect key="frame" x="16" y="283" width="933" height="110"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="929" id="evF-uZ-8m6"/>
-                                    <constraint firstAttribute="height" constant="110" id="ghG-Go-hUO"/>
-                                </constraints>
-                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Composer: Opus (total duration)" id="Ehj-JD-eb5">
-                                    <font key="font" metaFont="systemBold" size="40"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="mSb-Of-jCM">
-                                <rect key="frame" x="16" y="153" width="933" height="110"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="110" id="wIc-ob-dyO"/>
-                                </constraints>
-                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Opus Part (details)" id="TOF-or-7pX">
-                                    <font key="font" metaFont="systemBold" size="40"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="929" translatesAutoresizingMaskIntoConstraints="NO" id="Hdm-Th-bjb">
-                                <rect key="frame" x="16" y="23" width="933" height="110"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="110" id="f3H-ri-lLm"/>
-                                </constraints>
-                                <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Artist" id="6aX-Vw-EBk">
-                                    <font key="font" metaFont="systemBold" size="40"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="Hdm-Th-bjb" firstAttribute="top" secondItem="mSb-Of-jCM" secondAttribute="bottom" constant="20" id="0n9-ks-hGZ"/>
-                            <constraint firstItem="3uc-u3-1xJ" firstAttribute="top" secondItem="z15-UZ-PlS" secondAttribute="top" constant="5" id="Eaz-01-N0J"/>
-                            <constraint firstItem="3uc-u3-1xJ" firstAttribute="trailing" secondItem="mSb-Of-jCM" secondAttribute="trailing" id="VcS-W0-cV7"/>
-                            <constraint firstItem="3uc-u3-1xJ" firstAttribute="leading" secondItem="mSb-Of-jCM" secondAttribute="leading" id="WM2-ZA-Kec"/>
-                            <constraint firstAttribute="trailing" secondItem="3uc-u3-1xJ" secondAttribute="trailing" constant="20" symbolic="YES" id="YJc-lC-Mqd"/>
-                            <constraint firstItem="mSb-Of-jCM" firstAttribute="top" secondItem="3uc-u3-1xJ" secondAttribute="bottom" constant="20" id="ZOW-yZ-GSr"/>
-                            <constraint firstItem="mSb-Of-jCM" firstAttribute="trailing" secondItem="Hdm-Th-bjb" secondAttribute="trailing" id="ajA-AG-dO5"/>
-                            <constraint firstItem="mSb-Of-jCM" firstAttribute="leading" secondItem="Hdm-Th-bjb" secondAttribute="leading" id="eHr-mO-JaO"/>
-                        </constraints>
-                    </view>
-                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                </box>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yUG-Md-VYq">
                     <rect key="frame" x="1825" y="980" width="127" height="56"/>
                     <constraints>
@@ -89,14 +35,79 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <box autoresizesSubviews="NO" transparent="YES" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="hfj-9f-9kY">
+                    <rect key="frame" x="131" y="543" width="1028" height="428"/>
+                    <view key="contentView" id="z15-UZ-PlS">
+                        <rect key="frame" x="0.0" y="0.0" width="1028" height="428"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView autoresizesSubviews="NO" distribution="fillEqually" orientation="vertical" alignment="centerX" spacing="30" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f5A-YP-6vN">
+                                <rect key="frame" x="10" y="20" width="920" height="390"/>
+                                <subviews>
+                                    <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="900" translatesAutoresizingMaskIntoConstraints="NO" id="3uc-u3-1xJ">
+                                        <rect key="frame" x="8" y="280" width="904" height="110"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="900" id="fm4-1S-99U"/>
+                                            <constraint firstAttribute="height" constant="110" id="uz7-r8-tnc"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Composer: Opus (total duration)" id="Ehj-JD-eb5">
+                                            <font key="font" metaFont="systemBold" size="40"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="900" translatesAutoresizingMaskIntoConstraints="NO" id="mSb-Of-jCM">
+                                        <rect key="frame" x="8" y="140" width="904" height="110"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="900" id="70o-0K-Pd4"/>
+                                            <constraint firstAttribute="height" constant="110" id="7K1-wg-mrf"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Opus Part (details)" id="TOF-or-7pX">
+                                            <font key="font" metaFont="systemBold" size="40"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" preferredMaxLayoutWidth="900" translatesAutoresizingMaskIntoConstraints="NO" id="Hdm-Th-bjb">
+                                        <rect key="frame" x="-2" y="0.0" width="924" height="110"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="110" id="f3H-ri-lLm"/>
+                                            <constraint firstAttribute="width" constant="920" id="t1c-Iu-qSz"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Artist" id="6aX-Vw-EBk">
+                                            <font key="font" metaFont="systemBold" size="40"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="3uc-u3-1xJ" firstAttribute="leading" secondItem="mSb-Of-jCM" secondAttribute="leading" id="ErM-OM-3Bh"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" red="0.0" green="0.0" blue="0.0" alpha="0.41999999999999998" colorSpace="calibratedRGB"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
             </subviews>
             <constraints>
-                <constraint firstItem="hfj-9f-9kY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="80" id="7eg-uF-5RG"/>
+                <constraint firstAttribute="bottom" secondItem="hfj-9f-9kY" secondAttribute="bottom" constant="547" id="4TK-zx-YM7"/>
                 <constraint firstAttribute="trailing" secondItem="yUG-Md-VYq" secondAttribute="trailing" constant="30" id="9Rd-kC-dlt"/>
+                <constraint firstItem="hfj-9f-9kY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="134" id="DHh-4r-1B9"/>
                 <constraint firstItem="yUG-Md-VYq" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="44" id="FFN-xQ-PJY"/>
-                <constraint firstItem="hfj-9f-9kY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="31" id="T7u-Lw-IlQ"/>
-                <constraint firstAttribute="trailing" secondItem="hfj-9f-9kY" secondAttribute="trailing" constant="988" id="WPJ-yv-486"/>
-                <constraint firstAttribute="bottom" secondItem="hfj-9f-9kY" secondAttribute="bottom" constant="608" id="csX-K0-L66"/>
+                <constraint firstItem="hfj-9f-9kY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="111" id="NIq-XL-70b"/>
+                <constraint firstAttribute="trailing" secondItem="hfj-9f-9kY" secondAttribute="trailing" constant="824" id="RLK-Kl-sd1"/>
             </constraints>
             <point key="canvasLocation" x="705" y="560"/>
         </customView>
