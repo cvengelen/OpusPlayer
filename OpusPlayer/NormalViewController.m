@@ -528,14 +528,20 @@
         // If "All" is selected then remove the selected composer,
         // else set the selected composer to the selected combobox item
         if ([ selectedItem isEqualToString:@"All" ] ) selectedComposer = nil;
-        else selectedComposer = selectedItem;
+        else {
+            selectedComposer = selectedItem;
+            [comboBox setStringValue:selectedComposer];
+        }
     }
     else if ( [ comboBox.identifier isEqualToString:@"artists" ] )
     {
         // If "All" is selected then remove the selected artist,
         // else set the selected artist to the selected combobox item
         if ([ selectedItem isEqualToString:@"All" ] ) selectedArtist = nil;
-        else selectedArtist = selectedItem;
+        else {
+            selectedArtist = selectedItem;
+            [comboBox setStringValue:selectedArtist];
+        }
     }
     
     // Filter the playlist
