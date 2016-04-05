@@ -189,6 +189,8 @@
 -(void)setStringComposerOpus:(NSString *)aComposerOpus {
     if (!aComposerOpus) return;
     composerOpus = aComposerOpus;
+
+    if (!_ComposerOpusTextField) return;
     composerOpusFontSize = [FullScreenViewController setStringValue:composerOpus onTextField:_ComposerOpusTextField withMaximumFontSize:50.0 andMinimumFontSize:10.0];
 }
 
@@ -196,6 +198,8 @@
 -(void)setStringArtist:(NSString *)anArtist {
     if (!anArtist) return;
     artist = anArtist;
+
+    if (!_artistTextField) return;
 
     // Use the font size selected for the composerOpus output as maximum,
     // to avoid that the font used for the artist is larger that the font for the opus
@@ -206,6 +210,8 @@
 -(void)setStringOpusPart:(NSString *)anOpusPart {
     if (!anOpusPart) return;
     opusPart = anOpusPart;
+
+    if (!_opusPartTextField) return;
 
     // Use the font size selected for the composerOpus output as maximum,
     // to avoid that the font used for the opus part is larger that the font for the opus
