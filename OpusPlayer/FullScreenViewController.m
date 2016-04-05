@@ -97,7 +97,9 @@
     
     // Display the cursor if it was not visible. See "Controlling the Mouse Cursor"
     // (http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/QuartzDisplayServicesConceptual/Articles/MouseCursor.html)
-    if ( !( CGCursorIsVisible( ) ) ) CGDisplayShowCursor( kCGDirectMainDisplay );
+    // CGCursorIsVisible is deprecated from OS X 10.9
+    // see https://developer.apple.com/library/mac/documentation/GraphicsImaging/Reference/Quartz_Services_Ref/#//apple_ref/c/func/CGCursorIsVisible
+    CGDisplayShowCursor( kCGDirectMainDisplay );
     
     // Release the assertion, to enable the system to be able to sleep again
     IOReturn assertionCreateWithNameReturn = IOPMAssertionRelease( assertionID );
@@ -173,9 +175,12 @@
     int32_t deltaX, deltaY;
     CGGetLastMouseDelta( &deltaX, &deltaY );
     
-    // Show the cursor if it is moving, else hide it again if it was visible
-    if ( ( ( deltaX != 0 ) || ( deltaY != 0 ) ) && !( CGCursorIsVisible( ) ) ) { CGDisplayShowCursor( kCGDirectMainDisplay ); }
-    else if ( ( deltaX == 0 ) && ( deltaY == 0 ) && CGCursorIsVisible( ) ) { CGDisplayHideCursor( kCGDirectMainDisplay ); }
+    // Show the cursor if it is moving, else hide it
+    if ((deltaX != 0) || (deltaY != 0)) {
+        CGDisplayShowCursor( kCGDirectMainDisplay );
+    } else if ((deltaX == 0) && (deltaY == 0)) {
+        CGDisplayHideCursor( kCGDirectMainDisplay );
+    }
 }
 
 #pragma mark -
