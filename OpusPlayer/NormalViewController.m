@@ -87,11 +87,55 @@
         
         // Declaration of a function which tests if a playlist it the child of a given parent playlist
         BOOL ( ^testForPlaylistChild )( id playlistToTest, NSUInteger playlistToTestIndex, BOOL *stop );
-        
+
+        // Check for bool with value false
+        NSNumber *nullNumber = [NSNumber numberWithInt:0];
+
+        // The values of ITLibDistinguishedPlaylistKind* are incorrect, and cannot be used
+        // See: https://developer.apple.com/library/mac/documentation/iTunesLibrary/Reference/iTunesLibraryFrameworkReference/
+        // and: https://developer.apple.com/library/mac/documentation/iTunesLibrary/Reference/ITLibPlaylist_reference/index.html
+        NSNumber *filmsNumber = [NSNumber numberWithInt:2];
+        NSNumber *rentedNumber = [NSNumber numberWithInt:7];
+        NSNumber *appsNumber = [NSNumber numberWithInt:18];
+        NSNumber *videosNumber = [NSNumber numberWithInt:47];
+        NSNumber *homeVideosNumber = [NSNumber numberWithInt:48];
+        NSNumber *books1Number = [NSNumber numberWithInt:50];
+        NSNumber *books2Number = [NSNumber numberWithInt:57];
+        NSNumber *audioBooksNumber = [NSNumber numberWithInt:58];
+        NSNumber *pdfsNumber = [NSNumber numberWithInt:59];
+
         // Loop over all playlists in the iTunes music dictionary: this is an array under key Playlists
         NSArray* playlists = [ iTunesMusicDictionary valueForKey:@"Playlists" ];
         for ( NSDictionary* playlist in playlists )
         {
+            // See: https://developer.apple.com/library/mac/documentation/iTunesLibrary/Reference/ITLibPlaylist_reference/
+
+            // Check if the playlist is not visible: used and maintained by iTunes but never displayed as playlists to the user
+            if ([playlist valueForKey:@"Visible"]) {
+                NSNumber *visible = [playlist valueForKey:@"Visible"];
+                if ([visible isEqualToNumber:nullNumber]) {
+                    NSLog(@"Skipped internal playlist: %@", [playlist valueForKey:@"Name"]);
+                    continue;
+                }
+            }
+            
+            // Check if the playlist is of a specific kind
+            if ([playlist valueForKey:@"Distinguished Kind"]) {
+                NSNumber *distinguishedKind = [playlist valueForKey:@"Distinguished Kind"];
+                if ([distinguishedKind isEqualToNumber:filmsNumber] ||
+                    [distinguishedKind isEqualToNumber:rentedNumber] ||
+                    [distinguishedKind isEqualToNumber:appsNumber] ||
+                    [distinguishedKind isEqualToNumber:videosNumber] ||
+                    [distinguishedKind isEqualToNumber:homeVideosNumber] ||
+                    [distinguishedKind isEqualToNumber:books1Number] ||
+                    [distinguishedKind isEqualToNumber:books2Number] ||
+                    [distinguishedKind isEqualToNumber:audioBooksNumber] ||
+                    [distinguishedKind isEqualToNumber:pdfsNumber]) {
+                    NSLog(@"Skipped playlist: %@ (distinguished kind: %@)", [playlist valueForKey:@"Name"], distinguishedKind);
+                    continue;
+                }
+            }
+
             // Check if the playlist has a Folder key, which indicates thay the playlist is the parent of child playlists
             if ( [ playlist valueForKey:@"Folder" ] )
             {
@@ -109,15 +153,25 @@
                 NSArray* childPlayLists = [ playlists objectsAtIndexes:indexSet ];
                 [ childPlaylistsOfParent setValue:childPlayLists forKey:playlistPersistentId ];
             }
-            
+
+            // Check if this playlist does not have a parent, which makes it a root playlist
             if ( ![ playlist objectForKey:@"Parent Persistent ID" ] )
             {
-                [ rootPlaylists addObject:playlist ];
+                // Check if there a items in the playlist
+                if ([playlist objectForKey:@"Playlist Items"]) {
+                    NSLog(@"Add playlist: %@", [playlist valueForKey:@"Name"]);
+                    [ rootPlaylists addObject:playlist ];
+                } else {
+                    NSLog(@"Skipped empty playlist: %@", [playlist valueForKey:@"Name"]);
+                }
             }
         }
         
         // Initialise the array with the opus items in the playlist
         opusItems = [ NSMutableArray array ];
+        
+        // Initialise the array with the shuffled opus items
+        shuffledOpusItems = [ NSMutableArray array ];
 
         // Initialise HID remote control
         if ([HIDRemote isCandelairInstallationRequiredForRemoteMode:kHIDRemoteModeExclusiveAuto]) {
@@ -385,7 +439,7 @@
         [ opusItems addObject:opus ];
     }
     
-    NSLog( @"#opusItems: %ld from a total of %ld", [ opusItems count ], [ playlistTracks count ] );
+    NSLog( @"#opusItems: %ld from #tracks in playlist: %ld", [ opusItems count ], [ playlistTracks count ] );
     
     // Set the sort descriptors
     [ _playListArrayController setSortDescriptors:sortDescriptors ];
@@ -677,10 +731,9 @@
     
     // Get a random new opus from the opus items in the selected playlist,
     // with the played opus items removed
-    
+
     // Initialise an array with the opus items in the playlist: the arranged objects from the array controller
     NSMutableArray* remainingOpusItems = [ NSMutableArray arrayWithArray:[ _playListArrayController arrangedObjects ] ];
-    NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
     
     // Remove the already shuffled items from the playlist
     for ( CurrentOpus* shuffledOpusItem in shuffledOpusItems )
@@ -734,7 +787,7 @@
         NSLog( @"tracks empty" );
         return;
     }
-    NSLog( @"Play next opus %@", opus.name );
+    NSLog( @"playNextOpus: %@: %@", opus.composer, opus.name );
     
     // Initialize a new current opus item
     // (let ARM delete the previous current opus)
