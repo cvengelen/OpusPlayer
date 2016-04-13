@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B10106361CBD33FD00086B45 /* WebApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B10106351CBD33FD00086B45 /* WebApp.m */; };
 		B1034DF91688C67A0062646C /* beethoven.icns in Resources */ = {isa = PBXBuildFile; fileRef = B1034DF81688C67A0062646C /* beethoven.icns */; };
 		B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11155D816727EE60016C406 /* AVFoundation.framework */; };
 		B1204A98168A5F57004378A3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1204A97168A5F57004378A3 /* IOKit.framework */; };
@@ -14,6 +15,8 @@
 		B13BFFA81CABFDBE00FECD9E /* NormalView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13BFFA61CABFDBE00FECD9E /* NormalView.xib */; };
 		B13BFFAC1CAC02C200FECD9E /* FullScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B13BFFAA1CAC02C200FECD9E /* FullScreenViewController.m */; };
 		B13BFFAD1CAC02C200FECD9E /* FullScreenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B13BFFAB1CAC02C200FECD9E /* FullScreenView.xib */; };
+		B13F91081CBD571E001D06D7 /* WebAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B13F91071CBD571E001D06D7 /* WebAppKit.framework */; };
+		B1480A291CBE29C200988B5F /* WebAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B13F91071CBD571E001D06D7 /* WebAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B149412F16F48ED500B25311 /* index.wat in Resources */ = {isa = PBXBuildFile; fileRef = B149412E16F48ED500B25311 /* index.wat */; };
 		B149413116F4901900B25311 /* beethoven.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = B149412B16F48B0A00B25311 /* beethoven.png */; };
 		B15CCD461674C2F300FEEB9C /* PlayedOpus.m in Sources */ = {isa = PBXBuildFile; fileRef = B15CCD451674C2F300FEEB9C /* PlayedOpus.m */; };
@@ -51,12 +54,16 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B1480A291CBE29C200988B5F /* WebAppKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B10106341CBD33FD00086B45 /* WebApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApp.h; sourceTree = "<group>"; };
+		B10106351CBD33FD00086B45 /* WebApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebApp.m; sourceTree = "<group>"; };
+		B10106391CBD34FE00086B45 /* WebAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAppDelegate.h; sourceTree = "<group>"; };
 		B1034DF81688C67A0062646C /* beethoven.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = beethoven.icns; sourceTree = "<group>"; };
 		B11155D816727EE60016C406 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = ../../../../System/Library/Frameworks/AVFoundation.framework; sourceTree = "<group>"; };
 		B1204A97168A5F57004378A3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
@@ -66,6 +73,7 @@
 		B13BFFA91CAC02C200FECD9E /* FullScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullScreenViewController.h; sourceTree = "<group>"; };
 		B13BFFAA1CAC02C200FECD9E /* FullScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreenViewController.m; sourceTree = "<group>"; };
 		B13BFFAB1CAC02C200FECD9E /* FullScreenView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FullScreenView.xib; sourceTree = "<group>"; };
+		B13F91071CBD571E001D06D7 /* WebAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebAppKit.framework; path = Frameworks/WebAppKit.framework; sourceTree = "<group>"; };
 		B149412B16F48B0A00B25311 /* beethoven.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = beethoven.png; path = ../beethoven.png; sourceTree = "<group>"; };
 		B149412E16F48ED500B25311 /* index.wat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.wat; sourceTree = "<group>"; };
 		B15CCD441674C2F300FEEB9C /* PlayedOpus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayedOpus.h; sourceTree = "<group>"; };
@@ -109,6 +117,7 @@
 				B16DC3B7166B5F220003B297 /* Cocoa.framework in Frameworks */,
 				B11155D916727EE60016C406 /* AVFoundation.framework in Frameworks */,
 				B1204A98168A5F57004378A3 /* IOKit.framework in Frameworks */,
+				B13F91081CBD571E001D06D7 /* WebAppKit.framework in Frameworks */,
 				B1DA16E616E39015005D09DC /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,6 +163,7 @@
 		B16DC3B8166B5F220003B297 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B13F91071CBD571E001D06D7 /* WebAppKit.framework */,
 				B1DA16E516E39015005D09DC /* Security.framework */,
 				B1204A97168A5F57004378A3 /* IOKit.framework */,
 				B11155D816727EE60016C406 /* AVFoundation.framework */,
@@ -194,6 +204,9 @@
 				B1B6CEF91CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.h */,
 				B1B6CEFA1CAFEE0100DEFEB0 /* PlayedOpusItemsWindowController.m */,
 				B1B6CEFB1CAFEE0100DEFEB0 /* PlayedOpusItemsWindow.xib */,
+				B10106341CBD33FD00086B45 /* WebApp.h */,
+				B10106351CBD33FD00086B45 /* WebApp.m */,
+				B10106391CBD34FE00086B45 /* WebAppDelegate.h */,
 			);
 			path = OpusPlayer;
 			sourceTree = "<group>";
@@ -287,6 +300,7 @@
 			files = (
 				B19CCF381CB2415D00C756BB /* OpusPlayerWindowController.m in Sources */,
 				B16DC3C3166B5F220003B297 /* main.m in Sources */,
+				B10106361CBD33FD00086B45 /* WebApp.m in Sources */,
 				B13BFFA71CABFDBE00FECD9E /* NormalViewController.m in Sources */,
 				B13BFFAC1CAC02C200FECD9E /* FullScreenViewController.m in Sources */,
 				B16DC3CA166B5F220003B297 /* OpusPlayerAppDelegate.m in Sources */,
@@ -391,9 +405,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../WebAppKit\"",
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OpusPlayer/OpusPlayer-Prefix.pch";
@@ -410,9 +424,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../WebAppKit\"",
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OpusPlayer/OpusPlayer-Prefix.pch";

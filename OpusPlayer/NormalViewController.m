@@ -10,6 +10,7 @@
 
 #import "Opus.h"
 #import "Track.h"
+#import "WebApp.h"
 
 @implementation NormalViewController {
     // The played opus items window controller
@@ -45,6 +46,8 @@
 
     // Current time of the currently playing opus track
     NSNumber *currentOpusCurrentTime;
+
+    bool debugMode;
 }
 
 // Synthesize the get/set methods
@@ -56,6 +59,12 @@
     self = [super initWithNibName:@"NormalView" bundle:nil];
     if (self) {
         [self setTitle:@"Opus Player Normal View"];
+
+#ifdef DEBUG
+        debugMode = true;
+#else
+        debugMode = false;
+#endif
 
         // Save the played opus items window controller, for sending the played opus items to
         playedOpusItemsWindowController = thePlayedOpusItemsWindowController;
@@ -114,7 +123,7 @@
             if ([playlist valueForKey:@"Visible"]) {
                 NSNumber *visible = [playlist valueForKey:@"Visible"];
                 if ([visible isEqualToNumber:nullNumber]) {
-                    NSLog(@"Skipped internal playlist: %@", [playlist valueForKey:@"Name"]);
+                    if (debugMode) NSLog(@"Skipped internal playlist: %@", [playlist valueForKey:@"Name"]);
                     continue;
                 }
             }
@@ -131,7 +140,7 @@
                     [distinguishedKind isEqualToNumber:books2Number] ||
                     [distinguishedKind isEqualToNumber:audioBooksNumber] ||
                     [distinguishedKind isEqualToNumber:pdfsNumber]) {
-                    NSLog(@"Skipped playlist: %@ (distinguished kind: %@)", [playlist valueForKey:@"Name"], distinguishedKind);
+                    if (debugMode) NSLog(@"Skipped playlist: %@ (distinguished kind: %@)", [playlist valueForKey:@"Name"], distinguishedKind);
                     continue;
                 }
             }
@@ -159,14 +168,15 @@
             {
                 // Check if there a items in the playlist
                 if ([playlist objectForKey:@"Playlist Items"]) {
-                    NSLog(@"Add playlist: %@", [playlist valueForKey:@"Name"]);
+                    if (debugMode) NSLog(@"Add playlist: %@", [playlist valueForKey:@"Name"]);
                     [ rootPlaylists addObject:playlist ];
                 } else {
-                    NSLog(@"Skipped empty playlist: %@", [playlist valueForKey:@"Name"]);
+                    if (debugMode) NSLog(@"Skipped empty playlist: %@", [playlist valueForKey:@"Name"]);
                 }
             }
         }
-        
+        NSLog(@"OpusPlayer initialised with %ld root playlists", [rootPlaylists count]);
+
         // Initialise the array with the opus items in the playlist
         opusItems = [ NSMutableArray array ];
         
@@ -187,6 +197,9 @@
                 NSLog( @"HID remote failure" );
             }
         }
+
+        // Set self as delegate for WebApp, to get the playOrPause and playNextOpus requests
+        [WebApp setDelegate:self];
     }
     return self;
 }
@@ -439,7 +452,7 @@
         [ opusItems addObject:opus ];
     }
     
-    NSLog( @"#opusItems: %ld from #tracks in playlist: %ld", [ opusItems count ], [ playlistTracks count ] );
+    if (debugMode) NSLog( @"Playlist: %@, #tracks: %ld, #opusItems: %ld", [playlist valueForKey:@"Name"], [playlistTracks count], [opusItems count] );
     
     // Set the sort descriptors
     [ _playListArrayController setSortDescriptors:sortDescriptors ];
@@ -552,7 +565,7 @@
     
     // Filter the arranged objects in the playlist view array controller with the predicate (nil removes the predicate)
     [ _playListArrayController setFilterPredicate:predicate ];
-    NSLog( @"#arranged objects with predicate: %ld", [ _playListArrayController.arrangedObjects count ] );
+    if (debugMode) NSLog( @"#arranged objects with predicate: %ld", [ _playListArrayController.arrangedObjects count ] );
     
     // Do not change combobox list if there are no items in the filtered playlist
     if ( [ _playListArrayController.arrangedObjects count ] == 0 ) return;
@@ -575,7 +588,7 @@
     // Clear any possible typed in value
     [ comboBox setStringValue:@"" ];
     
-    NSLog( @"comboBoxSelectionDidChange - %@ combobox selection did change to %@", comboBox.identifier, selectedItem );
+    if (debugMode) NSLog( @"comboBoxSelectionDidChange - %@: %@", comboBox.identifier, selectedItem );
     
     if ( [ comboBox.identifier isEqualToString:@"composers" ] )
     {
@@ -605,7 +618,7 @@
 - (IBAction)composersEndEditing:(NSComboBox *)sender
 {
     NSString *selectedItem = [ sender stringValue ];
-    // NSLog( @"composersEndEditing - composers combobox selection did change to %@", selectedItem );
+    if (debugMode) NSLog( @"composersEndEditing - selected: %@", selectedItem );
     
     // Return immediately when no item is selected,
     // or when item is selected with combobox selection, in which case the textfield is empty
@@ -623,7 +636,7 @@
 - (IBAction)artistsEndEditing:(NSComboBox *)sender
 {
     NSString *selectedItem = [ sender stringValue ];
-    // NSLog( @"artistsEndEditing - artists combobox selection did change to %@", selectedItem );
+    if (debugMode) NSLog( @"artistsEndEditing - selected: %@", selectedItem );
     
     // Return immediately when no item is selected,
     // or when item is selected with combobox selection, in which case the textfield is empty
@@ -659,7 +672,7 @@
         // In that case this method does not need to take any action.
         if ( [ currentOpus.opus isEqual:[ [ _playListArrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ] ] ) return;
         
-        // NSLog( @"Selected play list row changed manually: stop playing current opus %@", currentOpus.opus.name );
+        if (debugMode) NSLog( @"Selected play list row changed manually: stop playing current opus %@", currentOpus.opus.name );
         
         // Release the audio hardware
         [ currentOpus stopPlaying ];
@@ -672,10 +685,10 @@
     Opus* opus = [ [ _playListArrayController arrangedObjects ] objectAtIndex:[ _playlistTableView selectedRow ] ];
     if ( [ opus.tracks count ] == 0 )
     {
-        NSLog( @"tracks empty" );
+        NSLog( @"tracks empty for opus: %@: %@", opus.composer, opus.name );
         return;
     }
-    // NSLog( @"Selected play list row changed manually: start playing opus %@", opus.name );
+    if (debugMode) NSLog( @"Selected play list row changed manually: start playing opus %@", opus.name );
     
     // Initialize a new current opus with the selected opus item
     // (let ARM delete the previous current opus)
@@ -740,23 +753,23 @@
     {
         [ remainingOpusItems removeObject:shuffledOpusItem.opus ];
     }
-    NSLog( @"#remaining opus items in playlist after removing shuffled opus items: %ld", [ remainingOpusItems count ] );
+    if (debugMode) NSLog( @"#remaining opus items in playlist after removing shuffled opus items: %ld", [ remainingOpusItems count ] );
     
     // Check if all items in the playlist have been played
     if ( [ remainingOpusItems count ] == 0 )
     {
         // Use all items again
         [ shuffledOpusItems removeAllObjects ];
-        NSLog( @"restart shuffle: list of shuffled opus items cleared" );
+        if (debugMode) NSLog( @"restart shuffle: list of shuffled opus items cleared" );
         
         remainingOpusItems = [ NSMutableArray arrayWithArray:[ _playListArrayController arrangedObjects ] ];
-        NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
+        if (debugMode) NSLog( @"#opus items in playlist: %ld", [ remainingOpusItems count ] );
     }
     
     // Try removing the composer from the remaining list of opus items
     NSPredicate* predicate = [ NSPredicate predicateWithFormat:@"!( composer like[cd] %@ )", currentOpus.opus.composer ];
     NSArray* remainingOpusItemsAfterRemovingComposer = [ remainingOpusItems filteredArrayUsingPredicate:predicate ];
-    NSLog( @"#filtered remaining opus items after removing composer %@: %ld",
+    if (debugMode) NSLog( @"#filtered remaining opus items after removing composer %@: %ld",
           currentOpus.opus.composer, [ remainingOpusItemsAfterRemovingComposer count ] );
     
     // Check if there are opus items left after removing the opus items with the same composer
@@ -769,7 +782,7 @@
     // Try removing the artist from the filtered remaining list of opus items
     predicate = [ NSPredicate predicateWithFormat:@"!( artist like[cd] %@ )", currentOpus.opus.artist ];
     NSArray* remainingOpusItemsAfterRemovingArtist = [ remainingOpusItems filteredArrayUsingPredicate:predicate ];
-    NSLog( @"#filtered remaining opus items after removing artist %@: %ld",
+    if (debugMode) NSLog( @"#filtered remaining opus items after removing artist %@: %ld",
           currentOpus.opus.artist, [ remainingOpusItemsAfterRemovingArtist count ] );
     
     // Check if there are opus items left after removing the opus items with the same artist
@@ -784,10 +797,10 @@
     Opus* opus = [ remainingOpusItems objectAtIndex:remainingOpusItemsIndex ];
     if ( [ opus.tracks count ] == 0 )
     {
-        NSLog( @"tracks empty" );
+        NSLog( @"tracks empty for opus: %@: %@", opus.composer, opus.name );
         return;
     }
-    NSLog( @"playNextOpus: %@: %@", opus.composer, opus.name );
+    if (debugMode) NSLog( @"playNextOpus: %@: %@", opus.composer, opus.name );
     
     // Initialize a new current opus item
     // (let ARM delete the previous current opus)
@@ -908,6 +921,8 @@
 
     // Also set the composer and opus in the full screen view
     [fullScreenViewController setStringComposerOpus:aComposerOpus];
+
+    [WebApp setComposerOpus:aComposerOpus];
 }
 
 // Notification from the current opus with the string value for artist
@@ -919,6 +934,8 @@
 
     // Also set the artist in the full screen view
     [fullScreenViewController setStringArtist:anArtist];
+
+    [WebApp setArtist:anArtist];
 }
 
 // Notification from the current opus with the string value for opusPart
@@ -930,6 +947,8 @@
     
     // Also set the opus part in the full screen view
     [fullScreenViewController setStringOpusPart:anOpusPart];
+
+    [WebApp setOpusPart:anOpusPart];
 }
 
 // Notification from the current opus of the opus track duration
@@ -954,7 +973,7 @@
 
 - (void)hidRemote:(HIDRemote *)hidRemote eventWithButton:(HIDRemoteButtonCode)buttonCode
         isPressed:(BOOL)isPressed fromHardwareWithAttributes:(NSMutableDictionary *)attributes {
-    // NSLog(@"%@: Button with code %d %@", hidRemote, buttonCode, (isPressed ? @"pressed" : @"released"));
+    if (debugMode) NSLog(@"%@: Button with code %d %@", hidRemote, buttonCode, (isPressed ? @"pressed" : @"released"));
     
     // Only react to button pressed
     if (!isPressed) return;
@@ -988,6 +1007,29 @@
             
         default:
             NSLog(@"unsupported button: %d", buttonCode);
+    }
+}
+
+#pragma mark -
+#pragma mark WebAppDelegate
+
+/////////////////////////////////////////////////////////////////////////////
+// WebApp delegate
+/////////////////////////////////////////////////////////////////////////////
+
+// Request the delegate to play or pause the current opus
+-(void)webAppPlayOrPause {
+    if (debugMode) NSLog( @"Web Server delegate play or pause" );
+    @synchronized( self ) {
+        [self playOrPause:nil];
+    }
+}
+
+// Request the delegate to play the next opus
+-(void)webAppPlayNextOpus {
+    if (debugMode) NSLog( @"Web Server delegate play next opus" );
+    @synchronized( self ) {
+        [ self playNextOpus:nil ];
     }
 }
 

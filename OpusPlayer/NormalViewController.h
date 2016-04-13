@@ -12,8 +12,9 @@
 #import "FullScreenViewController.h"
 #import "CurrentOpus.h"
 #import "HIDRemote.h"
+#import "WebAppDelegate.h"
 
-@interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate, HIDRemoteDelegate>
+@interface NormalViewController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSTableViewDelegate, NSComboBoxDelegate, CurrentOpusDelegate, HIDRemoteDelegate,  WebAppDelegate>
 
 // Initialise with the played opus items window controller and the full screen view controller
 - (id)initWithPlayedOpusItemsWindowController:(PlayedOpusItemsWindowController *)thePlayedOpusItemsWindowController
