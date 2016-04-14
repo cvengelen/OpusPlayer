@@ -480,7 +480,7 @@
     [ self setComboBox:_artistsComboBox withProperty:@"artist" ];
     
     // Set the label before the composers and artists combo boxes only if both are enabled
-    if ( [ _composersComboBox isEnabled ] && [ _artistsComboBox isEnabled ] ) [ _selectItemsTextField setStringValue:@"Select composer/artist:" ];
+    if ( [ _composersComboBox isEnabled ] && [ _artistsComboBox isEnabled ] ) [ _selectItemsTextField setStringValue:NSLocalizedString(@"Select composer/artist:", @"select composer or artist") ];
     else [ _selectItemsTextField setStringValue:@"" ];
     
     // Check if the playlist tableview actually contains on or more opus items

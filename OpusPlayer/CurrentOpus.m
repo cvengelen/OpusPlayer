@@ -251,7 +251,7 @@
 -( void )startOrContinuePlaying
 {
     [ audioPlayer play ];
-    [ delegate.playOrPauseButton setTitle:@"Pause" ];
+    [ delegate.playOrPauseButton setTitle:NSLocalizedString(@"Pause", @"pause the playing of the current track") ];
     [ delegate.playOrPauseButton setEnabled:YES ];
     isPlaying = YES;
     
@@ -263,7 +263,7 @@
 -( void )pausePlaying
 {
     [ audioPlayer pause ];
-    [ delegate.playOrPauseButton setTitle:@"Play" ];
+    [ delegate.playOrPauseButton setTitle:NSLocalizedString(@"Play", @"start or continue the playing of the current track") ];
     isPlaying = NO;
     
     // Stop the current time timer
@@ -274,7 +274,7 @@
 -( void )stopPlaying
 {
     [ audioPlayer stop ];
-    [ delegate.playOrPauseButton setTitle:@"Play" ];
+    [ delegate.playOrPauseButton setTitle:NSLocalizedString(@"Play", @"start or continue the playing of the current track") ];
     isPlaying = NO;
     
     // Stop the current time timer

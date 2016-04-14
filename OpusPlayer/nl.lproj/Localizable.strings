@@ -1,0 +1,9 @@
+/* pause the playing of the current track */
+"Pause" = "Pauzeer";
+
+/* start or continue the playing of the current track */
+"Play" = "Afspelen";
+
+/* select composer or artist */
+"Select composer/artist:" = "Selecteer componist/artiest:";
+

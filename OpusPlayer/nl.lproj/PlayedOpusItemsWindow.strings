@@ -1,0 +1,39 @@
+/* Class = "NSTableColumn"; headerCell.title = "Opus"; ObjectID = "3wf-i9-QRj"; */
+"3wf-i9-QRj.headerCell.title" = "Opus";
+
+/* Class = "NSTableColumn"; headerCell.title = "Played for"; ObjectID = "4bw-CQ-dnT"; */
+"4bw-CQ-dnT.headerCell.title" = "Afspeeltijd";
+
+/* Class = "NSTableColumn"; headerCell.title = "Componist"; ObjectID = "4we-iU-kum"; */
+"4we-iU-kum.headerCell.title" = "Componist";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "BMA-oQ-9cx"; */
+"BMA-oQ-9cx.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Played at"; ObjectID = "DsA-zI-Th2"; */
+"DsA-zI-Th2.headerCell.title" = "Afgespeeld op";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Fa8-uh-zym"; */
+"Fa8-uh-zym.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "LXZ-4x-MtI"; */
+"LXZ-4x-MtI.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "NxQ-5K-h5O"; */
+"NxQ-5K-h5O.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Odi-hZ-HlK"; */
+"Odi-hZ-HlK.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "hGR-EW-W4I"; */
+"hGR-EW-W4I.title" = "Text Cell";
+
+/* Class = "NSWindow"; title = "Played opus items"; ObjectID = "mhk-Wg-5BC"; */
+"mhk-Wg-5BC.title" = "Afgespeelde opus items";
+
+/* Class = "NSTableColumn"; headerCell.title = "Artist"; ObjectID = "t5O-2M-CZD"; */
+"t5O-2M-CZD.headerCell.title" = "Artiest";
+
+/* Class = "NSTableColumn"; headerCell.title = "Album"; ObjectID = "w0y-G9-9gc"; */
+"w0y-G9-9gc.headerCell.title" = "Album";
+

@@ -1,0 +1,96 @@
+/* Class = "NSTextFieldCell"; placeholderString = "Artist"; ObjectID = "2JE-6L-JQp"; */
+"2JE-6L-JQp.placeholderString" = "Artiest";
+
+/* Class = "NSTableColumn"; headerCell.title = "Opus"; ObjectID = "5q9-ye-LOV"; */
+"5q9-ye-LOV.headerCell.title" = "Opus";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Composer"; ObjectID = "30v-YY-u5i"; */
+"30v-YY-u5i.placeholderString" = "Componist";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Select composer/artist:"; ObjectID = "71S-HM-pjt"; */
+"71S-HM-pjt.placeholderString" = "Selecteer componist/artiest:";
+
+/* Class = "NSTextFieldCell"; title = "Select composer/artist:"; ObjectID = "71S-HM-pjt"; */
+"71S-HM-pjt.title" = "Selecteer componist/artiest:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Artist"; ObjectID = "BWK-qg-9cF"; */
+"BWK-qg-9cF.headerCell.title" = "Artiest";
+
+/* Class = "NSButtonCell"; title = "Next opus part"; ObjectID = "Bmk-Cj-fzL"; */
+"Bmk-Cj-fzL.title" = "Volgende opus deel";
+
+/* Class = "NSTableView"; ibShadowedToolTip = "Select an opus to play"; ObjectID = "CuR-Lu-aHs"; */
+"CuR-Lu-aHs.ibShadowedToolTip" = "Selecteer een opus om af te spelen";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Dm3-tL-OKr"; */
+"Dm3-tL-OKr.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Opus Part (details)"; ObjectID = "F2l-CJ-xfN"; */
+"F2l-CJ-xfN.placeholderString" = "Opus Deel (details)";
+
+/* Class = "NSButtonCell"; title = "Next opus"; ObjectID = "I9m-gZ-tQx"; */
+"I9m-gZ-tQx.title" = "Volgende opus";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Artist"; ObjectID = "MPN-9c-BU1"; */
+"MPN-9c-BU1.placeholderString" = "Artiest";
+
+/* Class = "NSTableColumn"; headerCell.title = "Album"; ObjectID = "MfF-MU-zFH"; */
+"MfF-MU-zFH.headerCell.title" = "Album";
+
+/* Class = "NSButtonCell"; title = "Shuffle"; ObjectID = "Ox0-SH-1lW"; */
+"Ox0-SH-1lW.title" = "Shuffle";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "PIX-pu-zWf"; */
+"PIX-pu-zWf.title" = "Text Cell";
+
+/* Class = "NSButtonCell"; title = "Play"; ObjectID = "PhB-qq-VV7"; */
+"PhB-qq-VV7.title" = "Afspelen";
+
+/* Class = "NSTableColumn"; headerCell.title = "Playlists"; ObjectID = "UFg-3I-Tvi"; */
+"UFg-3I-Tvi.headerCell.title" = "Playlists";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Composer: Opus (total duration)"; ObjectID = "VLV-he-4XM"; */
+"VLV-he-4XM.placeholderString" = "Componist: Opus (totale afspeeltijd)";
+
+/* Class = "NSComboBox"; ibShadowedToolTip = "Select an artist (wildcards * and ? are allowed)"; ObjectID = "VUp-pa-Cdo"; */
+"VUp-pa-Cdo.ibShadowedToolTip" = "Selecteer een artiest (wildcards * en ? zijn toegestaan)";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "YEi-ZT-e2g"; */
+"YEi-ZT-e2g.title" = "Text Cell";
+
+/* Class = "NSSlider"; ibShadowedToolTip = "Move the slider to go to another time in the track"; ObjectID = "Ycw-1w-sMS"; */
+"Ycw-1w-sMS.ibShadowedToolTip" = "Verschuif de slider om naar een ander tijdstip in de track te gaan";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Play the next opus part"; ObjectID = "Z1t-Ag-2zf"; */
+"Z1t-Ag-2zf.ibShadowedToolTip" = "Het volgende opus deel afspelen";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "ZlE-KQ-JOw"; */
+"ZlE-KQ-JOw.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "awz-nx-swo"; */
+"awz-nx-swo.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Componist"; ObjectID = "ctU-FW-61K"; */
+"ctU-FW-61K.headerCell.title" = "Componist";
+
+/* Class = "NSOutlineView"; ibShadowedToolTip = "Select a playlist"; ObjectID = "eWR-jR-wfT"; */
+"eWR-jR-wfT.ibShadowedToolTip" = "Selecteer een playlist";
+
+/* Class = "NSButtonCell"; title = "Previous opus part"; ObjectID = "fMF-wg-TpE"; */
+"fMF-wg-TpE.title" = "Vorige opus deel";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Play the previous opus part"; ObjectID = "jcg-7L-lYn"; */
+"jcg-7L-lYn.ibShadowedToolTip" = "Het vorige opus deel afspelen";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Play the next opus chosen randomly from the playlist"; ObjectID = "sqb-Vv-fRB"; */
+"sqb-Vv-fRB.ibShadowedToolTip" = "Het volgende willekeurige opus uit de playlist afspelen";
+
+/* Class = "NSComboBox"; ibShadowedToolTip = "Select a composer (wildcards * and ? are allowed)"; ObjectID = "tnP-ti-brc"; */
+"tnP-ti-brc.ibShadowedToolTip" = "Selecteer een componist (wildcards * en ? zijn toegestaan)";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Play or pause the track"; ObjectID = "xqz-Xq-FLP"; */
+"xqz-Xq-FLP.ibShadowedToolTip" = "Afspelen of pauseren van de track";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Play opus items randomly chosen from the playlist"; ObjectID = "yjm-8u-fee"; */
+"yjm-8u-fee.ibShadowedToolTip" = "Opus items uit playlist willekeurig afspelen";
+
