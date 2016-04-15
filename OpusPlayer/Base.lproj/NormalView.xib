@@ -33,13 +33,16 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <box autoresizesSubviews="NO" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="0k4-5r-KfI">
-                    <rect key="frame" x="190" y="578" width="679" height="51"/>
+                    <rect key="frame" x="238" y="578" width="631" height="51"/>
                     <view key="contentView" id="Rab-n1-beR">
-                        <rect key="frame" x="1" y="1" width="677" height="35"/>
+                        <rect key="frame" x="1" y="1" width="629" height="35"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <comboBox identifier="artists" toolTip="Select an artist (wildcards * and ? are allowed)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VUp-pa-Cdo">
-                                <rect key="frame" x="445" y="7" width="197" height="26"/>
+                            <comboBox identifier="artists" toolTip="Select an artist (wildcards * and ? are allowed)" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VUp-pa-Cdo">
+                                <rect key="frame" x="416" y="7" width="197" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="194" id="eeO-uO-JKf"/>
+                                </constraints>
                                 <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Artist" drawsBackground="YES" numberOfVisibleItems="20" id="MPN-9c-BU1">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -50,8 +53,11 @@
                                     <outlet property="delegate" destination="-2" id="tVk-KY-3Mu"/>
                                 </connections>
                             </comboBox>
-                            <comboBox identifier="composers" toolTip="Select a composer (wildcards * and ? are allowed)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tnP-ti-brc">
-                                <rect key="frame" x="218" y="7" width="197" height="26"/>
+                            <comboBox identifier="composers" toolTip="Select a composer (wildcards * and ? are allowed)" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tnP-ti-brc">
+                                <rect key="frame" x="199" y="7" width="197" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="194" id="XtY-tA-nBs"/>
+                                </constraints>
                                 <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Composer" drawsBackground="YES" numberOfVisibleItems="20" id="30v-YY-u5i">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -62,8 +68,11 @@
                                     <outlet property="delegate" destination="-2" id="dKM-iD-eqX"/>
                                 </connections>
                             </comboBox>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bdr-uS-dpo">
-                                <rect key="frame" x="18" y="13" width="192" height="17"/>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bdr-uS-dpo">
+                                <rect key="frame" x="9" y="13" width="180" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="176" id="SGG-Cb-3ZF"/>
+                                </constraints>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" placeholderString="Select composer/artist:" id="71S-HM-pjt">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -71,23 +80,28 @@
                                 </textFieldCell>
                             </textField>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="tnP-ti-brc" firstAttribute="leading" secondItem="Bdr-uS-dpo" secondAttribute="trailing" constant="12" id="RHY-PO-0ye"/>
+                            <constraint firstAttribute="trailing" secondItem="VUp-pa-Cdo" secondAttribute="trailing" constant="19" id="SF0-h3-jRY"/>
+                            <constraint firstItem="Bdr-uS-dpo" firstAttribute="centerY" secondItem="tnP-ti-brc" secondAttribute="centerY" id="bTi-hi-JSH"/>
+                            <constraint firstItem="tnP-ti-brc" firstAttribute="top" secondItem="Rab-n1-beR" secondAttribute="top" constant="4" id="bVD-UN-JZ3"/>
+                            <constraint firstItem="tnP-ti-brc" firstAttribute="baseline" secondItem="VUp-pa-Cdo" secondAttribute="baseline" id="eG4-HF-WFd"/>
+                            <constraint firstItem="VUp-pa-Cdo" firstAttribute="leading" secondItem="tnP-ti-brc" secondAttribute="trailing" constant="23" id="rgn-dE-FGP"/>
+                        </constraints>
                     </view>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="673" id="Bjj-xp-heo"/>
-                    </constraints>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </box>
                 <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RAn-2v-GuI">
                     <rect key="frame" x="10" y="181" width="856" height="393"/>
                     <subviews>
-                        <customView fixedFrame="YES" id="f1D-oX-FMy">
+                        <customView id="f1D-oX-FMy">
                             <rect key="frame" x="0.0" y="0.0" width="249" height="393"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <subviews>
-                                <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHv-2N-GLD">
+                                <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHv-2N-GLD">
                                     <rect key="frame" x="0.0" y="0.0" width="249" height="393"/>
-                                    <clipView key="contentView" ambiguous="YES" id="n61-zr-yi0">
+                                    <clipView key="contentView" id="n61-zr-yi0">
                                         <rect key="frame" x="1" y="0.0" width="247" height="392"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
@@ -134,14 +148,20 @@
                                     </tableHeaderView>
                                 </scrollView>
                             </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="uHv-2N-GLD" secondAttribute="bottom" id="B14-jI-flZ"/>
+                                <constraint firstItem="uHv-2N-GLD" firstAttribute="leading" secondItem="f1D-oX-FMy" secondAttribute="leading" id="EIh-9j-gcK"/>
+                                <constraint firstItem="uHv-2N-GLD" firstAttribute="top" secondItem="f1D-oX-FMy" secondAttribute="top" id="TFw-nS-fLG"/>
+                                <constraint firstAttribute="trailing" secondItem="uHv-2N-GLD" secondAttribute="trailing" id="vfr-im-yh3"/>
+                            </constraints>
                         </customView>
-                        <customView fixedFrame="YES" id="dEw-SM-ohf">
+                        <customView id="dEw-SM-ohf">
                             <rect key="frame" x="259" y="0.0" width="597" height="393"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
-                                <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YOB-0K-J7s">
+                                <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YOB-0K-J7s">
                                     <rect key="frame" x="0.0" y="0.0" width="597" height="393"/>
-                                    <clipView key="contentView" ambiguous="YES" id="0yK-lN-XWE">
+                                    <clipView key="contentView" id="0yK-lN-XWE">
                                         <rect key="frame" x="1" y="0.0" width="595" height="392"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
@@ -152,7 +172,7 @@
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                 <tableColumns>
-                                                    <tableColumn editable="NO" width="161" minWidth="40" maxWidth="1000" id="ctU-FW-61K">
+                                                    <tableColumn editable="NO" width="160" minWidth="40" maxWidth="1000" id="ctU-FW-61K">
                                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Componist">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -212,7 +232,7 @@
                                                             </binding>
                                                         </connections>
                                                     </tableColumn>
-                                                    <tableColumn editable="NO" width="130" minWidth="10" maxWidth="3.4028234663852886e+38" id="MfF-MU-zFH">
+                                                    <tableColumn editable="NO" width="131" minWidth="10" maxWidth="3.4028234663852886e+38" id="MfF-MU-zFH">
                                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -254,6 +274,12 @@
                                     </tableHeaderView>
                                 </scrollView>
                             </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="YOB-0K-J7s" secondAttribute="bottom" id="9xy-yK-Tht"/>
+                                <constraint firstItem="YOB-0K-J7s" firstAttribute="leading" secondItem="dEw-SM-ohf" secondAttribute="leading" id="RrA-So-fEV"/>
+                                <constraint firstAttribute="trailing" secondItem="YOB-0K-J7s" secondAttribute="trailing" id="rPm-r9-Yxk"/>
+                                <constraint firstItem="YOB-0K-J7s" firstAttribute="top" secondItem="dEw-SM-ohf" secondAttribute="top" id="rRP-ra-bQI"/>
+                            </constraints>
                         </customView>
                     </subviews>
                     <holdingPriorities>
@@ -261,10 +287,98 @@
                         <real value="250"/>
                     </holdingPriorities>
                 </splitView>
-                <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="393" translatesAutoresizingMaskIntoConstraints="NO" id="A7u-nn-5uP">
+                <box identifier="player controls" autoresizesSubviews="NO" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="g1a-s4-emH">
+                    <rect key="frame" x="129" y="128" width="619" height="45"/>
+                    <view key="contentView" id="McO-F6-MgG">
+                        <rect key="frame" x="1" y="1" width="617" height="43"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button toolTip="Play the previous opus part" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jcg-7L-lYn">
+                                <rect key="frame" x="12" y="5" width="146" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="134" id="dru-rY-XU3"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Previous opus part" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fMF-wg-TpE">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="playPreviousOpusPart:" target="-2" id="Rca-zR-cio"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Play or pause the track" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xqz-Xq-FLP">
+                                <rect key="frame" x="160" y="5" width="82" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="70" id="Fnn-By-jgw"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Play" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PhB-qq-VV7">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="playOrPause:" target="-2" id="TFg-aS-9x5"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Play the next opus part" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Z1t-Ag-2zf">
+                                <rect key="frame" x="246" y="5" width="149" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="137" id="gF7-Ga-01g"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Next opus part" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bmk-Cj-fzL">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="playNextOpusPart:" target="-2" id="izZ-k8-cjw"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Play the next opus chosen randomly from the playlist" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sqb-Vv-fRB">
+                                <rect key="frame" x="400" y="5" width="118" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="106" id="YlJ-km-PBm"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Next opus" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="I9m-gZ-tQx">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="playNextOpus:" target="-2" id="wmA-xF-Gg2"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Play opus items randomly chosen from the playlist" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yjm-8u-fee">
+                                <rect key="frame" x="525" y="5" width="82" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="70" id="4yd-AM-abN"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Shuffle" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ox0-SH-1lW">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="shuffleOpusItemsFromPlaylist:" target="-2" id="kOD-uh-BcT"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Z1t-Ag-2zf" firstAttribute="baseline" secondItem="sqb-Vv-fRB" secondAttribute="baseline" id="IB1-hF-p5y"/>
+                            <constraint firstItem="jcg-7L-lYn" firstAttribute="top" secondItem="McO-F6-MgG" secondAttribute="top" constant="10" id="VH8-lt-dpr"/>
+                            <constraint firstItem="sqb-Vv-fRB" firstAttribute="leading" secondItem="Z1t-Ag-2zf" secondAttribute="trailing" constant="17" id="chk-lj-KZX"/>
+                            <constraint firstItem="jcg-7L-lYn" firstAttribute="baseline" secondItem="xqz-Xq-FLP" secondAttribute="baseline" id="el7-lE-fZq"/>
+                            <constraint firstItem="jcg-7L-lYn" firstAttribute="leading" secondItem="McO-F6-MgG" secondAttribute="leading" constant="18" id="hHg-8H-SJu"/>
+                            <constraint firstItem="xqz-Xq-FLP" firstAttribute="leading" secondItem="jcg-7L-lYn" secondAttribute="trailing" constant="14" id="kO2-6a-qM5"/>
+                            <constraint firstItem="yjm-8u-fee" firstAttribute="leading" secondItem="sqb-Vv-fRB" secondAttribute="trailing" constant="19" id="mwk-TD-iaK"/>
+                            <constraint firstItem="xqz-Xq-FLP" firstAttribute="baseline" secondItem="Z1t-Ag-2zf" secondAttribute="baseline" id="nSx-Vx-PfN"/>
+                            <constraint firstItem="Z1t-Ag-2zf" firstAttribute="leading" secondItem="xqz-Xq-FLP" secondAttribute="trailing" constant="16" id="nly-yJ-Sus"/>
+                            <constraint firstItem="sqb-Vv-fRB" firstAttribute="baseline" secondItem="yjm-8u-fee" secondAttribute="baseline" id="qAN-4h-hvF"/>
+                        </constraints>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="393" translatesAutoresizingMaskIntoConstraints="NO" id="A7u-nn-5uP">
                     <rect key="frame" x="29" y="98" width="818" height="26"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="26" id="FGh-lH-CZA"/>
+                        <constraint firstAttribute="height" constant="26" id="gce-0Y-rr6"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Composer: Opus (total duration)" id="VLV-he-4XM">
                         <font key="font" metaFont="systemBold" size="18"/>
@@ -274,16 +388,19 @@
                 </textField>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="460" translatesAutoresizingMaskIntoConstraints="NO" id="FdM-3k-ixq">
                     <rect key="frame" x="29" y="72" width="818" height="26"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="26" id="vbw-Oo-cZU"/>
+                    </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Opus Part (details)" id="F2l-CJ-xfN">
                         <font key="font" metaFont="systemBold" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="749" horizontalCompressionResistancePriority="450" translatesAutoresizingMaskIntoConstraints="NO" id="oVw-n2-40j">
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="450" translatesAutoresizingMaskIntoConstraints="NO" id="oVw-n2-40j">
                     <rect key="frame" x="29" y="45" width="818" height="26"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="26" id="ZVb-da-gqs"/>
+                        <constraint firstAttribute="height" constant="26" id="HWv-m8-7uH"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" placeholderString="Artist" id="2JE-6L-JQp">
                         <font key="font" metaFont="systemBold" size="18"/>
@@ -299,93 +416,32 @@
                         <binding destination="-2" name="value" keyPath="self.currentOpusCurrentTime" id="0RC-id-isZ"/>
                     </connections>
                 </slider>
-                <box identifier="player controls" autoresizesSubviews="NO" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="g1a-s4-emH">
-                    <rect key="frame" x="64" y="128" width="743" height="45"/>
-                    <view key="contentView" id="McO-F6-MgG">
-                        <rect key="frame" x="1" y="1" width="741" height="43"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button toolTip="Play or pause the track" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xqz-Xq-FLP">
-                                <rect key="frame" x="208" y="5" width="84" height="32"/>
-                                <buttonCell key="cell" type="push" title="Play" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PhB-qq-VV7">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="playOrPause:" target="-2" id="TFg-aS-9x5"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Play the next opus part" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z1t-Ag-2zf">
-                                <rect key="frame" x="299" y="5" width="166" height="32"/>
-                                <buttonCell key="cell" type="push" title="Next opus part" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bmk-Cj-fzL">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="playNextOpusPart:" target="-2" id="izZ-k8-cjw"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Play the next opus chosen randomly from the playlist" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sqb-Vv-fRB">
-                                <rect key="frame" x="473" y="5" width="144" height="32"/>
-                                <buttonCell key="cell" type="push" title="Next opus" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="I9m-gZ-tQx">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="playNextOpus:" target="-2" id="wmA-xF-Gg2"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Play opus items randomly chosen from the playlist" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yjm-8u-fee">
-                                <rect key="frame" x="628" y="5" width="84" height="32"/>
-                                <buttonCell key="cell" type="push" title="Shuffle" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ox0-SH-1lW">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="shuffleOpusItemsFromPlaylist:" target="-2" id="kOD-uh-BcT"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Play the previous opus part" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jcg-7L-lYn">
-                                <rect key="frame" x="14" y="5" width="189" height="32"/>
-                                <buttonCell key="cell" type="push" title="Previous opus part" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fMF-wg-TpE">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="playPreviousOpusPart:" target="-2" id="Rca-zR-cio"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                    </view>
-                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                </box>
             </subviews>
             <constraints>
-                <constraint firstItem="oVw-n2-40j" firstAttribute="top" secondItem="FdM-3k-ixq" secondAttribute="bottom" constant="1" id="0HU-Kw-84m"/>
-                <constraint firstAttribute="bottom" secondItem="oVw-n2-40j" secondAttribute="bottom" constant="45" id="7HO-Id-YMM"/>
-                <constraint firstItem="Ycw-1w-sMS" firstAttribute="centerX" secondItem="g1a-s4-emH" secondAttribute="centerX" constant="3" id="8q3-Pq-9gg"/>
-                <constraint firstItem="0k4-5r-KfI" firstAttribute="trailing" secondItem="RAn-2v-GuI" secondAttribute="trailing" id="BLd-Dd-nX7"/>
-                <constraint firstItem="RAn-2v-GuI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="10" id="Cl2-a9-2d8"/>
-                <constraint firstItem="oVw-n2-40j" firstAttribute="trailing" secondItem="FdM-3k-ixq" secondAttribute="trailing" id="GRC-lO-0fr"/>
-                <constraint firstItem="A7u-nn-5uP" firstAttribute="trailing" secondItem="FdM-3k-ixq" secondAttribute="trailing" id="H3a-4R-pe4"/>
-                <constraint firstItem="Ycw-1w-sMS" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="81" id="INs-lm-lfx"/>
-                <constraint firstItem="A7u-nn-5uP" firstAttribute="top" secondItem="g1a-s4-emH" secondAttribute="bottom" constant="8" symbolic="YES" id="M6D-7L-Jbk"/>
-                <constraint firstItem="g1a-s4-emH" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="458" id="NBF-43-0YA"/>
-                <constraint firstItem="FdM-3k-ixq" firstAttribute="top" secondItem="A7u-nn-5uP" secondAttribute="bottom" id="Rom-Df-HpX"/>
-                <constraint firstAttribute="bottom" secondItem="Ycw-1w-sMS" secondAttribute="bottom" constant="20" symbolic="YES" id="TWq-oO-g8v"/>
-                <constraint firstItem="g1a-s4-emH" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" constant="-3" id="V1c-BE-3zi"/>
-                <constraint firstItem="oVw-n2-40j" firstAttribute="leading" secondItem="FdM-3k-ixq" secondAttribute="leading" id="VZN-pV-24Q"/>
-                <constraint firstItem="Ycw-1w-sMS" firstAttribute="centerX" secondItem="RAn-2v-GuI" secondAttribute="centerX" id="ZqX-5k-8JO"/>
-                <constraint firstItem="RAn-2v-GuI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="55" id="a5D-Ym-Jjf"/>
-                <constraint firstItem="g1a-s4-emH" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="67" id="atr-gL-dXB"/>
-                <constraint firstItem="RAn-2v-GuI" firstAttribute="top" secondItem="0k4-5r-KfI" secondAttribute="bottom" constant="8" symbolic="YES" id="bry-Ah-LRv"/>
-                <constraint firstItem="g1a-s4-emH" firstAttribute="top" secondItem="RAn-2v-GuI" secondAttribute="bottom" constant="10" id="flL-Tj-SWb"/>
-                <constraint firstItem="Ycw-1w-sMS" firstAttribute="centerX" secondItem="FdM-3k-ixq" secondAttribute="centerX" id="iut-7k-oNP"/>
-                <constraint firstAttribute="bottom" secondItem="g1a-s4-emH" secondAttribute="bottom" constant="132" id="o0s-4h-uY5"/>
-                <constraint firstItem="0k4-5r-KfI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="s81-w2-Hjj"/>
-                <constraint firstItem="oVw-n2-40j" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="31" id="vKi-Ih-T17"/>
-                <constraint firstItem="A7u-nn-5uP" firstAttribute="leading" secondItem="FdM-3k-ixq" secondAttribute="leading" id="yvv-sL-KS3"/>
+                <constraint firstItem="RAn-2v-GuI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="55" id="0Rj-Mh-P8G"/>
+                <constraint firstItem="g1a-s4-emH" firstAttribute="top" secondItem="RAn-2v-GuI" secondAttribute="bottom" constant="10" id="6CT-yS-CUg"/>
+                <constraint firstItem="oVw-n2-40j" firstAttribute="top" secondItem="FdM-3k-ixq" secondAttribute="bottom" constant="1" id="CZY-80-vlz"/>
+                <constraint firstItem="0k4-5r-KfI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="241" id="JaK-66-2Qh"/>
+                <constraint firstItem="RAn-2v-GuI" firstAttribute="top" secondItem="0k4-5r-KfI" secondAttribute="bottom" constant="8" symbolic="YES" id="Lqu-aB-HqY"/>
+                <constraint firstItem="RAn-2v-GuI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="10" id="MV2-Kb-j4j"/>
+                <constraint firstItem="RAn-2v-GuI" firstAttribute="centerX" secondItem="g1a-s4-emH" secondAttribute="centerX" id="Q5Y-W6-xPa"/>
+                <constraint firstItem="g1a-s4-emH" firstAttribute="centerX" secondItem="A7u-nn-5uP" secondAttribute="centerX" id="U6n-o2-2D1"/>
+                <constraint firstItem="A7u-nn-5uP" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="31" id="V11-4V-5LS"/>
+                <constraint firstItem="0k4-5r-KfI" firstAttribute="trailing" secondItem="RAn-2v-GuI" secondAttribute="trailing" id="aXp-qq-rtM"/>
+                <constraint firstItem="0k4-5r-KfI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="cs7-6f-FJV"/>
+                <constraint firstItem="Ycw-1w-sMS" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="81" id="d62-3P-Ixx"/>
+                <constraint firstItem="FdM-3k-ixq" firstAttribute="top" secondItem="A7u-nn-5uP" secondAttribute="bottom" id="dwV-sm-wGN"/>
+                <constraint firstItem="FdM-3k-ixq" firstAttribute="leading" secondItem="oVw-n2-40j" secondAttribute="leading" id="e1H-KP-69F"/>
+                <constraint firstItem="A7u-nn-5uP" firstAttribute="top" secondItem="g1a-s4-emH" secondAttribute="bottom" constant="8" symbolic="YES" id="fY6-o7-e2A"/>
+                <constraint firstItem="RAn-2v-GuI" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="fj7-Uc-s1z"/>
+                <constraint firstItem="oVw-n2-40j" firstAttribute="centerX" secondItem="Ycw-1w-sMS" secondAttribute="centerX" id="gKw-aV-JC5"/>
+                <constraint firstAttribute="bottom" secondItem="Ycw-1w-sMS" secondAttribute="bottom" constant="20" symbolic="YES" id="gti-Dj-UVR"/>
+                <constraint firstItem="Ycw-1w-sMS" firstAttribute="top" secondItem="oVw-n2-40j" secondAttribute="bottom" constant="8" symbolic="YES" id="iuR-bo-OEV"/>
+                <constraint firstItem="g1a-s4-emH" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="458" id="lYb-5E-wRD"/>
+                <constraint firstItem="g1a-s4-emH" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="132" id="o8k-Sr-2ag"/>
+                <constraint firstItem="FdM-3k-ixq" firstAttribute="trailing" secondItem="oVw-n2-40j" secondAttribute="trailing" id="s9V-Rt-GTU"/>
+                <constraint firstItem="A7u-nn-5uP" firstAttribute="leading" secondItem="FdM-3k-ixq" secondAttribute="leading" id="vYe-Eg-g6D"/>
+                <constraint firstItem="A7u-nn-5uP" firstAttribute="trailing" secondItem="FdM-3k-ixq" secondAttribute="trailing" id="wS8-MH-2WP"/>
             </constraints>
             <point key="canvasLocation" x="478.5" y="372.5"/>
         </customView>
